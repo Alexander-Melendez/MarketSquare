@@ -1,0 +1,118 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.navbar {
+  overflow: hidden;
+  background-color: #000000;
+}
+
+.navbar input[type=text] {
+  float: left;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-left: 40px;
+  border: none;
+  font-size: 32px;
+  height:50px;
+  width:50%;
+}
+.submit {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border: none;
+  text-align: center;
+  background-color:  #8a8a8a;
+  font-size: 32px;
+  height:50px;
+  width:110px
+}
+
+.buttonlogin {
+  float: right;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-right: 40px;
+  border: none;
+  text-align: center;
+  background-color:  #f54b45;
+  font-size: 32px;
+  height:50px;
+  width:100px
+}
+
+.submit:hover{
+  background-color: #acacac;
+}
+.buttonlogin:hover{
+  background-color: #750000;
+}
+
+.container {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.box {
+border-style: solid;
+margin-left: 20px;
+margin-top: 20px;
+margin-bottom: 20px;
+height:500px;
+width:400px;
+text-align: center;
+} 
+.box h4 {
+text-align: center;
+}
+
+.popupclass {
+  position:fixed; 
+  height:700px;
+  width:600px;
+  font-size: 32px;
+  border-style: solid;
+  background-color: #acacac;
+  top: calc(50% - 350px); 
+  left: calc(50% - 300px); 
+  animation: popup 1s;
+}
+.hidden {
+  display: none; 
+}
+@keyframes popup {
+  0%{
+    transform: scale(0);
+  }
+  100%{
+    transform: scale(1);
+  }
+}
+
+/*.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-inner {
+  position: relative;
+  padding: 32px;
+  width: 100%;
+  max-width: 640px;
+  background-color: rgb(134, 134, 134)
+}
+
+.popup-inner .close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+*/
