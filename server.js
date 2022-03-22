@@ -28,15 +28,15 @@ if (process.env.NODE_ENV === 'production')
 
 app.post('/api/login', async (req, res, next) => 
 {
-  // incoming: login, password
+  // incoming: email, password
   // outgoing: id, firstName, lastName, error
     
  var error = '';
 
-  const { login, password } = req.body;
+  const { email, password } = req.body;
 
   const db = client.db();
-  const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
+  const results = await db.collection('UserInfo').find({Email:email,Password:password}).toArray();
 
   var id = -1;
   var fn = '';
@@ -44,7 +44,7 @@ app.post('/api/login', async (req, res, next) =>
 
   if( results.length > 0 )
   {
-    id = results[0].UserId;
+    id = results[0].UserID;
     fn = results[0].FirstName;
     ln = results[0].LastName;
   }
