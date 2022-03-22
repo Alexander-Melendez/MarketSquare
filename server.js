@@ -55,12 +55,12 @@ app.post('/api/login', async (req, res, next) =>
 
 app.post('/api/register', async (req, res, next) =>
 {
-  // incoming: firstName, lastName, email, password
+  // incoming: firstName, lastName, email, password, phoneNumber
   // outgoing: error
 
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, phoneNumber } = req.body;
 
-  const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password};
+  const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber};
   var error = '';
 
   try
