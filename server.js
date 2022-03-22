@@ -53,6 +53,30 @@ app.post('/api/login', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+app.post('/api/register', async (req, res, next) =>
+{
+  // incoming: firstName, lastName, email, password
+  // outgoing: error
+
+  const { firstName, lastName, email, password } = req.body;
+
+  const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password};
+  var error = '';
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('UserInfo').insertOne(newUser);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);
+})
+
 app.use((req, res, next) => 
 {
   res.setHeader('Access-Control-Allow-Origin', '*');
