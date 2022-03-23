@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 require('dotenv').config();
 const url = process.env.MONGODB_URI;
-const MongoClient = require('mongodb').MongoClient;
+const MongoClient = 'mongodb+srv://UCFGROUP9:UCFgroup9!!@cluster0.ysk2t.mongodb.net/Marketplace?retryWrites=true&w=majority';
 const client = new MongoClient(url);
 client.connect();
 
