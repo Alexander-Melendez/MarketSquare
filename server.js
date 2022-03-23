@@ -28,15 +28,15 @@ if (process.env.NODE_ENV === 'production')
 
 app.post('/api/login', async (req, res, next) => 
 {
-  // incoming: login, password
+  // incoming: email, password
   // outgoing: id, firstName, lastName, error
     
  var error = '';
 
-  const { login, password } = req.body;
+  const { email, password } = req.body;
 
   const db = client.db();
-  const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
+  const results = await db.collection('UserInfo').find({Email:email,Password:password}).toArray();
 
   var id = -1;
   var fn = '';
@@ -44,7 +44,7 @@ app.post('/api/login', async (req, res, next) =>
 
   if( results.length > 0 )
   {
-    id = results[0].UserId;
+    id = results[0].UserID;
     fn = results[0].FirstName;
     ln = results[0].LastName;
   }
@@ -52,6 +52,30 @@ app.post('/api/login', async (req, res, next) =>
   var ret = { id:id, firstName:fn, lastName:ln, error:''};
   res.status(200).json(ret);
 });
+
+app.post('/api/register', async (req, res, next) =>
+{
+  // incoming: firstName, lastName, email, password, phoneNumber
+  // outgoing: error
+
+  const { firstName, lastName, email, password, phoneNumber } = req.body;
+
+  const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber};
+  var error = '';
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('UserInfo').insertOne(newUser);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);
+})
 
 app.use((req, res, next) => 
 {
