@@ -60,7 +60,7 @@ app.post('/api/register', async (req, res, next) =>
 
   const { firstName, lastName, email, password, phoneNumber } = req.body;
 
-  const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber};
+  const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()};
   var error = '';
 
   try
