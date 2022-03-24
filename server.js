@@ -75,7 +75,34 @@ app.post('/api/register', async (req, res, next) =>
 
   var ret = { error: error };
   res.status(200).json(ret);
-})
+});
+
+app.post('/api/search', async (req, res, next) => 
+{
+  // incoming: userId, search
+  // outgoing: results[], error
+
+  var error = '';
+
+  const { userId, search } = req.body;
+  var _search = search.trim();
+
+  const db = client.db();
+  const results = await db.collection('ProductInfo').find(
+      {$or:[
+      {"ProductName":{$regex:_search + '*', $options:'r',}},
+      {"ProductCategory":{$regex:_search + '*', $options:'r'}}]}
+      ).toArray();
+
+  var _ret = [];
+  for( var i=0; i<results.length; i++ )
+  {
+    _ret.push( results[i].ProductName );
+  }
+
+  var ret = {results:_ret, error:error};
+  res.status(200).json(ret);
+});
 
 app.use((req, res, next) => 
 {
