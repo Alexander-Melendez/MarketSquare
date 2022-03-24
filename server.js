@@ -104,6 +104,87 @@ app.post('/api/search', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+app.post('/api/addproduct', async (req, res, next) =>
+{
+  // incoming: productName, productCategory, productDescription, productPrice, contactInfo, email, 
+  // outgoing: error
+
+  const { productName, productCategory, productDescription, productPrice, contactInfo, email } = req.body;
+
+  const newProduct = {ProductName:productName,ProductCategory:productCategory,ProductDescription:productDescription,ProductPrice:productPrice,ContactInfo:contactInfo,Email:email,DateListed: new Date()};
+  var error = '';
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('ProductInfo').insertOne(newProduct);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);
+});
+
+app.post('/api/editproduct', async (req, res, next) =>
+{
+  // incoming: productName
+  // outgoing: error
+
+  const { productName, email, newName, newDescription } = req.body;
+  const productToUpdate = {ProductName:productName,Email:email}; 
+  const updateInfo = 
+  {
+    $set: {
+      ProductName:newName,
+      ProductDescription:newDescription
+      
+    },
+  };
+
+  var error = '';
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('ProductInfo').updateOne(productToUpdate, updateInfo);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);
+});
+
+app.post('/api/deleteproduct', async (req, res, next) =>
+{
+  // incoming: productName
+  // outgoing: error
+
+  const { productName } = req.body;
+
+  const deleteProduct = {ProductName:productName};
+  var error = '';
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('ProductInfo').deleteOne(deleteProduct);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);
+});
+
+
 app.use((req, res, next) => 
 {
   res.setHeader('Access-Control-Allow-Origin', '*');
