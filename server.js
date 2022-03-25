@@ -60,7 +60,7 @@ app.post('/api/register', async (req, res, next) =>
 
   const { firstName, lastName, email, password, phoneNumber } = req.body;
 
-  const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber};
+  const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()};
   var error = '';
 
   try
@@ -75,7 +75,115 @@ app.post('/api/register', async (req, res, next) =>
 
   var ret = { error: error };
   res.status(200).json(ret);
-})
+});
+
+app.post('/api/search', async (req, res, next) => 
+{
+  // incoming: userId, search
+  // outgoing: results[], error
+
+  var error = '';
+
+  const { userId, search } = req.body;
+  var _search = search.trim();
+
+  const db = client.db();
+  const results = await db.collection('ProductInfo').find(
+      {$or:[
+      {"ProductName":{$regex:_search + '*', $options:'r',}},
+      {"ProductCategory":{$regex:_search + '*', $options:'r'}}]}
+      ).toArray();
+
+  var _ret = [];
+  for( var i=0; i<results.length; i++ )
+  {
+    _ret.push( results[i].ProductName );
+  }
+
+  var ret = {results:_ret, error:error};
+  res.status(200).json(ret);
+});
+
+app.post('/api/addproduct', async (req, res, next) =>
+{
+  // incoming: productName, productCategory, productDescription, productPrice, contactInfo, email, 
+  // outgoing: error
+
+  const { productName, productCategory, productDescription, productPrice, contactInfo, email } = req.body;
+
+  const newProduct = {ProductName:productName,ProductCategory:productCategory,ProductDescription:productDescription,ProductPrice:productPrice,ContactInfo:contactInfo,Email:email,DateListed: new Date()};
+  var error = '';
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('ProductInfo').insertOne(newProduct);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);
+});
+
+app.post('/api/editproduct', async (req, res, next) =>
+{
+  // incoming: productName
+  // outgoing: error
+
+  const { productName, email, newName, newDescription } = req.body;
+  const productToUpdate = {ProductName:productName,Email:email}; 
+  const updateInfo = 
+  {
+    $set: {
+      ProductName:newName,
+      ProductDescription:newDescription
+      
+    },
+  };
+
+  var error = '';
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('ProductInfo').updateOne(productToUpdate, updateInfo);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);
+});
+
+app.post('/api/deleteproduct', async (req, res, next) =>
+{
+  // incoming: productName
+  // outgoing: error
+
+  const { productName } = req.body;
+
+  const deleteProduct = {ProductName:productName};
+  var error = '';
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('ProductInfo').deleteOne(deleteProduct);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);
+});
+
 
 app.use((req, res, next) => 
 {
