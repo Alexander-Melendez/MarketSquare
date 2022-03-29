@@ -155,9 +155,8 @@ function PlacingTest() {
 
 function App() {
   return (
-    <Router>
+    <Router basename='Home'>
       <div>
-        {/* <Switch>  move up here to hide search ?*/}
         <Navbar bg="dark" variant="dark" sticky="top">
             <Link to='/' style={{ textDecoration: 'none' }}><Navbar.Brand>Home</Navbar.Brand></Link>
             <Route path='/' exact>
@@ -170,7 +169,7 @@ function App() {
             <Container style={{ display: 'flex', justifyContent: 'flex-end' }} >
               <Route path='/' exact>
                 <Nav.Link as={Link} to="/Register">Register</Nav.Link>
-                <Nav.Link as={Link} to="/login">Login</Nav.Link>
+                <Nav.Link as={Link} to="/lo gin">Login</Nav.Link>
               </Route>
               <Nav.Link as={Link} to="/NewListing">Sell</Nav.Link>
             </Container>

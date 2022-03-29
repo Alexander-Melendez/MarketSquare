@@ -1,9 +1,10 @@
 // import { createContext, useState, useEffect } from 'react'
 import { Row, Col, Card, Form, Button, InputGroup, FormControl } from 'react-bootstrap';
-
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+
+import ImgThumbs from '../components/ImgThumbs';
 
 // form validation rules 
 const schema = yup.object().shape({
@@ -11,6 +12,9 @@ const schema = yup.object().shape({
     productCategory: yup.string().required(),
     productDescription: yup.string().required(),
     productPrice: yup.number().positive().integer().required(),
+    images: yup.mixed().required()
+        .test("fileType", "Unsupported File Format", (value) =>
+                ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
     // contactInfo: yup.string().required(), 
     // email: yup.string().required()
 });
@@ -108,6 +112,12 @@ function NewListingPage() {
                                         {/* {errors.email?.message}
                                     </Form.Control.Feedback> */}
                                 </Form.Group>
+                                <Form.Group>
+                                    <Form.Label></Form.Label>
+                                    <Form.Control type="file" name="images" multiple
+                                        {...register("images", {onChange: (e) => ImgThumbs(e.target.files)})}
+                                    ></Form.Control>
+                                </Form.Group>
                             </Row>
                             <Form.Group as={Col} controlId="formControls">
                                 <Button
@@ -120,6 +130,7 @@ function NewListingPage() {
                                 </Button>
                             </Form.Group>
                         </Form>
+                        <ImgThumbs/>
                     </Col>
                 </Row>
             </Card.Body>
