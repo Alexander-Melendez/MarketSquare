@@ -26,8 +26,8 @@ function RegisterPage(){
         formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState } 
     } = useForm({
         resolver: yupResolver(registerSchema),
-        mode: "onTouched",
-        reValidateMode: "onChange",
+        // mode: "onTouched",
+        // reValidateMode: "onChange",
     });
 
     const onSubmit = async (data) => {
@@ -49,7 +49,12 @@ function RegisterPage(){
                 console.log("API Error:" + res.error);
             }
             else {
+                // var user =  {id:res.id,firstName:res.firstName,lastName:res.lastName}
                 console.log(res);
+                // localStorage.setItem('user_data', JSON.stringify(user));
+                // console.log(res);
+                window.location.href = "/Home/login"
+                // <Redirect to="/Home" />
             }
         }
         catch (e) {
@@ -111,6 +116,7 @@ function RegisterPage(){
                                         <Form.Control
                                             type="text"
                                             name="passwordTwo"
+                                            {...register("passwordTwo")}
                                             isInvalid={!!errors.passwordTwo && touchedFields.passwordTwo}
                                         >
                                         </Form.Control>
