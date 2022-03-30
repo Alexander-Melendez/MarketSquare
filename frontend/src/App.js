@@ -13,148 +13,87 @@ import RegisterPage from './pages/RegisterPage';
 import LoggedInName from './components/LoggedInName'
 const Name = ["One", "Two", "Three", "Four", "Five", "Six", "Seven?", "Eight!", "Zero"];
 const Price = [1, 2, 3, 4, 5, 6, 7, 8, 0];
-const length = Name.length;
 
-
-/*
-let boxloop = 0;
-let counter = 0;
-
-
-function getname() {
-  return (Name[counter]);
-}
-
-function getprice() {
-  return (Price[counter]);
-}
-
-function FormattedBoxes() {
-  return(
-    <div class = "box">
-      <p>Name: {getname()}</p>
-      <p>Price: {getprice()}</p>
-    </div>
-  );
-}
-
-function FormattedContainer() {
-  var boxes = [];
-  for (var i = 0; i < boxloop; i++) {
-    boxes.push(<FormattedBoxes/>);
-  }
-  return ( 
-    <div class = "container">
-      {boxes}
-    </div>
-  );
-}
-function LoopingContainers() {
-  var rowone = [];
-  let numloop = (length/4);
-  if(length % 4 !== 0) {
-    numloop = (length/4)-1;
-  }
-
-  for (var i = 0; i < numloop; i++) {
-    boxloop = 4;
-    rowone.push(<FormattedContainer/>);
-  }
-  
-  return (
-    <div>
-      {rowone}
-    </div>
-  );
-}
-
-function LoopingContainersCheck() {
-  var rowtwo = [];
-  boxloop = length % 4;
-  if(boxloop !== 0) {
-    rowtwo.push(<FormattedContainer/>);
-  }
-  return (
-    <div>
-      {rowtwo}
-    </div>
-  );
-}
-
-function Placinghtml() {
-  return (
-    <div>
-      <LoopingContainers/>
-      <LoopingContainersCheck/>
-    </div>
-  );
-}
-*/
-
-//TESTING WITH REACT COMPONENTS
-
-/*
-class Conpartment extends React.Component {
-  render() {
-    return(
-      <div>
-        <PlacingTest/>
-      </div>
-    );
-  }
-}
-*/
-
-function PlacingTest() {
-  const [NameArray, setNameArray] = useState(Name);
-  const [PriceArray, setPriceArray] = useState(Price);
-
-  function FormattedBoxesone(index) {
-    const [Switch, setSwitch] = useState(false);
-    return (
-      <div>
-        <div class="box" onClick={() => setSwitch(true)}>
-          <p>Name: {NameArray[index]}</p>
-          <p>Price: {PriceArray[index]}</p>
-        </div>
-        <div className={Switch ? "popupclass" : "hidden"} onClick={() => setSwitch(false)}>
-          <p>Name: {NameArray[index]}</p>
-          <p>Price: {PriceArray[index]}</p>
-        </div>
-      </div>
-    );
-  }
-
-
-  var rowone = [];
-  let numloop = (length / 4);
-  var boxes = [];
-  let boxloops = 4;
-  if (length % 4 !== 0) {
-    numloop = (length / 4) - 1;
-  }
-
-  for (var i = 0; i < numloop; i++) {
-    for (var j = 0; j < boxloops; j++) {
-      boxes.push(FormattedBoxesone(i * 4 + j));
-    }
-  }
-  for (var k = 0; k < length % 4; k++) {
-    boxes.push(FormattedBoxesone(i * 4 + k));
-  }
-  rowone.push(boxes);
-
-
-
-  return (
-    <div class="container">
-      {rowone}
-    </div>
-  );
-
-}
 
 function App() {
+  var search = '';
+  const [searchResults,setResults] = useState('');
+  const[NameArray, setNameArray] = useState(Name);
+  const[PriceArray, setPriceArray] = useState(Price);
+  const length = NameArray.length;
+
+
+
+  function PlacingTest() {
+    function FormattedBoxesone(index) {
+      const [Switch, setSwitch] = useState(false);
+      return (
+        <div>
+          <div class="box" onClick={() => setSwitch(true)}>
+            <p>Name: {NameArray[index]}</p>
+            <p>Price: {PriceArray[index]}</p>
+          </div>
+          <div className={Switch ? "popupclass" : "hidden"} onClick={() => setSwitch(false)}>
+            <p>Name: {NameArray[index]}</p>
+            <p>Price: {PriceArray[index]}</p>
+          </div>
+        </div>
+      );
+    }
+  
+  
+    var rowone = [];
+    let numloop = (length / 4);
+    var boxes = [];
+    let boxloops = 4;
+    if (length % 4 !== 0) {
+      numloop = (length / 4) - 1;
+    }
+  
+    for (var i = 0; i < numloop; i++) {
+      for (var j = 0; j < boxloops; j++) {
+        boxes.push(FormattedBoxesone(i * 4 + j));
+      }
+    }
+    for (var k = 0; k < length % 4; k++) {
+      boxes.push(FormattedBoxesone(i * 4 + k));
+    }
+    rowone.push(boxes);
+  
+  
+  
+    return (
+      <div class="container">
+        {rowone}
+      </div>
+    );
+  
+  }
+
+  
+  var userId = 0;
+  const searchCard = async event => 
+  {
+      event.preventDefault();
+      
+      var obj = {userId:userId,search:search.value};
+      var js = JSON.stringify(obj);
+      try
+      {
+        const response = await fetch('http://localhost:5000/api/search',
+        {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+          var txt = await response.text();
+          var res = JSON.parse(txt);
+          var _results = res.results;
+          setNameArray(_results);
+          //alert(_results);
+      }
+      catch(e)
+      {
+          alert(e.toString());
+          setResults(e.toString());
+      }
+  };
   return (
     <Router basename='Home'>
       <div>
@@ -162,8 +101,8 @@ function App() {
             <Link to='/' style={{ textDecoration: 'none' }}><Navbar.Brand>Home</Navbar.Brand></Link>
             <Route path='/' exact>
               <Form className="d-flex">
-              <FormControl type="search"  placeholder="Search.."/>
-              <Button variant="secondary">Submit</Button>
+              <FormControl type="search"  placeholder="Search.." ref={(c) => search = c}/>
+              <Button variant="secondary" onClick={searchCard}>Submit</Button>
             
               </Form>
             </Route>
