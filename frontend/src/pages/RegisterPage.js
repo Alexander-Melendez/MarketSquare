@@ -5,29 +5,33 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+const req = "Required field"
+
 // form validation rules 
 const registerSchema = yup.object().shape({
-    firstName: yup.string().required(),
-    lastName: yup.string().required(),
-    email: yup.string().email().required(),
+    firstName: yup.string().required(req),
+    lastName: yup.string().required(req),
+    email: yup.string().email("example: user@site.com").required(req),
     phoneNumber: yup.string().matches(
         /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-    ).required(),
-    password: yup.string().matches(
+        , "###-###-#### or ##########"
+    ).required(req),
+    password: yup.string().min(8, "Must Contain at least 8 characters")
+        .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/
-        // ,"Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
-      ).required(),
-    passwordTwo: yup.string().oneOf([yup.ref("password"), null]).required(),
+        , "Must contain, one uppercase letter, one lowercase letter, one number and one special character"
+    ).required(req),
+    passwordTwo: yup.string().oneOf([yup.ref("password"), null], "Passwords do not match").required(req),
 });
 
-function RegisterPage(){
-    
+function RegisterPage() {
+
     const { register, handleSubmit, reset, setValue, getValues,
-        formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState } 
+        formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState }
     } = useForm({
         resolver: yupResolver(registerSchema),
-        // mode: "onTouched",
-        // reValidateMode: "onChange",
+        mode: "onBlur",
+        reValidateMode: "onBlur",
     });
 
     const onSubmit = async (data) => {
@@ -40,7 +44,7 @@ function RegisterPage(){
                     method: 'POST',
                     body: send,
                     headers: {
-                        'Content-Type':'application/json'
+                        'Content-Type': 'application/json'
                     }
                 });
             var txt = await response.text();
@@ -80,6 +84,9 @@ function RegisterPage(){
                                             {...register("firstName")}
                                             isInvalid={!!errors.firstName && touchedFields.firstName}
                                         ></Form.Control>
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.firstName?.message}
+                                        </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Label>Last Name</Form.Label>
@@ -89,6 +96,9 @@ function RegisterPage(){
                                             {...register("lastName")}
                                             isInvalid={!!errors.lastName && touchedFields.lastName}
                                         ></Form.Control>
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.lastName?.message}
+                                        </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group >
                                         <Form.Label>Email</Form.Label>
@@ -99,8 +109,8 @@ function RegisterPage(){
                                             isInvalid={!!errors.email && touchedFields.email}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {/* {errors.email.message} */}
-                                        </Form.Control.Feedback> 
+                                            {errors.email?.message}
+                                        </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Label>Password</Form.Label>
@@ -110,6 +120,9 @@ function RegisterPage(){
                                             {...register("password")}
                                             isInvalid={!!errors.password && touchedFields.password}
                                         />
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.password?.message}
+                                        </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Label>Confirm Password</Form.Label>
@@ -120,6 +133,9 @@ function RegisterPage(){
                                             isInvalid={!!errors.passwordTwo && touchedFields.passwordTwo}
                                         >
                                         </Form.Control>
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.passwordTwo?.message}
+                                        </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Label>Phone Number</Form.Label>
@@ -129,6 +145,9 @@ function RegisterPage(){
                                             {...register("phoneNumber")}
                                             isInvalid={!!errors.phoneNumber && touchedFields.phoneNumber}
                                         ></Form.Control>
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.phoneNumber?.message}
+                                        </Form.Control.Feedback>
                                     </Form.Group>
                                 </Row>
                                 <Form.Group as={Col} controlId="formControls">
