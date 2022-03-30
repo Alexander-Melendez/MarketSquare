@@ -1,6 +1,7 @@
 // import { createContext, useState, useEffect } from 'react'
 import { Row, Col, Card, Form, Button, InputGroup, FormControl, Container } from 'react-bootstrap';
 
+import { Redirect } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -34,9 +35,14 @@ function LoginPage(){
             var res = JSON.parse(txt);
             if (res.error.length > 0) {
                 console.log("API Error:" + res.error);
+                
             }
             else {
-                console.log(res);
+                var user =  {id:res.id,firstName:res.firstName,lastName:res.lastName}
+                localStorage.setItem('user_data', JSON.stringify(user));
+                console.log(res, user, localStorage.getItem('user_data'));
+                window.location.href = '/Home';
+                // <Redirect to="/Home" />
             }
         }
         catch (e) {

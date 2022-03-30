@@ -10,6 +10,7 @@ import NewListingPage from './pages/NewListingPage';
 import MakeListing from './components/MakeListing';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import LoggedInName from './components/LoggedInName'
 const Name = ["One", "Two", "Three", "Four", "Five", "Six", "Seven?", "Eight!", "Zero"];
 const Price = [1, 2, 3, 4, 5, 6, 7, 8, 0];
 const length = Name.length;
@@ -168,8 +169,12 @@ function App() {
             </Route>
             <Container style={{ display: 'flex', justifyContent: 'flex-end' }} >
               <Route path='/' exact>
-                <Nav.Link as={Link} to="/Register">Register</Nav.Link>
-                <Nav.Link as={Link} to="/lo gin">Login</Nav.Link>
+                {localStorage.getItem('user_data') !== null
+                  ?<div><LoggedInName/></div>
+                  :<><Nav.Link as={Link} to="/Register">Register</Nav.Link>
+                   <Nav.Link as={Link} to="/login">Login</Nav.Link></>
+                
+                }
               </Route>
               <Nav.Link as={Link} to="/NewListing">Sell</Nav.Link>
             </Container>

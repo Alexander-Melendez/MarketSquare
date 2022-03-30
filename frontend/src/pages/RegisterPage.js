@@ -22,8 +22,12 @@ const registerSchema = yup.object().shape({
 
 function RegisterPage(){
     
-    const { register, handleSubmit, reset, setValue, getValues, errors, formState } = useForm({
+    const { register, handleSubmit, reset, setValue, getValues,
+        formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState } 
+    } = useForm({
         resolver: yupResolver(registerSchema),
+        mode: "onTouched",
+        reValidateMode: "onChange",
     });
 
     const onSubmit = async (data) => {
@@ -45,7 +49,7 @@ function RegisterPage(){
                 console.log("API Error:" + res.error);
             }
             else {
-                console.log("Response:" +res);
+                console.log(res);
             }
         }
         catch (e) {
@@ -69,6 +73,7 @@ function RegisterPage(){
                                             type="text"
                                             name="firstName"
                                             {...register("firstName")}
+                                            isInvalid={!!errors.firstName && touchedFields.firstName}
                                         ></Form.Control>
                                     </Form.Group>
                                     <Form.Group>
@@ -77,6 +82,7 @@ function RegisterPage(){
                                             type="text"
                                             name="lastName"
                                             {...register("lastName")}
+                                            isInvalid={!!errors.lastName && touchedFields.lastName}
                                         ></Form.Control>
                                     </Form.Group>
                                     <Form.Group >
@@ -85,8 +91,7 @@ function RegisterPage(){
                                             type="text"
                                             name="email"
                                             {...register("email")}
-                                            // isInvalid={errors.email}
-                                            // className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                                            isInvalid={!!errors.email && touchedFields.email}
                                         />
                                         <Form.Control.Feedback type="invalid">
                                             {/* {errors.email.message} */}
@@ -98,6 +103,7 @@ function RegisterPage(){
                                             type="text"
                                             name="password"
                                             {...register("password")}
+                                            isInvalid={!!errors.password && touchedFields.password}
                                         />
                                     </Form.Group>
                                     <Form.Group>
@@ -105,9 +111,8 @@ function RegisterPage(){
                                         <Form.Control
                                             type="text"
                                             name="passwordTwo"
-                                            {...register("passwordTwo")}
+                                            isInvalid={!!errors.passwordTwo && touchedFields.passwordTwo}
                                         >
-
                                         </Form.Control>
                                     </Form.Group>
                                     <Form.Group>
@@ -116,6 +121,7 @@ function RegisterPage(){
                                             type="text"
                                             name="phoneNumber"
                                             {...register("phoneNumber")}
+                                            isInvalid={!!errors.phoneNumber && touchedFields.phoneNumber}
                                         ></Form.Control>
                                     </Form.Group>
                                 </Row>
