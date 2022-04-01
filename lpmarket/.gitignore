@@ -1,0 +1,5 @@
+.env
+plans.txt
+node_modules
+public
+OLD_package-lock.json
