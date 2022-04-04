@@ -1,5 +1,7 @@
 // import { createContext, useState, useEffect } from 'react'
-import { Row, Col, Card, Form, Button, InputGroup, FormControl } from 'react-bootstrap';
+
+// Removed FormControl to reduce unused from 'react-bootstrap'
+import { Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -21,7 +23,8 @@ const schema = yup.object().shape({
 
 function NewListingPage() {
 
-    const { register, handleSubmit, reset, setValue, getValues, errors, formState } = useForm({
+    // Removed setValue, getValues, and errors to reduce unused errors
+    const { register, handleSubmit, reset, formState } = useForm({
         resolver: yupResolver(schema),
     });
 

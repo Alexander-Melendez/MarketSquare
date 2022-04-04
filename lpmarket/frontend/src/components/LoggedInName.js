@@ -13,8 +13,8 @@ function LoggedInName()
         window.location.href = '/';
     };    
   return(
-    <div><span id="userName"  style={{ color: "white" }}>Logged In As {firstName} {lastName}</span>
-    <Button 
+    <div><span id="userName"  style={{ color: "white" }}>Logged In As {firstName} {lastName}    </span>
+    <Button variant = "outline-info" 
     onClick={doLogout}> Log Out </Button></div>
   );
 };

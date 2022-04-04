@@ -1,5 +1,6 @@
 // import { createContext, useState, useEffect } from 'react'
-import { Row, Col, Card, Form, Button, InputGroup, FormControl, Container } from 'react-bootstrap';
+// InputGroup and FormControl from 'react-bootstrap' removed to reduce unused errors
+import { Row, Col, Card, Form, Button, Container } from 'react-bootstrap';
 
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';

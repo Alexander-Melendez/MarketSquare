@@ -1,10 +1,13 @@
 // import { createContext, useState, useEffect } from 'react'
-import { Row, Col, Card, Form, Button, InputGroup, FormControl, Container } from 'react-bootstrap';
+// InputGroup and FormControl from 'react-bootstrap' removed to reduce unused errors
+import { Row, Col, Card, Form, Button, Container } from 'react-bootstrap';
 
-import { Redirect } from "react-router-dom";
+// Removed import { Redirect } from "react-router-dom"; to reduce unused errors
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+// Keeping this here as I will fix the jwt soon
+import { useJwt } from "react-jwt";
 
 // form validation rules 
 const loginSchema = yup.object().shape({
@@ -14,11 +17,19 @@ const loginSchema = yup.object().shape({
 
 function LoginPage(){
     
-    const { register, handleSubmit, reset, setValue, getValues, errors, formState } = useForm({
+    // Removed setValue, getValues, and errors to reduce unused errors
+    const { register, handleSubmit, reset, formState } = useForm({
         resolver: yupResolver(loginSchema),
     });
 
+    
+
     const onSubmit = async (data) => {
+
+        // JWT Set Up WIP
+        //let storage = require('../tokenStorage.js');
+        //let obj = {email:email,password:password.value,jwtToken:storage.retrieveToken()};
+        //let js = JSON.stringify(obj)
         console.log(data)
         var send = JSON.stringify(data);
         console.log(send)

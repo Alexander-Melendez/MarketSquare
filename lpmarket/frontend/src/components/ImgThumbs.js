@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Image, Container, Row, Col } from 'react-bootstrap'
+// Removed Image Row and Col from react-bootstrap to removed unused errors
+import { Container } from 'react-bootstrap'
 
 function ImgThumbs(fileInput) {
 
