@@ -14,9 +14,9 @@ const schema = yup.object().shape({
     productCategory: yup.string().required(),
     productDescription: yup.string().required(),
     productPrice: yup.number().positive().integer().required(),
-    images: yup.mixed().required()
-        .test("fileType", "Unsupported File Format", (value) =>
-                ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
+    // images: yup.mixed().required()
+    //     .test("fileType", "Unsupported File Format", (value) =>
+    //             ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
     // contactInfo: yup.string().required(), 
     // email: yup.string().required()
 });
@@ -102,7 +102,7 @@ function NewListingPage() {
                                     </InputGroup>
                                 </Form.Group>
                                 <Form.Group as={Col} controlId="formGridEmail">
-                                    {/* <Form.Label>Email</Form.Label>
+                                    <Form.Label>Email</Form.Label>
                                     <Form.Control
                                         type="text"
                                         name="email"
@@ -112,13 +112,13 @@ function NewListingPage() {
 
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {/* {errors.email?.message}
-                                    </Form.Control.Feedback> */}
+                                        {/* {errors.email?.message} */}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label></Form.Label>
                                     <Form.Control type="file" name="images" multiple
-                                        {...register("images", {onChange: (e) => ImgThumbs(e.target.files)})}
+                                        // {...register("images", {onChange: (e) => ImgThumbs(e.target.files)})}
                                     ></Form.Control>
                                 </Form.Group>
                             </Row>
@@ -133,7 +133,7 @@ function NewListingPage() {
                                 </Button>
                             </Form.Group>
                         </Form>
-                        <ImgThumbs/>
+                        {/* <ImgThumbs/> */}
                     </Col>
                 </Row>
             </Card.Body>
