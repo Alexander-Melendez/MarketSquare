@@ -127,6 +127,10 @@ exports.setApp = function(app, client)
     for( var i=0; i<results.length; i++ )
     {
         _ret.push( results[i].ProductName );
+        _ret.push( results[i].ProductCategory );
+        _ret.push( results[i].ProductDescription );
+        _ret.push( results[i].ProductPrice );
+        _ret.push( results[i].ContactInfo );
     }
 
     let refreshedToken = null;
