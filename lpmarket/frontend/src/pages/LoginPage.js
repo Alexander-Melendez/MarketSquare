@@ -11,18 +11,20 @@ import { useJwt } from "react-jwt";
 
 // form validation rules 
 const loginSchema = yup.object().shape({
-    email: yup.string().email().required(),
-    password: yup.string().required(),
+    email: yup.string().email("example: user@site.com").required("Required"),
+    password: yup.string().required("Required"),
 });
 
-function LoginPage(){
-    
-    // Removed setValue, getValues, and errors to reduce unused errors
-    const { register, handleSubmit, reset, formState } = useForm({
-        resolver: yupResolver(loginSchema),
-    });
+function LoginPage() {
 
-    
+    // Removed setValue, getValues, and errors to reduce unused errors
+    const { register, handleSubmit, reset,
+        formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState }
+    } = useForm({
+        resolver: yupResolver(loginSchema),
+        mode: "onBlur",
+        reValidateMode: "onBlur",
+    });
 
     const onSubmit = async (data) => {
 
@@ -39,17 +41,17 @@ function LoginPage(){
                     method: 'POST',
                     body: send,
                     headers: {
-                        'Content-Type':'application/json'
+                        'Content-Type': 'application/json'
                     }
                 });
             var txt = await response.text();
             var res = JSON.parse(txt);
             if (res.error.length > 0) {
                 console.log("API Error:" + res.error);
-                
+
             }
             else {
-                var user =  {id:res.id,firstName:res.firstName,lastName:res.lastName}
+                var user = { id: res.id, firstName: res.firstName, lastName: res.lastName }
                 localStorage.setItem('user_data', JSON.stringify(user));
                 console.log(res, user, localStorage.getItem('user_data'));
                 window.location.href = '/Home';
@@ -77,19 +79,23 @@ function LoginPage(){
                                             type="text"
                                             name="email"
                                             {...register("email")}
-                                            // isInvalid={errors.email}                                        
+                                            isInvalid={!!errors.email && touchedFields.email}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {/* {errors.email.message} */}
-                                        </Form.Control.Feedback> 
+                                            {errors.email?.message}
+                                        </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Label>password</Form.Label>
                                         <Form.Control
-                                            type="text"
-                                            name="productName"
+                                            type="password"
+                                            name="password"
                                             {...register("password")}
+                                            isInvalid={!!errors.password && touchedFields.password}
                                         />
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.password?.message}
+                                        </Form.Control.Feedback>
                                     </Form.Group>
                                 </Row>
                                 <Form.Group as={Col} controlId="formControls">

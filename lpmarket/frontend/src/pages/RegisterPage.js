@@ -116,7 +116,7 @@ function RegisterPage() {
                                     <Form.Group>
                                         <Form.Label>Password</Form.Label>
                                         <Form.Control
-                                            type="text"
+                                            type="password"
                                             name="password"
                                             {...register("password")}
                                             isInvalid={!!errors.password && touchedFields.password}
@@ -128,7 +128,7 @@ function RegisterPage() {
                                     <Form.Group>
                                         <Form.Label>Confirm Password</Form.Label>
                                         <Form.Control
-                                            type="text"
+                                            type="password"
                                             name="passwordTwo"
                                             {...register("passwordTwo")}
                                             isInvalid={!!errors.passwordTwo && touchedFields.passwordTwo}
