@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 // Create Schema
-const CardSchema = new Schema({
+const ProductSchema = new Schema({
   UserId: {
     type: String
   },
@@ -31,4 +31,4 @@ const CardSchema = new Schema({
     required: true
   },
 });
-module.exports = Card = mongoose.model('Cards', CardSchema);
+module.exports = ProductInfo = mongoose.model('ProductInfo', ProductSchema);

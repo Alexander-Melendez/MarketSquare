@@ -3,14 +3,15 @@ require('mongodb');
 
 exports.setApp = function(app, client)
 {
+    const User = require("./models/UserInfo.js");
+    const Product = require("./models/ProductInfo.js");
+
     app.post('/api/login', async (req, res, next) => 
     {
     // incoming: email, password
     // outgoing: id, firstName, lastName, error
         
-    var error = '';
-    const User = require("./models/user.js");
-    const Listing = require("./models/card.js");
+    let error = '';
 
     const { email, password } = req.body;
 
@@ -119,12 +120,12 @@ exports.setApp = function(app, client)
         ).toArray();
     */
     
-    const results = await Listing.find({$or:[
+    const results = await Product.find({$or:[
         {"ProductName":{$regex:_search + '*', $options:'r',}},
         {"ProductCategory":{$regex:_search + '*', $options:'r'}}]});
 
     let _ret = [];
-    for( var i=0; i<results.length; i++ )
+    for( let i = 0; i < results.length; i++ )
     {
         _ret.push( results[i].ProductName );
         _ret.push( results[i].ProductCategory );

@@ -10,14 +10,19 @@ app.use(cors());
 app.use(bodyParser.json());
 
 require('dotenv').config();
+
 const url = process.env.MONGODB_URI;
-const mongoose = require("mongoose");
+/*const mongoose = require("mongoose");
 mongoose.connect(url)
   .then(() => console.log("MongoDB connected!"))
-  .catch(err => console.log(err))
+  .catch(err => console.log(err))*/
 
-var api = require('./api.js');
-api.setApp(app, mongoose);
+const MongoClient = require('mongodb').MongoClient;
+const client = new MongoClient(url);
+client.connect();
+
+//var api = require('./api.js');
+//api.setApp(app, mongoose);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') 
@@ -30,7 +35,7 @@ if (process.env.NODE_ENV === 'production')
   });
 }
 
-/*
+
 app.post('/api/login', async (req, res, next) => 
 {
   // incoming: email, password
@@ -93,16 +98,22 @@ app.post('/api/search', async (req, res, next) =>
   var _search = search.trim();
 
   const db = client.db();
+
   const results = await db.collection('ProductInfo').find(
       {$or:[
       {"ProductName":{$regex:_search + '*', $options:'r',}},
       {"ProductCategory":{$regex:_search + '*', $options:'r'}}]}
       ).toArray();
 
-  var _ret = [];
-  for( var i=0; i<results.length; i++ )
+  let _ret = [];
+
+  for( var i = 0; i < results.length; i++ )
   {
-    _ret.push( results[i].ProductName );
+      _ret.push( results[i].ProductName );
+      _ret.push( results[i].ProductCategory );
+      _ret.push( results[i].ProductDescription );
+      _ret.push( results[i].ProductPrice );
+      _ret.push( results[i].ContactInfo );
   }
 
   var ret = {results:_ret, error:error};
@@ -188,7 +199,7 @@ app.post('/api/deleteproduct', async (req, res, next) =>
   var ret = { error: error };
   res.status(200).json(ret);
 });
-*/
+
 
 app.use((req, res, next) => 
 {
