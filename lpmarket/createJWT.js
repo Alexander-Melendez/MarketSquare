@@ -1,9 +1,11 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+
 exports.createToken = function ( fn, ln, id )
 {
     return _createToken( fn, ln, id );
 }
+
 _createToken = function ( fn, ln, id )
 {
     try
@@ -19,14 +21,15 @@ _createToken = function ( fn, ln, id )
                        '24h'
                       '365d'
       */
-      var ret = {accessToken:accessToken};
+      let ret = {accessToken:accessToken, fn:fn, ln:ln, id:id};
     }
     catch(e)
     {
-      var ret = {error:e.message};
+      let ret = {error:e.message};
     }
     return ret;
 }
+
 exports.isExpired = function( token )
 {
    var isError = jwt.verify( token, process.env.ACCESS_TOKEN_SECRET, 
@@ -43,11 +46,14 @@ exports.isExpired = function( token )
    });
    return isError;
 }
+
 exports.refresh = function( token )
 {
-  var ud = jwt.decode(token,{complete:true});
-  var userId = ud.payload.id;
-  var firstName = ud.payload.firstName;
-  var lastName = ud.payload.lastName;
+  let ud = jwt.decode(token,{complete:true});
+    
+  let userId = ud.payload.id;
+  let firstName = ud.payload.firstName;
+  let lastName = ud.payload.lastName;
+    
   return _createToken( firstName, lastName, userId );
 }
