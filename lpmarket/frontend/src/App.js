@@ -11,15 +11,17 @@ import MakeListing from './components/MakeListing';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import LoggedInName from './components/LoggedInName'
-const Name = ["One", "Two", "Three", "Four", "Five", "Six", "Seven?", "Eight!", "Zero"];
-const Price = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+const Temp = [];
+
 
 
 function App() {
   var search = '';
   const [searchResults,setResults] = useState('');
-  const[NameArray, setNameArray] = useState(Name);
-  const[PriceArray, setPriceArray] = useState(Price);
+  const[NameArray, setName] = useState(Temp);
+  const[PriceArray, setPrice] = useState(Temp);
+  const[ProductCategoryArray, setProductCategory] = useState(Temp);
+  const[DescArray, setDesc] = useState(Temp);
   const length = NameArray.length;
 
 
@@ -32,10 +34,14 @@ function App() {
           <div class="box" onClick={() => setSwitch(true)}>
             <p>Name: {NameArray[index]}</p>
             <p>Price: {PriceArray[index]}</p>
+            <p>Category: {ProductCategoryArray[index]}</p>
+            <p>Description: {DescArray[index]}</p>
           </div>
           <div className={Switch ? "popupclass" : "hidden"} onClick={() => setSwitch(false)}>
             <p>Name: {NameArray[index]}</p>
             <p>Price: {PriceArray[index]}</p>
+            <p>Category: {ProductCategoryArray[index]}</p>
+            <p>Description: {DescArray[index]}</p>
           </div>
         </div>
       );
@@ -85,8 +91,23 @@ function App() {
           var txt = await response.text();
           var res = JSON.parse(txt);
           var _results = res.results;
-          setNameArray(_results);
-          //alert(_results);
+          var resultsName = [];
+          var resultsProductCategory = [];
+          var resultsDesc = [];
+          var resultsPrice = [];
+          var resultContactInfo = [];
+          var resultlength = _results.length;
+          for(var i = 0; i < resultlength; i = i+5) {
+            resultsName.push(_results[i]);
+            resultsProductCategory.push(_results[i+1]);
+            resultsDesc.push(_results[i+2]);
+            resultsPrice.push(_results[i+3]);
+            resultContactInfo.push(_results[i+4]);
+          }
+          setName(resultsName);
+          setPrice(resultsPrice);
+          setProductCategory(resultsProductCategory);
+          setDesc(resultsDesc);
       }
       catch(e)
       {
