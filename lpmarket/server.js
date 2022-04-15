@@ -21,8 +21,8 @@ const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url);
 client.connect();
 
-//var api = require('./api.js');
-//api.setApp(app, mongoose);
+var api = require('./api.js');
+api.setApp(app, client);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') 
@@ -36,169 +36,169 @@ if (process.env.NODE_ENV === 'production')
 }
 
 
-app.post('/api/login', async (req, res, next) => 
-{
-  // incoming: email, password
-  // outgoing: id, firstName, lastName, error
+// app.post('/api/login', async (req, res, next) => 
+// {
+//   // incoming: email, password
+//   // outgoing: id, firstName, lastName, error
     
- var error = '';
+//  var error = '';
 
-  const { email, password } = req.body;
+//   const { email, password } = req.body;
 
-  const db = client.db();
-  const results = await db.collection('UserInfo').find({Email:email,Password:password}).toArray();
+//   const db = client.db();
+//   const results = await db.collection('UserInfo').find({Email:email,Password:password}).toArray();
 
-  var id = -1;
-  var fn = '';
-  var ln = '';
+//   var id = -1;
+//   var fn = '';
+//   var ln = '';
 
-  if( results.length > 0 )
-  {
-    id = results[0].UserID;
-    fn = results[0].FirstName;
-    ln = results[0].LastName;
-  }
+//   if( results.length > 0 )
+//   {
+//     id = results[0].UserID;
+//     fn = results[0].FirstName;
+//     ln = results[0].LastName;
+//   }
 
-  var ret = { id:id, firstName:fn, lastName:ln, error:''};
-  res.status(200).json(ret);
-});
+//   var ret = { id:id, firstName:fn, lastName:ln, error:''};
+//   res.status(200).json(ret);
+// });
 
-app.post('/api/register', async (req, res, next) =>
-{
-  // incoming: firstName, lastName, email, password, phoneNumber
-  // outgoing: error
+// app.post('/api/register', async (req, res, next) =>
+// {
+//   // incoming: firstName, lastName, email, password, phoneNumber
+//   // outgoing: error
 
-  const { firstName, lastName, email, password, phoneNumber } = req.body;
+//   const { firstName, lastName, email, password, phoneNumber } = req.body;
 
-  const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()};
-  var error = '';
+//   const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()};
+//   var error = '';
 
-  try
-  {
-    const db = client.db();
-    const result = db.collection('UserInfo').insertOne(newUser);
-  }
-  catch(e)
-  {
-    error = e.toString();
-  }
+//   try
+//   {
+//     const db = client.db();
+//     const result = db.collection('UserInfo').insertOne(newUser);
+//   }
+//   catch(e)
+//   {
+//     error = e.toString();
+//   }
 
-  var ret = { error: error };
-  res.status(200).json(ret);
-});
+//   var ret = { error: error };
+//   res.status(200).json(ret);
+// });
 
-app.post('/api/search', async (req, res, next) => 
-{
-  // incoming: userId, search
-  // outgoing: results[], error
+// app.post('/api/search', async (req, res, next) => 
+// {
+//   // incoming: userId, search
+//   // outgoing: results[], error
 
-  var error = '';
+//   var error = '';
 
-  const { userId, search } = req.body;
-  var _search = search.trim();
+//   const { userId, search } = req.body;
+//   var _search = search.trim();
 
-  const db = client.db();
+//   const db = client.db();
 
-  const results = await db.collection('ProductInfo').find(
-      {$or:[
-      {"ProductName":{$regex:_search + '*', $options:'r',}},
-      {"ProductCategory":{$regex:_search + '*', $options:'r'}}]}
-      ).toArray();
+//   const results = await db.collection('ProductInfo').find(
+//       {$or:[
+//       {"ProductName":{$regex:_search + '*', $options:'r',}},
+//       {"ProductCategory":{$regex:_search + '*', $options:'r'}}]}
+//       ).toArray();
 
-  let _ret = [];
+//   let _ret = [];
 
-  for( var i = 0; i < results.length; i++ )
-  {
-      _ret.push( results[i].ProductName );
-      _ret.push( results[i].ProductCategory );
-      _ret.push( results[i].ProductDescription );
-      _ret.push( results[i].ProductPrice );
-      _ret.push( results[i].ContactInfo );
-  }
+//   for( var i = 0; i < results.length; i++ )
+//   {
+//       _ret.push( results[i].ProductName );
+//       _ret.push( results[i].ProductCategory );
+//       _ret.push( results[i].ProductDescription );
+//       _ret.push( results[i].ProductPrice );
+//       _ret.push( results[i].ContactInfo );
+//   }
 
-  var ret = {results:_ret, error:error};
-  res.status(200).json(ret);
-});
+//   var ret = {results:_ret, error:error};
+//   res.status(200).json(ret);
+// });
 
-app.post('/api/addproduct', async (req, res, next) =>
-{
-  // incoming: productName, productCategory, productDescription, productPrice, contactInfo, email, 
-  // outgoing: error
+// app.post('/api/addproduct', async (req, res, next) =>
+// {
+//   // incoming: productName, productCategory, productDescription, productPrice, contactInfo, email, 
+//   // outgoing: error
 
-  const { productName, productCategory, productDescription, productPrice, contactInfo, email } = req.body;
+//   const { productName, productCategory, productDescription, productPrice, contactInfo, email } = req.body;
 
-  const newProduct = {ProductName:productName,ProductCategory:productCategory,ProductDescription:productDescription,ProductPrice:productPrice,ContactInfo:contactInfo,Email:email,DateListed: new Date()};
-  var error = '';
+//   const newProduct = {ProductName:productName,ProductCategory:productCategory,ProductDescription:productDescription,ProductPrice:productPrice,ContactInfo:contactInfo,Email:email,DateListed: new Date()};
+//   var error = '';
 
-  try
-  {
-    const db = client.db();
-    const result = db.collection('ProductInfo').insertOne(newProduct);
-  }
-  catch(e)
-  {
-    error = e.toString();
-  }
+//   try
+//   {
+//     const db = client.db();
+//     const result = db.collection('ProductInfo').insertOne(newProduct);
+//   }
+//   catch(e)
+//   {
+//     error = e.toString();
+//   }
 
-  var ret = { error: error };
-  res.status(200).json(ret);
-});
+//   var ret = { error: error };
+//   res.status(200).json(ret);
+// });
 
-app.post('/api/editproduct', async (req, res, next) =>
-{
-  // incoming: productName
-  // outgoing: error
+// app.post('/api/editproduct', async (req, res, next) =>
+// {
+//   // incoming: productName
+//   // outgoing: error
 
-  const { productName, email, newName, newDescription } = req.body;
-  const productToUpdate = {ProductName:productName,Email:email}; 
-  const updateInfo = 
-  {
-    $set: {
-      ProductName:newName,
-      ProductDescription:newDescription
+//   const { productName, email, newName, newDescription } = req.body;
+//   const productToUpdate = {ProductName:productName,Email:email}; 
+//   const updateInfo = 
+//   {
+//     $set: {
+//       ProductName:newName,
+//       ProductDescription:newDescription
       
-    },
-  };
+//     },
+//   };
 
-  var error = '';
+//   var error = '';
 
-  try
-  {
-    const db = client.db();
-    const result = db.collection('ProductInfo').updateOne(productToUpdate, updateInfo);
-  }
-  catch(e)
-  {
-    error = e.toString();
-  }
+//   try
+//   {
+//     const db = client.db();
+//     const result = db.collection('ProductInfo').updateOne(productToUpdate, updateInfo);
+//   }
+//   catch(e)
+//   {
+//     error = e.toString();
+//   }
 
-  var ret = { error: error };
-  res.status(200).json(ret);
-});
+//   var ret = { error: error };
+//   res.status(200).json(ret);
+// });
 
-app.post('/api/deleteproduct', async (req, res, next) =>
-{
-  // incoming: productName
-  // outgoing: error
+// app.post('/api/deleteproduct', async (req, res, next) =>
+// {
+//   // incoming: productName
+//   // outgoing: error
 
-  const { productName } = req.body;
+//   const { productName } = req.body;
 
-  const deleteProduct = {ProductName:productName};
-  var error = '';
+//   const deleteProduct = {ProductName:productName};
+//   var error = '';
 
-  try
-  {
-    const db = client.db();
-    const result = db.collection('ProductInfo').deleteOne(deleteProduct);
-  }
-  catch(e)
-  {
-    error = e.toString();
-  }
+//   try
+//   {
+//     const db = client.db();
+//     const result = db.collection('ProductInfo').deleteOne(deleteProduct);
+//   }
+//   catch(e)
+//   {
+//     error = e.toString();
+//   }
 
-  var ret = { error: error };
-  res.status(200).json(ret);
-});
+//   var ret = { error: error };
+//   res.status(200).json(ret);
+// });
 
 
 app.use((req, res, next) => 
