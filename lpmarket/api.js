@@ -80,23 +80,23 @@ app.post('/api/search', async (req, res, next) =>
 
   var error = '';
 
-  // const { userId, search } = req.body;
-  let token = require('./createJWT.js');
-  const { userId, search, jwtToken } = req.body;
+  const { userId, search } = req.body;
+  // let token = require('./createJWT.js');
+  // const { userId, search, jwtToken } = req.body;
 
-  try
-  {
-      if( token.isExpired(jwtToken))
-      {
-          var r = {error:'The JWT is no longer valid', jwtToken: ''};
-          res.status(200).json(r);
-          return;
-      }
-  }
-  catch(e)
-  {
-      console.log(e.message);
-  }
+//   try
+//   {
+//       if( token.isExpired(jwtToken))
+//       {
+//           var r = {error:'The JWT is no longer valid', jwtToken: ''};
+//           res.status(200).json(r);
+//           return;
+//       }
+//   }
+//   catch(e)
+//   {
+//       console.log(e.message);
+//   }
 
   var _search = search.trim();
 
@@ -119,17 +119,18 @@ app.post('/api/search', async (req, res, next) =>
       _ret.push( results[i].ContactInfo );
   }
 
-  var refreshedToken = null;
-  try
-  {
-    refreshedToken = token.refresh(jwtToken);
-  }
-  catch(e)
-  {
-      console.log(e.message);
-  }
+//   var refreshedToken = null;
+//   try
+//   {
+//     refreshedToken = token.refresh(jwtToken);
+//   }
+//   catch(e)
+//   {
+//       console.log(e.message);
+//   }
 
-  var ret = {results:_ret, error:error, jwtToken: refreshedToken};
+  // var ret = {results:_ret, error:error, jwtToken: refreshedToken};
+  var ret = {results:_ret, error:error};
   res.status(200).json(ret);
 });
 
