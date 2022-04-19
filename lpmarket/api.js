@@ -7,225 +7,266 @@ exports.setApp = function(app, client)
     const Product = require("./models/ProductInfo.js");
 
     app.post('/api/login', async (req, res, next) => 
-    {
-    // incoming: email, password
-    // outgoing: id, firstName, lastName, error
-        
-    let error = '';
-
-    const { email, password } = req.body;
-
-    //const db = client.db();
-    //const results = await db.collection('UserInfo').find({Email:email,Password:password}).toArray();
+{
+  // incoming: email, password
+  // outgoing: id, firstName, lastName, error
     
-    const results = await User.find({Email: email, Password:password});
-    var id = -1;
-    var fn = '';
-    var ln = '';
+ let error = '';
 
-    var ret;
+  const { email, password } = req.body;
 
-    if( results.length > 0 )
-    {
-        id = results[0].UserID;
-        fn = results[0].FirstName;
-        ln = results[0].LastName;
+  const db = client.db();
+  const results = await db.collection('UserInfo').find({Email:email,Password:password}).toArray();
 
-        try
-        {
-            const token = require("./createJWT.js");
-            ret = token.createToken(fn, ln, id);
-        }
-        catch(e)
-        {
-            ret = {error:e.message};
-        }
-    }
-    else
-    {
-        ret = {error: "Login/Password incorrect"};
-    }
-    
-    //var ret = { id:id, firstName:fn, lastName:ln, error:''};
-    res.status(200).json(ret);
-    });
+  var id = -1;
+  var fn = '';
+  var ln = '';
 
-    app.post('/api/register', async (req, res, next) =>
-    {
-    // incoming: firstName, lastName, email, password, phoneNumber
-    // outgoing: error
+  var ret;
 
-    let token = require("./createJWT.js");
-
-    const { firstName, lastName, email, password, phoneNumber, jwtToken} = req.body;;
-
-    //const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()};
-    const newUser = new User({FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()});
-    let error = '';
+  if( results.length > 0 )
+  {
+    id = results[0].UserID;
+    fn = results[0].FirstName;
+    ln = results[0].LastName;
 
     try
     {
-        if( token.isExpired(jwtToken))
-        {
-            var r = {error: 'The JWT Is no longer valid', jwtToken:""}
-            res.status(200).json(r);
-            return;
-        }
+        const token = require("./createJWT.js");
+        ret = token.createToken(fn, ln, id);
     }
     catch(e)
     {
-        console.log(e.message);
+        ret = {error:e.message};
     }
+}
+else
+{
+    ret = {error: "Login/Password incorrect"};
+}
 
-    try
-    {
-        const db = client.db();
-        const result = db.collection('UserInfo').insertOne(newUser);
-    }
-    catch(e)
-    {
-        error = e.toString();
-    }
+  // let ret = { id:id, firstName:fn, lastName:ln, error:''};
+  res.status(200).json(ret);
+});
 
-    let refreshedToken = null;
+app.post('/api/register', async (req, res, next) =>
+{
+  // incoming: firstName, lastName, email, password, phoneNumber
+  // outgoing: error
 
-    try
-    {
-        refreshedToken = token.refresh(jwtToken);
-    }
-    catch(e)
-    {
-        console.log(e.message);
-    }
+  const { firstName, lastName, email, password, phoneNumber } = req.body;
 
-    var ret = { error: error, jwtToken: refreshedToken };
-    res.status(200).json(ret);
-    });
+  const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()};
+  var error = '';
 
-    app.post('/api/search', async (req, res, next) => 
-    {
-    // incoming: userId, search
-    // outgoing: results[], error
+  try
+  {
+    const db = client.db();
+    const result = db.collection('UserInfo').insertOne(newUser);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
 
-    let error = '';
+  var ret = { error: error };
+  res.status(200).json(ret);
+});
 
-    const { userId, search } = req.body;
-    let _search = search.trim();
+app.post('/api/search', async (req, res, next) => 
+{
+  // incoming: userId, search
+  // outgoing: results[], error
 
-    //const db = client.db();
-    /*const results = await db.collection('ProductInfo').find(
-        {$or:[
-        {"ProductName":{$regex:_search + '*', $options:'r',}},
-        {"ProductCategory":{$regex:_search + '*', $options:'r'}}]}
-        ).toArray();
-    */
-    
-    const results = await Product.find({$or:[
-        {"ProductName":{$regex:_search + '*', $options:'r',}},
-        {"ProductCategory":{$regex:_search + '*', $options:'r'}}]});
+  var error = '';
 
-    let _ret = [];
-    for( let i = 0; i < results.length; i++ )
-    {
-        _ret.push( results[i].ProductName );
-        _ret.push( results[i].ProductCategory );
-        _ret.push( results[i].ProductDescription );
-        _ret.push( results[i].ProductPrice );
-        _ret.push( results[i].ContactInfo );
-    }
+  const { userId, search } = req.body;
+  // let token = require('./createJWT.js');
+  // const { userId, search, jwtToken } = req.body;
 
-    let refreshedToken = null;
+//   try
+//   {
+//       if( token.isExpired(jwtToken))
+//       {
+//           var r = {error:'The JWT is no longer valid', jwtToken: ''};
+//           res.status(200).json(r);
+//           return;
+//       }
+//   }
+//   catch(e)
+//   {
+//       console.log(e.message);
+//   }
 
-    try
-    {
-        refreshedToken = token.refresh(jwtToken);
-    }
-    catch(e)
-    {
-        console.log(e.message);
-    }
+  var _search = search.trim();
 
-    var ret = {results:_ret, error:error, jwtToken: refreshedToken};
-    res.status(200).json(ret);
-    });
+  const db = client.db();
 
-    app.post('/api/addproduct', async (req, res, next) =>
-    {
-    // incoming: productName, productCategory, productDescription, productPrice, contactInfo, email, 
-    // outgoing: error
+  const results = await db.collection('ProductInfo').find(
+      {$or:[
+      {"ProductName":{$regex:_search + '*', $options:'r',}},
+      {"ProductCategory":{$regex:_search + '*', $options:'r'}}]}
+      ).toArray();
 
-    const { productName, productCategory, productDescription, productPrice, contactInfo, email } = req.body;
+  let _ret = [];
 
-    const newProduct = {ProductName:productName,ProductCategory:productCategory,ProductDescription:productDescription,ProductPrice:productPrice,ContactInfo:contactInfo,Email:email,DateListed: new Date()};
-    var error = '';
+  for( var i = 0; i < results.length; i++ )
+  {
+      _ret.push( results[i].ProductName );
+      _ret.push( results[i].ProductCategory );
+      _ret.push( results[i].ProductDescription );
+      _ret.push( results[i].ProductPrice );
+      _ret.push( results[i].ContactInfo );
+  }
 
-    try
-    {
-        const db = client.db();
-        const result = db.collection('ProductInfo').insertOne(newProduct);
-    }
-    catch(e)
-    {
-        error = e.toString();
-    }
+//   var refreshedToken = null;
+//   try
+//   {
+//     refreshedToken = token.refresh(jwtToken);
+//   }
+//   catch(e)
+//   {
+//       console.log(e.message);
+//   }
 
-    var ret = { error: error };
-    res.status(200).json(ret);
-    });
+  // var ret = {results:_ret, error:error, jwtToken: refreshedToken};
+  var ret = {results:_ret, error:error};
+  res.status(200).json(ret);
+});
 
-    app.post('/api/editproduct', async (req, res, next) =>
-    {
-    // incoming: productName
-    // outgoing: error
+app.post('/api/addproduct', async (req, res, next) =>
+{
+  // incoming: productName, productCategory, productDescription, productPrice, contactInfo, email, 
+  // outgoing: error
 
-    const { productName, email, newName, newDescription } = req.body;
-    const productToUpdate = {ProductName:productName,Email:email}; 
-    const updateInfo = 
-    {
-        $set: {
-        ProductName:newName,
-        ProductDescription:newDescription
-        
-        },
-    };
+  // const { productName, productCategory, productDescription, productPrice, contactInfo, email } = req.body;
+  let token = require('./createJWT.js');
+  const { productName, productCategory, productDescription, productPrice, contactInfo, email, jwtToken } = req.body;
 
-    var error = '';
+  try
+  {
+      if( token.isExpired(jwtToken))
+      {
+          var r = {error:'The JWT is no longer valid', jwtToken: ''};
+          res.status(200).json(r);
+          return;
+      }
+  }
+  catch(e)
+  {
+      console.log(e.message);
+  }
 
-    try
-    {
-        const db = client.db();
-        const result = db.collection('ProductInfo').updateOne(productToUpdate, updateInfo);
-    }
-    catch(e)
-    {
-        error = e.toString();
-    }
+  const newProduct = {ProductName:productName,ProductCategory:productCategory,ProductDescription:productDescription,ProductPrice:productPrice,ContactInfo:contactInfo,Email:email,DateListed: new Date()};
+  var error = '';
 
-    var ret = { error: error };
-    res.status(200).json(ret);
-    });
+  try
+  {
+    const db = client.db();
+    const result = db.collection('ProductInfo').insertOne(newProduct);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
 
-    app.post('/api/deleteproduct', async (req, res, next) =>
-    {
-    // incoming: productName
-    // outgoing: error
+  var refreshedToken = null;
+  try
+  {
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+      console.log(e.message);
+  }
 
-    const { productName } = req.body;
+  var ret = { error: error, jwtToken: refreshedToken };
+  res.status(200).json(ret);
 
-    const deleteProduct = {ProductName:productName};
-    var error = '';
+  // var ret = { error: error };
+  // res.status(200).json(ret);
+});
 
-    try
-    {
-        const db = client.db();
-        const result = db.collection('ProductInfo').deleteOne(deleteProduct);
-    }
-    catch(e)
-    {
-        error = e.toString();
-    }
+app.post('/api/editproduct', async (req, res, next) =>
+{
+  // incoming: productName
+  // outgoing: error
 
-    var ret = { error: error };
-    res.status(200).json(ret);
-    });
+  const { productName, email, newName, newDescription, newCategory, newPrice, newContactInfo } = req.body;
+  const productToUpdate = {ProductName:productName,Email:email}; 
+  const updateInfo = 
+  {
+    $set: {
+      ProductName:newName,
+      ProductDescription:newDescription,
+      ProductCategory:newCategory,
+      ProductPrice:newPrice,
+      ContactInfo:newContactInfo
+    },
+  };
+
+  var error = '';
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('ProductInfo').updateOne(productToUpdate, updateInfo);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);
+});
+
+app.post('/api/deleteproduct', async (req, res, next) =>
+{
+  // incoming: productName
+  // outgoing: error
+
+  let token = require('./createJWT.js');
+  const { productName, jwtToken } = req.body;
+
+  try
+  {
+      if( token.isExpired(jwtToken))
+      {
+          var r = {error:'The JWT is no longer valid', jwtToken: ''};
+          res.status(200).json(r);
+          return;
+      }
+  }
+  catch(e)
+  {
+      console.log(e.message);
+  }
+
+  const deleteProduct = {ProductName:productName};
+  var error = '';
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('ProductInfo').deleteOne(deleteProduct);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var refreshedToken = null;
+  try
+  {
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+      console.log(e.message);
+  }
+
+  var ret = { error: error, jwtToken: refreshedToken };
+  res.status(200).json(ret);
+});
 }
