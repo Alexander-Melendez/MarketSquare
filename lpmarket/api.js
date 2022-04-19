@@ -191,14 +191,16 @@ app.post('/api/editproduct', async (req, res, next) =>
   // incoming: productName
   // outgoing: error
 
-  const { productName, email, newName, newDescription } = req.body;
+  const { productName, email, newName, newDescription, newCategory, newPrice, newContactInfo } = req.body;
   const productToUpdate = {ProductName:productName,Email:email}; 
   const updateInfo = 
   {
     $set: {
       ProductName:newName,
-      ProductDescription:newDescription
-      
+      ProductDescription:newDescription,
+      ProductCategory:newCategory,
+      ProductPrice:newPrice,
+      ContactInfo:newContactInfo
     },
   };
 
