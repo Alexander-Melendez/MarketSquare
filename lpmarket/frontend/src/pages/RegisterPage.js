@@ -1,6 +1,6 @@
-// import { createContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect } from 'react'
 // InputGroup and FormControl from 'react-bootstrap' removed to reduce unused errors
-import { Row, Col, Card, Form, Button, Container } from 'react-bootstrap';
+import { Row, Col, Card, Form, Button, Container, InputGroup } from 'react-bootstrap';
 
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -19,13 +19,18 @@ const registerSchema = yup.object().shape({
     ).required(req),
     password: yup.string().min(8, "Must Contain at least 8 characters")
         .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/
-        , "Must contain, one uppercase letter, one lowercase letter, one number and one special character"
-    ).required(req),
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/
+            , "Must contain, one uppercase letter, one lowercase letter, one number and one special character"
+        ).required(req),
     passwordTwo: yup.string().oneOf([yup.ref("password"), null], "Passwords do not match").required(req),
 });
 
 function RegisterPage() {
+
+    const [passwordShown, setPasswordShown] = useState(false);
+    const togglePasswordVisiblity = () => {
+        setPasswordShown(passwordShown ? false : true);
+    };
 
     const { register, handleSubmit, reset, setValue, getValues,
         formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState }
@@ -114,29 +119,45 @@ function RegisterPage() {
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
+                                        
                                         <Form.Label>Password</Form.Label>
+                                        <InputGroup>
                                         <Form.Control
-                                            type="password"
+                                            type={passwordShown ? "text" : "password"}
                                             name="password"
                                             {...register("password")}
                                             isInvalid={!!errors.password && touchedFields.password}
                                         />
+                                        <Button variant="outline-secondary"
+                                            onClick={togglePasswordVisiblity}
+                                        >
+                                            Show
+                                        </Button>
+                                        
                                         <Form.Control.Feedback type="invalid">
                                             {errors.password?.message}
                                         </Form.Control.Feedback>
+                                        </InputGroup>
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Label>Confirm Password</Form.Label>
+                                        <InputGroup>
                                         <Form.Control
-                                            type="password"
+                                            type={passwordShown ? "text" : "password"}
                                             name="passwordTwo"
                                             {...register("passwordTwo")}
                                             isInvalid={!!errors.passwordTwo && touchedFields.passwordTwo}
                                         >
                                         </Form.Control>
+                                        <Button variant="outline-secondary"
+                                            onClick={togglePasswordVisiblity}
+                                        >
+                                            Show
+                                        </Button>
                                         <Form.Control.Feedback type="invalid">
                                             {errors.passwordTwo?.message}
                                         </Form.Control.Feedback>
+                                        </InputGroup>
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Label>Phone Number</Form.Label>
@@ -155,7 +176,8 @@ function RegisterPage() {
                                     <Button
                                         type="submit"
                                         disabled={formState.isSubmitting}
-                                        className="btn btn-primary">
+                                        className="btn btn-primary"
+                                    >
                                         {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
                                         </span>}
                                         Register

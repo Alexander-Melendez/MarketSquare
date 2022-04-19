@@ -1,12 +1,14 @@
 // import { createContext, useState, useEffect } from 'react'
 
 // Removed FormControl to reduce unused from 'react-bootstrap'
-import { Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
+import React, { useState } from "react";
+import { v4 as uuid } from 'uuid';
+import { Row, Col, Card, Form, Button, InputGroup, Image, CloseButton, Container } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
-import ImgThumbs from '../components/ImgThumbs';
+// import ImgThumbs from '../components/ImgThumbs';
 
 // form validation rules 
 const schema = yup.object().shape({
@@ -14,9 +16,10 @@ const schema = yup.object().shape({
     productCategory: yup.string().required(),
     productDescription: yup.string().required(),
     productPrice: yup.number().positive().integer().required(),
-    // images: yup.mixed().required()
-    //     .test("fileType", "Unsupported File Format", (value) =>
-    //             ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
+    images: yup.mixed()
+    .required()
+        .test("fileType", "Unsupported File Format", (value) =>
+            ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
     // contactInfo: yup.string().required(), 
     // email: yup.string().required()
 });
@@ -24,9 +27,71 @@ const schema = yup.object().shape({
 function NewListingPage() {
 
     // Removed setValue, getValues, and errors to reduce unused errors
-    const { register, handleSubmit, reset, formState } = useForm({
+    const { register, handleSubmit, reset, formState, setValue, getValues, resetField } = useForm({
         resolver: yupResolver(schema),
     });
+
+    const [files, setFiles] = useState([]);
+    const [images, setImages] = useState([]);
+    const [isHovered, setHover] = useState(false);
+
+    async function uploadimg(e) {
+        console.log(e.target.files)
+        const fileList = e.target.files;
+        // const imageList = []
+
+        // for (let i = 0; i < fileList.length; i++) {
+        //     imageList.push(await readFileAsync(fileList[i]))
+        // }
+        const imageList = await Promise.all(Array.from(fileList).map(async (f) => {
+            const image = await readFileAsync(f)
+            return image
+        }))
+
+        if (fileList) {
+
+
+            setImages(images => [...images, ...imageList]);
+            setFiles(files => [...files, ...fileList])
+            // setValue('images', files);
+            console.log("e---image", files, images);
+        }
+    }
+
+    function readFileAsync(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                resolve({
+                    id: uuid(),
+                    url: reader.result,
+                    type: "image"
+                });
+            };
+
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function handleSaveImage() {
+        console.log(files);
+    }
+
+    function deleteFile(id) {
+        const imageIndex = images.findIndex(item => item.id === id);
+
+        if (imageIndex > -1) {
+            const value = files.filter((_, i) => i !== imageIndex);
+            setImages(images.filter(item => item.id !== id));
+            setFiles(value);
+            if (images.length === 1) {
+                resetField('images');
+            }
+            // setValue("images", value);
+        }
+    }
 
     const onSubmit = async (data) => {
         console.log(data)
@@ -38,7 +103,7 @@ function NewListingPage() {
                     method: 'POST',
                     body: send,
                     headers: {
-                        'Content-Type':'application/json'
+                        'Content-Type': 'application/json'
                     }
                 });
             var txt = await response.text();
@@ -58,13 +123,18 @@ function NewListingPage() {
     return (
         <Card>
             <Card.Body>
-                <h5>{'Create New Listing'}</h5>
+                <Row>
+                    <Col><Card.Title>Create New Listing</Card.Title></Col>
+                    <Col>
+                    </Col>
+                </Row>
                 <hr />
                 <Row>
                     <Col>
                         <Form noValidate onSubmit={handleSubmit(onSubmit)} onReset={reset}>
                             <Row>
                                 <Form.Group>
+                                    {/* <FloatingLabel label="Product Name"> */}
                                     <Form.Label>Product Name</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -102,41 +172,82 @@ function NewListingPage() {
                                     </InputGroup>
                                 </Form.Group>
                                 <Form.Group as={Col} controlId="formGridEmail">
-                                    <Form.Label>Email</Form.Label>
+                                    {/* <Form.Label>Email</Form.Label>
                                     <Form.Control
                                         type="text"
                                         name="email"
                                         {...register("email")}
-                                        // isInvalid={errors.email}
-                                        // className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                                    // isInvalid={errors.email}
+                                    // className={`form-control ${errors.email ? 'is-invalid' : ''}`}
 
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {/* {errors.email?.message} */}
-                                    </Form.Control.Feedback>
+                                         {errors.email?.message}
+                                    </Form.Control.Feedback> */}
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label></Form.Label>
-                                    <Form.Control type="file" name="images" multiple
-                                        // {...register("images", {onChange: (e) => ImgThumbs(e.target.files)})}
-                                    ></Form.Control>
+                                    <Row><Form.Control
+                                        type="file"
+                                        name="images"
+                                        multiple
+                                        {...register("images", { onChange: uploadimg })}
+                                    ></Form.Control></Row>
+                                    <Row><Container fluid>
+                                        <Row className="justify-content-start">
+                                            {images.map((media) => (
+                                                <Col
+                                                    key={media.id}
+                                                    onMouseOver={() => setHover(true)}
+                                                    onMouseLeave={() => setHover(false)}
+                                                    style={{
+                                                        position: 'relative',
+                                                        maxWidth: '150px',
+                                                        maxHeight: '150px'
+                                                    }}
+                                                >
+                                                    <Image
+                                                        fluid
+                                                        thumbnail
+                                                        src={media.url}
+                                                        // alt="product"
+                                                        key={media.id}
+                                                    />
+                                                    {isHovered && (
+                                                        <Button
+                                                            variant="secondary" size="sm"
+                                                            style={{
+                                                                position: 'absolute',
+                                                                left: 0,
+                                                                right: 0,
+                                                                top: 0,
+                                                                bottom: 0
+                                                            }}
+                                                            onClick={() => deleteFile(media.id)}
+                                                        >Remove</Button>
+                                                    )}
+                                                </Col>
+                                            ))}
+                                        </Row>
+                                    </Container></Row>
                                 </Form.Group>
+                                {/* <Form.Group controlId="formControls" > */}
+                                    <Button 
+                                    
+                                        type="submit"
+                                        disabled={formState.isSubmitting}
+                                        className="justify-content-start btn btn-primary">
+                                        {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
+                                        </span>}
+                                        Create
+                                    </Button>
+                                {/* </Form.Group> */}
                             </Row>
-                            <Form.Group as={Col} controlId="formControls">
-                                <Button
-                                    type="submit"
-                                    disabled={formState.isSubmitting}
-                                    className="btn btn-primary">
-                                    {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
-                                    </span>}
-                                    Create
-                                </Button>
-                            </Form.Group>
                         </Form>
-                        {/* <ImgThumbs/> */}
                     </Col>
                 </Row>
             </Card.Body>
+
         </Card>
     );
 }
