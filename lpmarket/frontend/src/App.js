@@ -24,7 +24,18 @@ function App() {
   const[DescArray, setDesc] = useState(Temp);
   const length = NameArray.length;
 
-
+  const app_name = 'marketsquare'
+  function buildPath(route)
+  {
+      if (process.env.NODE_ENV === 'production') 
+      {
+          return 'https://' + app_name +  '.herokuapp.com/' + route;
+      }
+      else
+      {        
+          return 'http://localhost:5000/' + route;
+      }
+  }
 
   function PlacingTest() {
     function FormattedBoxesone(index) {
@@ -86,7 +97,7 @@ function App() {
       var js = JSON.stringify(obj);
       try
       {
-        const response = await fetch('http://localhost:5000/api/search',
+        const response = await fetch(buildPath('api/search'),
         {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
           var txt = await response.text();
           var res = JSON.parse(txt);

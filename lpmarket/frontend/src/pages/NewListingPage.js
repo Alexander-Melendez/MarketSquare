@@ -28,12 +28,25 @@ function NewListingPage() {
         resolver: yupResolver(schema),
     });
 
+    const app_name = 'marketsquare'
+    function buildPath(route)
+    {
+        if (process.env.NODE_ENV === 'production') 
+        {
+            return 'https://' + app_name +  '.herokuapp.com/' + route;
+        }
+        else
+        {        
+            return 'http://localhost:5000/' + route;
+        }
+    }
+
     const onSubmit = async (data) => {
         console.log(data)
         var send = JSON.stringify(data);
         console.log(send)
         try {
-            const response = await fetch('http://localhost:5000/api/addproduct',
+            const response = await fetch(buildPath('api/addproduct'),
                 {
                     method: 'POST',
                     body: send,

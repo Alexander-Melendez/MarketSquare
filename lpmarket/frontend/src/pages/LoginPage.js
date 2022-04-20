@@ -17,6 +17,19 @@ const loginSchema = yup.object().shape({
 
 function LoginPage() {
 
+    const app_name = 'marketsquare'
+    function buildPath(route)
+    {
+        if (process.env.NODE_ENV === 'production') 
+        {
+            return 'https://' + app_name +  '.herokuapp.com/' + route;
+        }
+        else
+        {        
+            return 'http://localhost:5000/' + route;
+        }
+    }
+
     // Removed setValue, getValues, and errors to reduce unused errors
     const { register, handleSubmit, reset,
         formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState }
@@ -36,7 +49,7 @@ function LoginPage() {
         var send = JSON.stringify(data);
         console.log(send)
         try {
-            const response = await fetch('http://localhost:5000/api/login',
+            const response = await fetch(buildPath('api/login'),
                 {
                     method: 'POST',
                     body: send,
