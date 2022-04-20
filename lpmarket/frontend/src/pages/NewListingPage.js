@@ -24,6 +24,19 @@ const schema = yup.object().shape({
     // email: yup.string().required()
 });
 
+const app_name = 'marketsquare'
+function buildPath(route)
+{
+    if (process.env.NODE_ENV === 'production') 
+    {
+        return 'https://' + app_name +  '.herokuapp.com/' + route;
+    }
+    else
+    {        
+        return 'http://localhost:5000/' + route;
+    }
+}
+
 function NewListingPage() {
 
     // Removed setValue, getValues, and errors to reduce unused errors
@@ -98,7 +111,7 @@ function NewListingPage() {
         var send = JSON.stringify(data);
         console.log(send)
         try {
-            const response = await fetch('http://localhost:5000/api/addproduct',
+            const response = await fetch(buildPath('api/addproduct'),
                 {
                     method: 'POST',
                     body: send,
@@ -134,7 +147,6 @@ function NewListingPage() {
                         <Form noValidate onSubmit={handleSubmit(onSubmit)} onReset={reset}>
                             <Row>
                                 <Form.Group>
-                                    {/* <FloatingLabel label="Product Name"> */}
                                     <Form.Label>Product Name</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -171,28 +183,16 @@ function NewListingPage() {
                                         <InputGroup.Text>.00</InputGroup.Text>
                                     </InputGroup>
                                 </Form.Group>
-                                <Form.Group as={Col} controlId="formGridEmail">
-                                    {/* <Form.Label>Email</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="email"
-                                        {...register("email")}
-                                    // isInvalid={errors.email}
-                                    // className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                         {errors.email?.message}
-                                    </Form.Control.Feedback> */}
-                                </Form.Group>
                                 <Form.Group>
                                     <Form.Label></Form.Label>
-                                    <Row><Form.Control
+                                    <Row>
+                                        <Form.Control
                                         type="file"
                                         name="images"
                                         multiple
                                         {...register("images", { onChange: uploadimg })}
-                                    ></Form.Control></Row>
+                                        />
+                                    </Row>
                                     <Row><Container fluid>
                                         <Row className="justify-content-start">
                                             {images.map((media) => (
