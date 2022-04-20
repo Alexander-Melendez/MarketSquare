@@ -61,7 +61,9 @@ margin-top: 20px;
 margin-bottom: 20px;
 height:500px;
 width:400px;
-text-align: center;
+text-indent: 3%;
+text-align: left;
+font-size: 20px;
 } 
 .box h4 {
 text-align: center;
@@ -89,6 +91,14 @@ text-align: center;
     transform: scale(1);
   }
 }
+.Product {
+  text-align: center;
+  font-size: 28px;
+}
+.test {
+  position: absolute; 
+}
+
 
 /*.popup {
   position: fixed;
