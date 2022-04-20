@@ -231,7 +231,7 @@ function NewListingPage() {
                                         </Row>
                                     </Container></Row>
                                 </Form.Group>
-                                {/* <Form.Group controlId="formControls" > */}
+                                <Form.Group controlId="formControls" >
                                     <Button 
                                     
                                         type="submit"
@@ -241,7 +241,7 @@ function NewListingPage() {
                                         </span>}
                                         Create
                                     </Button>
-                                {/* </Form.Group> */}
+                                </Form.Group>
                             </Row>
                         </Form>
                     </Col>

@@ -42,7 +42,7 @@ function LoginPage() {
     const onSubmit = async (data) => {
 
         // JWT Set Up WIP
-        //let storage = require('../tokenStorage.js');
+        let storage = require('../tokenStorage.js');
         //let obj = {email:email,password:password.value,jwtToken:storage.retrieveToken()};
         //let js = JSON.stringify(obj)
         console.log(data)
@@ -61,10 +61,18 @@ function LoginPage() {
             var res = JSON.parse(txt);
             if (res.error.length > 0) {
                 console.log("API Error:" + res.error);
-
             }
             else {
-                var user = { id: res.id, firstName: res.firstName, lastName: res.lastName }
+               
+                
+                
+                storage.storeToken(res); 
+                var jwt = require('jsonwebtoken'); 
+
+                var ud = jwt.decode(storage.retrieveToken(),{complete:true}); 
+                // var user = { id: res.id, firstName: res.firstName, lastName: res.lastName }
+                var user = { id: ud.payload.id, firstName: ud.payload.firstName, lastName: ud.payload.lastName }
+
                 localStorage.setItem('user_data', JSON.stringify(user));
                 console.log(res, user, localStorage.getItem('user_data'));
                 window.location.href = '/Home';
