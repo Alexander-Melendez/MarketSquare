@@ -43,16 +43,16 @@ function App() {
       return (
         <div>
           <div class="box" onClick={() => setSwitch(true)}>
-            <p class = "Product">Product: {NameArray[index]}</p>
-            <p>Price: {PriceArray[index]}</p>
-            <p>Category: {ProductCategoryArray[index]}</p>
-            <p>Description: {DescArray[index]}</p>
+            <p class = "Product">{NameArray[index]}</p>
+            <p>$ {PriceArray[index]}</p>
+            <p>{ProductCategoryArray[index]}</p>
           </div>
           <div className={Switch ? "popupclass" : "hidden"} onClick={() => setSwitch(false)}>
-            <p>Product: {NameArray[index]}</p>
-            <p>Price: {PriceArray[index]}</p>
-            <p>Category: {ProductCategoryArray[index]}</p>
-            <p>Description: {DescArray[index]}</p>
+            <p class = "Product">{NameArray[index]}</p>
+            <p>${PriceArray[index]}</p>
+            <p> {ProductCategoryArray[index]}</p>
+            <p class = "Descriptiontwo">Description</p>
+            <p class = "Description"> {DescArray[index]}</p>
           </div>
         </div>
       );
@@ -152,11 +152,9 @@ function App() {
         </Navbar>
 
         <Switch>
-          <div class = "test">
           <Route path='/' exact>
-            <PlacingTest />
+            <div class = "test"> <PlacingTest /> </div>
           </Route>
-          </div>
           <Route exact path='/NewListing' component={NewListingPage} />
           <Route exact path='/login' component={LoginPage} />
           <Route exact path='/register' component={RegisterPage} />
