@@ -104,8 +104,8 @@ app.post('/api/search', async (req, res, next) =>
 
   const results = await db.collection('ProductInfo').find(
       {$or:[
-      {"ProductName":{$regex:_search + '*', $options:'r',}},
-      {"ProductCategory":{$regex:_search + '*', $options:'r'}}]}
+      {"ProductName":{$regex:_search + '*', $options:'i',}},
+      {"ProductCategory":{$regex:_search + '*', $options:'i'}}]}
       ).toArray();
 
   let _ret = [];
@@ -117,6 +117,9 @@ app.post('/api/search', async (req, res, next) =>
       _ret.push( results[i].ProductDescription );
       _ret.push( results[i].ProductPrice );
       _ret.push( results[i].ContactInfo );
+      _ret.push( results[i].ProductState );
+      _ret.push( results[i].ProductCity );
+      _ret.push( results[i].ProductCondition );
   }
 
 //   var refreshedToken = null;
