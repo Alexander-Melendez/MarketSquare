@@ -84,42 +84,60 @@ app.post('/api/search', async (req, res, next) =>
   // let token = require('./createJWT.js');
   // const { userId, search, jwtToken } = req.body;
 
-//   try
-//   {
-//       if( token.isExpired(jwtToken))
-//       {
-//           var r = {error:'The JWT is no longer valid', jwtToken: ''};
-//           res.status(200).json(r);
-//           return;
-//       }
-//   }
-//   catch(e)
-//   {
-//       console.log(e.message);
-//   }
-
-  var _search = search.trim();
-
+  //   try
+  //   {
+  //       if( token.isExpired(jwtToken))
+  //       {
+  //           var r = {error:'The JWT is no longer valid', jwtToken: ''};
+  //           res.status(200).json(r);
+  //           return;
+  //       }
+  //   }
+  //   catch(e)
+  //   {
+  //       console.log(e.message);
+  //   }
+    
   const db = client.db();
-
-  const results = await db.collection('ProductInfo').find(
-      {$or:[
-      {"ProductName":{$regex:_search + '*', $options:'i',}},
-      {"ProductCategory":{$regex:_search + '*', $options:'i'}}]}
-      ).toArray();
-
   let _ret = [];
-
-  for( var i = 0; i < results.length; i++ )
+    
+  if ( search )
   {
-      _ret.push( results[i].ProductName );
-      _ret.push( results[i].ProductCategory );
-      _ret.push( results[i].ProductDescription );
-      _ret.push( results[i].ProductPrice );
-      _ret.push( results[i].ContactInfo );
-      _ret.push( results[i].ProductState );
-      _ret.push( results[i].ProductCity );
-      _ret.push( results[i].ProductCondition );
+      var _search = search.trim();
+      
+      const results = await db.collection('ProductInfo').find(
+        {$or:[
+        {"ProductName":{$regex:_search + '*', $options:'i',}},
+        {"ProductCategory":{$regex:_search + '*', $options:'i'}}]}
+        ).toArray();
+      
+      for( var i = 0; i < results.length; i++ )
+      {
+        _ret.push( results[i].ProductName );
+        _ret.push( results[i].ProductCategory );
+        _ret.push( results[i].ProductDescription );
+        _ret.push( results[i].ProductPrice );
+        _ret.push( results[i].ContactInfo );
+        _ret.push( results[i].ProductState );
+        _ret.push( results[i].ProductCity );
+        _ret.push( results[i].ProductCondition );
+      }
+  }
+  else
+  {
+      const results = await db.collection('ProductInfo').find().toArray();
+      
+      for( var i = 0; i < results.length; i++ )
+      {
+        _ret.push( results[i].ProductName );
+        _ret.push( results[i].ProductCategory );
+        _ret.push( results[i].ProductDescription );
+        _ret.push( results[i].ProductPrice );
+        _ret.push( results[i].ContactInfo );
+        _ret.push( results[i].ProductState );
+        _ret.push( results[i].ProductCity );
+        _ret.push( results[i].ProductCondition );
+      }
   }
 
 //   var refreshedToken = null;
