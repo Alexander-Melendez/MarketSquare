@@ -21,6 +21,7 @@ function App() {
   const[NameArray, setName] = useState(Temp);
   const[PriceArray, setPrice] = useState(Temp);
   const[ProductCategoryArray, setProductCategory] = useState(Temp);
+  const[ContactInfoArray, setContactInfo] = useState(Temp);
   const[DescArray, setDesc] = useState(Temp);
   const length = NameArray.length;
 
@@ -53,6 +54,7 @@ function App() {
             <p> {ProductCategoryArray[index]}</p>
             <p class = "Descriptiontwo">Description</p>
             <p class = "Description"> {DescArray[index]}</p>
+            <p>Contact Info: {ContactInfoArray[index]}</p>
           </div>
         </div>
       );
@@ -92,7 +94,10 @@ function App() {
   const searchCard = async event => 
   {
       event.preventDefault();
-      
+      if(typeof myVar === 'undefined') {
+        alert("Please Enter Something before searching");
+      }
+      else {
       var obj = {userId:userId,search:search.value};
       var js = JSON.stringify(obj);
       try
@@ -119,12 +124,14 @@ function App() {
           setPrice(resultsPrice);
           setProductCategory(resultsProductCategory);
           setDesc(resultsDesc);
+          setContactInfo(resultContactInfo);
       }
       catch(e)
       {
           alert(e.toString());
           setResults(e.toString());
       }
+    }
   };
   return (
     <Router basename='Home'>
