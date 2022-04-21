@@ -59,16 +59,16 @@ function LoginPage() {
                 });
             var txt = await response.text();
             var res = JSON.parse(txt);
-            if (res.error.length > 0) {
-                console.log("API Error:" + res.error);
-
-            }
-            else {
-                var user = { id: res.id, firstName: res.firstName, lastName: res.lastName }
+            if (res.fn.length > 0) {
+                var user = { id: res.id, firstName: res.fn, lastName: res.ln }
                 localStorage.setItem('user_data', JSON.stringify(user));
                 console.log(res, user, localStorage.getItem('user_data'));
                 window.location.href = '/Home';
                 // <Redirect to="/Home" />
+                console.log("API Error:" + res.error);
+            }
+            else {
+                console.log("API Error:" + res.error);
             }
         }
         catch (e) {
