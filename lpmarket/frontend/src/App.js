@@ -94,44 +94,44 @@ function App() {
   const searchCard = async event => 
   {
       event.preventDefault();
-      if(typeof myVar === 'undefined') {
-        alert("Please Enter Something before searching");
+      if(search.value == "") {
+        alert("Please Enter a Search Value");
       }
-      else {
-      var obj = {userId:userId,search:search.value};
-      var js = JSON.stringify(obj);
-      try
-      {
-        const response = await fetch(buildPath('api/search'),
-        {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
-          var txt = await response.text();
-          var res = JSON.parse(txt);
-          var _results = res.results;
-          var resultsName = [];
-          var resultsProductCategory = [];
-          var resultsDesc = [];
-          var resultsPrice = [];
-          var resultContactInfo = [];
-          var resultlength = _results.length;
-          for(var i = 0; i < resultlength; i = i+5) {
-            resultsName.push(_results[i]);
-            resultsProductCategory.push(_results[i+1]);
-            resultsDesc.push(_results[i+2]);
-            resultsPrice.push(_results[i+3]);
-            resultContactInfo.push(_results[i+4]);
-          }
-          setName(resultsName);
-          setPrice(resultsPrice);
-          setProductCategory(resultsProductCategory);
-          setDesc(resultsDesc);
-          setContactInfo(resultContactInfo);
+      else { 
+        var obj = {userId:userId,search:search.value};
+        var js = JSON.stringify(obj);
+        try
+        {
+          const response = await fetch(buildPath('api/search'),
+          {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+            var txt = await response.text();
+            var res = JSON.parse(txt);
+            var _results = res.results;
+            var resultsName = [];
+            var resultsProductCategory = [];
+            var resultsDesc = [];
+            var resultsPrice = [];
+            var resultContactInfo = [];
+            var resultlength = _results.length;
+            for(var i = 0; i < resultlength; i = i+5) {
+              resultsName.push(_results[i]);
+              resultsProductCategory.push(_results[i+1]);
+              resultsDesc.push(_results[i+2]);
+              resultsPrice.push(_results[i+3]);
+              resultContactInfo.push(_results[i+4]);
+            }
+            setName(resultsName);
+            setPrice(resultsPrice);
+            setProductCategory(resultsProductCategory);
+            setDesc(resultsDesc);
+            setContactInfo(resultContactInfo);
+        }
+        catch(e)
+        {
+            alert(e.toString());
+            setResults(e.toString());
+        }
       }
-      catch(e)
-      {
-          alert(e.toString());
-          setResults(e.toString());
-      }
-    }
   };
   return (
     <Router basename='Home'>

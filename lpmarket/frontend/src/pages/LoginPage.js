@@ -65,7 +65,6 @@ function LoginPage() {
                 console.log(res, user, localStorage.getItem('user_data'));
                 window.location.href = '/Home';
                 // <Redirect to="/Home" />
-                console.log("API Error:" + res.error);
             }
             else {
                 console.log("API Error:" + res.error);
