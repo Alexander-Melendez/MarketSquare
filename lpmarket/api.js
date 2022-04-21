@@ -213,7 +213,7 @@ app.post('/api/editproduct', async (req, res, next) =>
   // incoming: productName
   // outgoing: error
 
-  const { productName, email, newName, newDescription, newCategory, newPrice, newContactInfo } = req.body;
+  const { productName, email, newName, newDescription, newCategory, newPrice, newContactInfo, newProductState, newProductCity, newProductCondition } = req.body;
   const productToUpdate = {ProductName:productName,Email:email}; 
   const updateInfo = 
   {
@@ -222,7 +222,10 @@ app.post('/api/editproduct', async (req, res, next) =>
       ProductDescription:newDescription,
       ProductCategory:newCategory,
       ProductPrice:newPrice,
-      ContactInfo:newContactInfo
+      ContactInfo:newContactInfo,
+      ProductState:newProductState,
+      ProductCity:newProductCity,
+      ProductCondition:newProductCondition
     },
   };
 
