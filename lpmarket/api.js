@@ -293,4 +293,36 @@ app.post('/api/deleteproduct', async (req, res, next) =>
   var ret = { error: error, jwtToken: refreshedToken };
   res.status(200).json(ret);
 });
+    
+    app.post('/api/editprofile', async (req, res, next) =>
+  {
+    // incoming: productName
+    // outgoing: error
+
+    const { email, newFirstName, newLastName, newPhoneNumber } = req.body;
+    const userToUpdate = {Email:email}; 
+    const updateInfo = 
+    {
+      $set: {
+        FirstName:newFirstName,
+        LastName:newLastName,
+        PhoneNumber:newPhoneNumber
+      },
+    };
+
+    var error = '';
+
+    try
+    {
+      const db = client.db();
+      const result = db.collection('UserInfo').updateOne(userToUpdate, updateInfo);
+    }
+    catch(e)
+    {
+      error = e.toString();
+    }
+
+    var ret = { error: error };
+    res.status(200).json(ret);
+  });
 }
