@@ -101,51 +101,16 @@ app.post('/api/search', async (req, res, next) =>
   const db = client.db();
   let _ret = [];
     
-  if ( search )
-  {
-      var _search = search.trim();
-      
-      if ( _search )
-      {
-          const results = await db.collection('ProductInfo').find(
-            {$or:[
-            {"ProductName":{$regex:_search + '*', $options:'i',}},
-            {"ProductCategory":{$regex:_search + '*', $options:'i'}}]}
-            ).toArray();
+  var _search = search.trim();
 
-          for( var i = 0; i < results.length; i++ )
-          {
-            _ret.push( results[i].ProductName );
-            _ret.push( results[i].ProductCategory );
-            _ret.push( results[i].ProductDescription );
-            _ret.push( results[i].ProductPrice );
-            _ret.push( results[i].ContactInfo );
-            _ret.push( results[i].ProductState );
-            _ret.push( results[i].ProductCity );
-            _ret.push( results[i].ProductCondition );
-          }
-      }
-      else
-      {
-        const results = await db.collection('ProductInfo').find().toArray();
-      
-        for( var i = 0; i < results.length; i++ )
-        {
-          _ret.push( results[i].ProductName );
-          _ret.push( results[i].ProductCategory );
-          _ret.push( results[i].ProductDescription );
-          _ret.push( results[i].ProductPrice );
-          _ret.push( results[i].ContactInfo );
-          _ret.push( results[i].ProductState );
-          _ret.push( results[i].ProductCity );
-          _ret.push( results[i].ProductCondition );
-        }
-      }
-  }
-  else
+  if ( _search )
   {
-      const results = await db.collection('ProductInfo').find().toArray();
-      
+      const results = await db.collection('ProductInfo').find(
+        {$or:[
+        {"ProductName":{$regex:_search + '*', $options:'i',}},
+        {"ProductCategory":{$regex:_search + '*', $options:'i'}}]}
+        ).toArray();
+
       for( var i = 0; i < results.length; i++ )
       {
         _ret.push( results[i].ProductName );
@@ -157,6 +122,22 @@ app.post('/api/search', async (req, res, next) =>
         _ret.push( results[i].ProductCity );
         _ret.push( results[i].ProductCondition );
       }
+  }
+  else
+  {
+    const results = await db.collection('ProductInfo').find().toArray();
+
+    for( var i = 0; i < results.length; i++ )
+    {
+      _ret.push( results[i].ProductName );
+      _ret.push( results[i].ProductCategory );
+      _ret.push( results[i].ProductDescription );
+      _ret.push( results[i].ProductPrice );
+      _ret.push( results[i].ContactInfo );
+      _ret.push( results[i].ProductState );
+      _ret.push( results[i].ProductCity );
+      _ret.push( results[i].ProductCondition );
+    }
   }
 
 //   var refreshedToken = null;
