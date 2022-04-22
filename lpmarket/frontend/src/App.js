@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from 'react-dom';
 
 import { BrowserRouter as Router, Route, Redirect, Switch, Link } from 'react-router-dom';
@@ -40,6 +40,56 @@ function App() {
           return 'http://localhost:5000/' + route;
       }
   }
+
+
+  useEffect(async () => {
+    var obj = {userId:userId,search:search.value};
+      var js = JSON.stringify(obj);
+      try
+      {
+        const response = await fetch(buildPath('api/search'),
+        {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+          var txt = await response.text();
+          var res = JSON.parse(txt);
+          var _results = res.results;
+          var resultsName = [];
+          var resultsProductCategory = [];
+          var resultsDesc = [];
+          var resultsPrice = [];
+          var resultContactInfo = [];
+          var resultState = [];
+          var resultCity = [];
+          var resultCondition = [];
+
+          var resultlength = _results.length;
+          for(var i = 0; i < resultlength; i = i+8) {
+            resultsName.push(_results[i]);
+            resultsProductCategory.push(_results[i+1]);
+            resultsDesc.push(_results[i+2]);
+            resultsPrice.push(_results[i+3]);
+            resultContactInfo.push(_results[i+4]);
+            resultState.push(_results[i+5]);
+            resultCity.push(_results[i+6]);
+            resultCondition.push(_results[i+7]);
+          }
+          setName(resultsName);
+          setPrice(resultsPrice);
+          setProductCategory(resultsProductCategory);
+          setDesc(resultsDesc);
+          setContactInfo(resultContactInfo);
+          setState(resultState);
+          setCity(resultCity);
+          setCondition(resultCondition);
+      }
+      catch(e)
+      {
+          alert(e.toString());
+          setResults(e.toString());
+      }
+  }, []);
+
+
+
 
   function PlacingTest() {
     function FormattedBoxesone(index) {
