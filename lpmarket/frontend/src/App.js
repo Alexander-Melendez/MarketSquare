@@ -142,7 +142,9 @@ function App() {
 
         <Switch>
           <Route path='/' exact>
-            <div class = "test"> <PlacingTest /> </div>
+            <div class = "test"> 
+            <PlacingTest /> 
+            </div>
           </Route>
           <Route exact path='/NewListing' component={NewListingPage} />
           <Route exact path='/login' component={LoginPage} />

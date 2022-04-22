@@ -15,9 +15,11 @@ const schema = yup.object().shape({
     productName: yup.string().required(),
     productCategory: yup.string().required(),
     productDescription: yup.string().required(),
+    city: yup.string().required(),
+    state: yup.string().required(),
     productPrice: yup.number().positive().integer().required(),
     images: yup.mixed()
-    .required()
+        .required()
         .test("fileType", "Unsupported File Format", (value) =>
             ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
     // contactInfo: yup.string().required(), 
@@ -25,14 +27,11 @@ const schema = yup.object().shape({
 });
 
 const app_name = 'marketsquare'
-function buildPath(route)
-{
-    if (process.env.NODE_ENV === 'production') 
-    {
-        return 'https://' + app_name +  '.herokuapp.com/' + route;
+function buildPath(route) {
+    if (process.env.NODE_ENV === 'production') {
+        return 'https://' + app_name + '.herokuapp.com/' + route;
     }
-    else
-    {        
+    else {
         return 'http://localhost:5000/' + route;
     }
 }
@@ -134,18 +133,18 @@ function NewListingPage() {
     };
 
     return (
-        <Card>
-            <Card.Body>
-                <Row>
-                    <Col><Card.Title>Create New Listing</Card.Title></Col>
-                    <Col>
-                    </Col>
-                </Row>
-                <hr />
-                <Row>
-                    <Col>
+        <Container fluid>
+            <Card>
+                <Card.Body>
+                    <Row>
+                        <Col><Card.Title>Create New Listing</Card.Title></Col>
+                        <Col>
+                        </Col>
+                    </Row>
+                    <hr />
+                    <Row>
                         <Form noValidate onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-                            <Row>
+                            <Row className="mb-3">
                                 <Form.Group>
                                     <Form.Label>Product Name</Form.Label>
                                     <Form.Control
@@ -171,7 +170,7 @@ function NewListingPage() {
                                         {...register("productDescription")}
                                     />
                                 </Form.Group>
-                                <Form.Group>
+                                <Form.Group  >
                                     <Form.Label>Price</Form.Label>
                                     <InputGroup className="mb-3">
                                         <InputGroup.Text>$</InputGroup.Text>
@@ -183,72 +182,100 @@ function NewListingPage() {
                                         <InputGroup.Text>.00</InputGroup.Text>
                                     </InputGroup>
                                 </Form.Group>
+                                    <Form.Group as={Col}>
+                                        <Form.Label>City</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="city"
+                                            {...register("city")}
+                                        ></Form.Control>
+                                    </Form.Group>
+                                    <Form.Group as={Col}>
+                                        <Form.Label>State</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="state"
+                                            {...register("state")}
+                                        ></Form.Control>
+                                    </Form.Group>
                                 <Form.Group>
                                     <Form.Label></Form.Label>
-                                    <Row>
-                                        <Form.Control
+                                    {/* <Row> */}
+                                    <Form.Control
                                         type="file"
                                         name="images"
                                         multiple
                                         {...register("images", { onChange: uploadimg })}
-                                        />
-                                    </Row>
-                                    <Row><Container fluid>
-                                        <Row className="justify-content-start">
-                                            {images.map((media) => (
-                                                <Col
-                                                    key={media.id}
-                                                    onMouseOver={() => setHover(true)}
-                                                    onMouseLeave={() => setHover(false)}
-                                                    style={{
-                                                        position: 'relative',
-                                                        maxWidth: '150px',
-                                                        maxHeight: '150px'
-                                                    }}
-                                                >
-                                                    <Image
-                                                        fluid
-                                                        thumbnail
-                                                        src={media.url}
-                                                        // alt="product"
+                                    />
+                                    {/* </Row> */}
+                                    <Row>
+                                        <Container fluid>
+                                            <Row 
+                                            className="justify-content-start mb-3" xs="auto"
+                                            
+                                            >
+                                                {images.map((media) => (
+                                                    <Col
                                                         key={media.id}
-                                                    />
-                                                    {isHovered && (
-                                                        <Button
-                                                            variant="secondary" size="sm"
+                                                        onMouseOver={() => setHover(true)}
+                                                        onMouseLeave={() => setHover(false)}
+                                                        style={{
+                                                            position: 'relative',
+                                                            maxWidth: '150px',
+                                                            maxHeight: '150px'
+                                                        }}
+                                                        // xs
+                                                    >
+                                                        <Image
+                                                            fluid
+                                                            // thumbnail
+                                                            src={media.url}
+                                                            // alt="product"
+                                                            key={media.id}
                                                             style={{
-                                                                position: 'absolute',
-                                                                left: 0,
-                                                                right: 0,
-                                                                top: 0,
-                                                                bottom: 0
+                                                                maxWidth: '100%',
+                                                                maxHeight: '100%'
                                                             }}
-                                                            onClick={() => deleteFile(media.id)}
-                                                        >Remove</Button>
-                                                    )}
-                                                </Col>
-                                            ))}
-                                        </Row>
-                                    </Container></Row>
+                                                        />
+                                                        {isHovered && (
+                                                            <Button
+                                                                variant="secondary" 
+                                                                size="sm"
+                                                                style={{
+                                                                    position: 'absolute',
+                                                                    left: 0,
+                                                                    right: 0,
+                                                                    top: 0,
+                                                                    bottom: 0
+                                                                }}
+                                                                onClick={() => deleteFile(media.id)}
+                                                            >Remove</Button>
+                                                        )}
+                                                    </Col>
+                                                ))}
+                                            </Row>
+                                        </Container>
+                                    </Row>
                                 </Form.Group>
-                                <Form.Group controlId="formControls" >
-                                    <Button 
-                                    
-                                        type="submit"
-                                        disabled={formState.isSubmitting}
-                                        className="justify-content-start btn btn-primary">
-                                        {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
-                                        </span>}
-                                        Create
-                                    </Button>
-                                </Form.Group>
-                            </Row>
-                        </Form>
-                    </Col>
-                </Row>
-            </Card.Body>
 
-        </Card>
+                            </Row>
+                            {/* <Form.Group controlId="formControls" > */}
+                            <Button
+                                type="submit"
+                                disabled={formState.isSubmitting}
+                                className="justify-content-start btn btn-primary">
+                                {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
+                                </span>}
+                                Create
+                            </Button>
+                            {/* </Form.Group> */}
+
+                        </Form>
+                    </Row>
+                </Card.Body>
+
+            </Card>
+        </Container>
     );
 }
 

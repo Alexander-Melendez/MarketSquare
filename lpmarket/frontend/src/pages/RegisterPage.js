@@ -41,14 +41,11 @@ function RegisterPage() {
     });
 
     const app_name = 'marketsquare'
-    function buildPath(route)
-    {
-        if (process.env.NODE_ENV === 'production') 
-        {
-            return 'https://' + app_name +  '.herokuapp.com/' + route;
+    function buildPath(route) {
+        if (process.env.NODE_ENV === 'production') {
+            return 'https://' + app_name + '.herokuapp.com/' + route;
         }
-        else
-        {        
+        else {
             return 'http://localhost:5000/' + route;
         }
     }
@@ -86,8 +83,11 @@ function RegisterPage() {
     };
 
     return (
-        <Container>
-            <Card>
+        <Container
+            className="justify-content-center d-flex align-items-center"
+            // style={{ "min-height": "90vh" }}
+        >
+            <Card className='mx-auto'>
                 <Card.Body>
                     <h5>{"Register"}</h5>
                     <hr />
@@ -132,44 +132,44 @@ function RegisterPage() {
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
-                                        
+
                                         <Form.Label>Password</Form.Label>
                                         <InputGroup>
-                                        <Form.Control
-                                            type={passwordShown ? "text" : "password"}
-                                            name="password"
-                                            {...register("password")}
-                                            isInvalid={!!errors.password && touchedFields.password}
-                                        />
-                                        <Button variant="outline-secondary"
-                                            onClick={togglePasswordVisiblity}
-                                        >
-                                            Show
-                                        </Button>
-                                        
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.password?.message}
-                                        </Form.Control.Feedback>
+                                            <Form.Control
+                                                type={passwordShown ? "text" : "password"}
+                                                name="password"
+                                                {...register("password")}
+                                                isInvalid={!!errors.password && touchedFields.password}
+                                            />
+                                            <Button variant="outline-secondary"
+                                                onClick={togglePasswordVisiblity}
+                                            >
+                                                Show
+                                            </Button>
+
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.password?.message}
+                                            </Form.Control.Feedback>
                                         </InputGroup>
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Label>Confirm Password</Form.Label>
                                         <InputGroup>
-                                        <Form.Control
-                                            type={passwordShown ? "text" : "password"}
-                                            name="passwordTwo"
-                                            {...register("passwordTwo")}
-                                            isInvalid={!!errors.passwordTwo && touchedFields.passwordTwo}
-                                        >
-                                        </Form.Control>
-                                        <Button variant="outline-secondary"
-                                            onClick={togglePasswordVisiblity}
-                                        >
-                                            Show
-                                        </Button>
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.passwordTwo?.message}
-                                        </Form.Control.Feedback>
+                                            <Form.Control
+                                                type={passwordShown ? "text" : "password"}
+                                                name="passwordTwo"
+                                                {...register("passwordTwo")}
+                                                isInvalid={!!errors.passwordTwo && touchedFields.passwordTwo}
+                                            >
+                                            </Form.Control>
+                                            <Button variant="outline-secondary"
+                                                onClick={togglePasswordVisiblity}
+                                            >
+                                                Show
+                                            </Button>
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.passwordTwo?.message}
+                                            </Form.Control.Feedback>
                                         </InputGroup>
                                     </Form.Group>
                                     <Form.Group>

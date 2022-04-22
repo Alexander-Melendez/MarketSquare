@@ -1,14 +1,14 @@
-// import { createContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect } from 'react'
 // InputGroup and FormControl from 'react-bootstrap' removed to reduce unused errors
 import { Row, Col, Card, Form, Button, Container } from 'react-bootstrap';
-
+import { Link } from 'react-router-dom';
 // Removed import { Redirect } from "react-router-dom"; to reduce unused errors
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 // Keeping this here as I will fix the jwt soon
-import { useJwt } from "react-jwt";
-
+import { useJwt, decodeToken } from "react-jwt";
+// import jwt from "jsonwebtoken"
 // form validation rules 
 const loginSchema = yup.object().shape({
     email: yup.string().email("example: user@site.com").required("Required"),
@@ -18,17 +18,16 @@ const loginSchema = yup.object().shape({
 function LoginPage() {
 
     const app_name = 'marketsquare'
-    function buildPath(route)
-    {
-        if (process.env.NODE_ENV === 'production') 
-        {
-            return 'https://' + app_name +  '.herokuapp.com/' + route;
+    function buildPath(route) {
+        if (process.env.NODE_ENV === 'production') {
+            return 'https://' + app_name + '.herokuapp.com/' + route;
         }
-        else
-        {        
+        else {
             return 'http://localhost:5000/' + route;
         }
     }
+
+
 
     // Removed setValue, getValues, and errors to reduce unused errors
     const { register, handleSubmit, reset,
@@ -39,6 +38,7 @@ function LoginPage() {
         reValidateMode: "onBlur",
     });
 
+    // const { decodedToken, isExpired } = useJwt("");
     const onSubmit = async (data) => {
 
         // JWT Set Up WIP
@@ -63,19 +63,18 @@ function LoginPage() {
                 console.log("API Error:" + res.error);
             }
             else {
-               
-                
-                
-                storage.storeToken(res); 
-                var jwt = require('jsonwebtoken'); 
 
-                var ud = jwt.decode(storage.retrieveToken(),{complete:true}); 
+                storage.storeToken(res);
+                // var jwt = require('jsonwebtoken'); 
+
+                // var ud = jwt.decode(storage.retrieveToken(),{complete:true}); 
+                var ud = decodeToken(storage.retrieveToken());
                 // var user = { id: res.id, firstName: res.firstName, lastName: res.lastName }
                 var user = { id: ud.payload.id, firstName: ud.payload.firstName, lastName: ud.payload.lastName }
 
                 localStorage.setItem('user_data', JSON.stringify(user));
                 console.log(res, user, localStorage.getItem('user_data'));
-                window.location.href = '/Home';
+                // window.location.href = '/Home';
                 // <Redirect to="/Home" />
             }
         }
@@ -85,18 +84,24 @@ function LoginPage() {
     };
 
     return (
-        <Container>
-            <Card>
+        <Container
+            className="justify-content-center d-flex align-items-center"
+            style={{ "min-height": "90vh" }}
+        >
+            {/* <Row>
+            <Col md lg="4"> */}
+            <Card className='mx-auto'>
                 <Card.Body>
                     <h5>{'Login'}</h5>
                     <hr />
-                    <Row>
+                    <Row >
                         <Col>
                             <Form noValidate onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-                                <Row>
+                                <Row className="mb-3">
                                     <Form.Group as={Col} controlId="formGridEmail">
                                         <Form.Label>Email</Form.Label>
                                         <Form.Control
+                                            className='formFloating'
                                             type="text"
                                             name="email"
                                             {...register("email")}
@@ -119,21 +124,28 @@ function LoginPage() {
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                 </Row>
-                                <Form.Group as={Col} controlId="formControls">
-                                    <Button
-                                        type="submit"
-                                        disabled={formState.isSubmitting}
-                                        className="btn btn-primary">
-                                        {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
-                                        </span>}
-                                        Login
-                                    </Button>
-                                </Form.Group>
+                                {/* <Form.Group as={Row} controlId="formControls"> */}
+                                <Button
+                                    type="submit"
+                                    disabled={formState.isSubmitting}
+                                    className="btn btn-primary">
+                                    {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
+                                    </span>}
+                                    Login
+                                </Button>
+                                <Button as={Link} variant='link' to="/Register">
+                                    Register an Account
+                                </Button>
+                                {/* </Form.Group> */}
+
                             </Form>
                         </Col>
                     </Row>
                 </Card.Body>
             </Card>
+
+            {/* </Col>
+        </Row> */}
         </Container>
     );
 }
