@@ -28,9 +28,18 @@ function App() {
   const[ConditionArray, setCondition] = useState(Temp);
   const length = NameArray.length;
 
-
-
-
+  const app_name = 'marketsquare'
+  function buildPath(route)
+  {
+      if (process.env.NODE_ENV === 'production') 
+      {
+          return 'https://' + app_name +  '.herokuapp.com/' + route;
+      }
+      else
+      {        
+          return 'http://localhost:5000/' + route;
+      }
+  }
   useEffect(async () => {
     var obj = {userId:userId,search:search.value};
       var js = JSON.stringify(obj);
