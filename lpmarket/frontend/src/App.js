@@ -21,7 +21,11 @@ function App() {
   const[NameArray, setName] = useState(Temp);
   const[PriceArray, setPrice] = useState(Temp);
   const[ProductCategoryArray, setProductCategory] = useState(Temp);
+  const[ContactInfoArray, setContactInfo] = useState(Temp);
   const[DescArray, setDesc] = useState(Temp);
+  const[StateArray, setState] = useState(Temp);
+  const[CityArray, setCity] = useState(Temp);
+  const[ConditionArray, setCondition] = useState(Temp);
   const length = NameArray.length;
 
 
@@ -33,15 +37,20 @@ function App() {
         <div>
           <div class="box" onClick={() => setSwitch(true)}>
             <p class = "Product">{NameArray[index]}</p>
+            <p>Condition: {ConditionArray[index]}</p>
             <p>$ {PriceArray[index]}</p>
             <p>{ProductCategoryArray[index]}</p>
+            <p>Location: {CityArray[index]} {StateArray[index]}</p>
           </div>
           <div className={Switch ? "popupclass" : "hidden"} onClick={() => setSwitch(false)}>
             <p class = "Product">{NameArray[index]}</p>
+            <p>Condition: {ConditionArray[index]}</p>
             <p>${PriceArray[index]}</p>
             <p> {ProductCategoryArray[index]}</p>
+            <p>Location: {StateArray[index]} {CityArray[index]}</p>
             <p class = "Descriptiontwo">Description</p>
             <p class = "Description"> {DescArray[index]}</p>
+            <p>Contact Info: {ContactInfoArray[index]}</p>
           </div>
         </div>
       );
@@ -80,8 +89,7 @@ function App() {
   var userId = 0;
   const searchCard = async event => 
   {
-      event.preventDefault();
-      
+    event.preventDefault();
       var obj = {userId:userId,search:search.value};
       var js = JSON.stringify(obj);
       try
@@ -96,18 +104,29 @@ function App() {
           var resultsDesc = [];
           var resultsPrice = [];
           var resultContactInfo = [];
+          var resultState = [];
+          var resultCity = [];
+          var resultCondition = [];
+
           var resultlength = _results.length;
-          for(var i = 0; i < resultlength; i = i+5) {
+          for(var i = 0; i < resultlength; i = i+8) {
             resultsName.push(_results[i]);
             resultsProductCategory.push(_results[i+1]);
             resultsDesc.push(_results[i+2]);
             resultsPrice.push(_results[i+3]);
             resultContactInfo.push(_results[i+4]);
+            resultState.push(_results[i+5]);
+            resultCity.push(_results[i+6]);
+            resultCondition.push(_results[i+7]);
           }
           setName(resultsName);
           setPrice(resultsPrice);
           setProductCategory(resultsProductCategory);
           setDesc(resultsDesc);
+          setContactInfo(resultContactInfo);
+          setState(resultState);
+          setCity(resultCity);
+          setCondition(resultCondition);
       }
       catch(e)
       {

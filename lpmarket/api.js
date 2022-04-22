@@ -84,39 +84,60 @@ app.post('/api/search', async (req, res, next) =>
   // let token = require('./createJWT.js');
   // const { userId, search, jwtToken } = req.body;
 
-//   try
-//   {
-//       if( token.isExpired(jwtToken))
-//       {
-//           var r = {error:'The JWT is no longer valid', jwtToken: ''};
-//           res.status(200).json(r);
-//           return;
-//       }
-//   }
-//   catch(e)
-//   {
-//       console.log(e.message);
-//   }
-
-  var _search = search.trim();
-
+  //   try
+  //   {
+  //       if( token.isExpired(jwtToken))
+  //       {
+  //           var r = {error:'The JWT is no longer valid', jwtToken: ''};
+  //           res.status(200).json(r);
+  //           return;
+  //       }
+  //   }
+  //   catch(e)
+  //   {
+  //       console.log(e.message);
+  //   }
+    
   const db = client.db();
-
-  const results = await db.collection('ProductInfo').find(
-      {$or:[
-      {"ProductName":{$regex:_search + '*', $options:'r',}},
-      {"ProductCategory":{$regex:_search + '*', $options:'r'}}]}
-      ).toArray();
-
   let _ret = [];
-
-  for( var i = 0; i < results.length; i++ )
+    
+  if ( search )
   {
-      _ret.push( results[i].ProductName );
-      _ret.push( results[i].ProductCategory );
-      _ret.push( results[i].ProductDescription );
-      _ret.push( results[i].ProductPrice );
-      _ret.push( results[i].ContactInfo );
+      var _search = search.trim();
+      
+      const results = await db.collection('ProductInfo').find(
+        {$or:[
+        {"ProductName":{$regex:_search + '*', $options:'i',}},
+        {"ProductCategory":{$regex:_search + '*', $options:'i'}}]}
+        ).toArray();
+      
+      for( var i = 0; i < results.length; i++ )
+      {
+        _ret.push( results[i].ProductName );
+        _ret.push( results[i].ProductCategory );
+        _ret.push( results[i].ProductDescription );
+        _ret.push( results[i].ProductPrice );
+        _ret.push( results[i].ContactInfo );
+        _ret.push( results[i].ProductState );
+        _ret.push( results[i].ProductCity );
+        _ret.push( results[i].ProductCondition );
+      }
+  }
+  else
+  {
+      const results = await db.collection('ProductInfo').find().toArray();
+      
+      for( var i = 0; i < results.length; i++ )
+      {
+        _ret.push( results[i].ProductName );
+        _ret.push( results[i].ProductCategory );
+        _ret.push( results[i].ProductDescription );
+        _ret.push( results[i].ProductPrice );
+        _ret.push( results[i].ContactInfo );
+        _ret.push( results[i].ProductState );
+        _ret.push( results[i].ProductCity );
+        _ret.push( results[i].ProductCondition );
+      }
   }
 
 //   var refreshedToken = null;
@@ -192,7 +213,7 @@ app.post('/api/editproduct', async (req, res, next) =>
   // incoming: productName
   // outgoing: error
 
-  const { productName, email, newName, newDescription, newCategory, newPrice, newContactInfo } = req.body;
+  const { productName, email, newName, newDescription, newCategory, newPrice, newContactInfo, newProductState, newProductCity, newProductCondition } = req.body;
   const productToUpdate = {ProductName:productName,Email:email}; 
   const updateInfo = 
   {
@@ -201,7 +222,10 @@ app.post('/api/editproduct', async (req, res, next) =>
       ProductDescription:newDescription,
       ProductCategory:newCategory,
       ProductPrice:newPrice,
-      ContactInfo:newContactInfo
+      ContactInfo:newContactInfo,
+      ProductState:newProductState,
+      ProductCity:newProductCity,
+      ProductCondition:newProductCondition
     },
   };
 
@@ -269,4 +293,36 @@ app.post('/api/deleteproduct', async (req, res, next) =>
   var ret = { error: error, jwtToken: refreshedToken };
   res.status(200).json(ret);
 });
+    
+    app.post('/api/editprofile', async (req, res, next) =>
+  {
+    // incoming: productName
+    // outgoing: error
+
+    const { email, newFirstName, newLastName, newPhoneNumber } = req.body;
+    const userToUpdate = {Email:email}; 
+    const updateInfo = 
+    {
+      $set: {
+        FirstName:newFirstName,
+        LastName:newLastName,
+        PhoneNumber:newPhoneNumber
+      },
+    };
+
+    var error = '';
+
+    try
+    {
+      const db = client.db();
+      const result = db.collection('UserInfo').updateOne(userToUpdate, updateInfo);
+    }
+    catch(e)
+    {
+      error = e.toString();
+    }
+
+    var ret = { error: error };
+    res.status(200).json(ret);
+  });
 }
