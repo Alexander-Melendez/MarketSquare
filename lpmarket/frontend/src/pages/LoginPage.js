@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from 'react'
 // InputGroup and FormControl from 'react-bootstrap' removed to reduce unused errors
 import { Row, Col, Card, Form, Button, Container } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, Redirect, useLocation } from 'react-router-dom';
 // Removed import { Redirect } from "react-router-dom"; to reduce unused errors
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -27,8 +27,6 @@ function LoginPage() {
         }
     }
 
-
-
     // Removed setValue, getValues, and errors to reduce unused errors
     const { register, handleSubmit, reset,
         formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState }
@@ -38,6 +36,8 @@ function LoginPage() {
         reValidateMode: "onBlur",
     });
 
+    const [redirectPrev, setRedirectPrev ] = useState(false)
+    
     // const { decodedToken, isExpired } = useJwt("");
     const onSubmit = async (data) => {
 
@@ -81,11 +81,14 @@ function LoginPage() {
                 var ud = decodeToken(storage.retrieveToken());
                 // var user = { id: res.id, firstName: res.firstName, lastName: res.lastName }
                 // var user = { id: ud.payload.id, firstName: ud.payload.firstName, lastName: ud.payload.lastName }
-                
+
                 var user = { id: res.id, firstName: res.fn, lastName: res.ln }
                 localStorage.setItem('user_data', JSON.stringify(user));
                 console.log(res, user, localStorage.getItem('user_data'));
+
                 // window.location.href = '/Home';
+                setRedirectPrev(true)
+
                 // <Redirect to="/Home" />
             }
             else {
@@ -96,6 +99,12 @@ function LoginPage() {
             console.log(e.toString());
         }
     };
+    
+
+    // const location = useLocation()
+    // if (redirectPrev === true){
+    //     return <Redirect to={location.state?.from || '/'}/>
+    // }
 
     return (
         <Container
