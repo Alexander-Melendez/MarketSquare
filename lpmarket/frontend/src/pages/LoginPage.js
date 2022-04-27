@@ -17,15 +17,7 @@ const loginSchema = yup.object().shape({
 
 function LoginPage() {
 
-    const app_name = 'marketsquare'
-    function buildPath(route) {
-        if (process.env.NODE_ENV === 'production') {
-            return 'https://' + app_name + '.herokuapp.com/' + route;
-        }
-        else {
-            return 'http://localhost:5000/' + route;
-        }
-    }
+    let bp = require('../Path.js');
 
     // Removed setValue, getValues, and errors to reduce unused errors
     const { register, handleSubmit, reset,
@@ -36,7 +28,7 @@ function LoginPage() {
         reValidateMode: "onBlur",
     });
 
-    const [redirectPrev, setRedirectPrev ] = useState(false)
+    // const [redirectPrev, setRedirectPrev ] = useState(false)
     
     // const { decodedToken, isExpired } = useJwt("");
     const onSubmit = async (data) => {
@@ -49,7 +41,7 @@ function LoginPage() {
         var send = JSON.stringify(data);
         console.log(send)
         try {
-            const response = await fetch(buildPath('api/login'),
+            const response = await fetch(bp.buildPath('api/login'),
                 {
                     method: 'POST',
                     body: send,
@@ -59,6 +51,7 @@ function LoginPage() {
                 });
             var txt = await response.text();
             var res = JSON.parse(txt);
+            // console.log(res)
             /*if (res.error.length > 0) {
                 console.log("API Error:" + res.error);
             }
@@ -74,20 +67,22 @@ function LoginPage() {
 
             if (res.fn.length > 0) {
                 
-                storage.storeToken(res);
+                // storage.storeToken(res);
                 // var jwt = require('jsonwebtoken'); 
 
                 // var ud = jwt.decode(storage.retrieveToken(),{complete:true}); 
-                var ud = decodeToken(storage.retrieveToken());
-                // var user = { id: res.id, firstName: res.firstName, lastName: res.lastName }
+
+                var tok = decodeToken(res.accessToken);
+                localStorage.setItem('token_data', tok);
                 // var user = { id: ud.payload.id, firstName: ud.payload.firstName, lastName: ud.payload.lastName }
 
-                var user = { id: res.id, firstName: res.fn, lastName: res.ln }
+                // var user = { id: res.id, irstName: res.fn, lastName: res.ln }
+                var user = { firstName: res.fn, lastName: res.ln }
                 localStorage.setItem('user_data', JSON.stringify(user));
-                console.log(res, user, localStorage.getItem('user_data'));
-
-                // window.location.href = '/Home';
-                setRedirectPrev(true)
+                // console.log(res, user, storage.retrieveToken('user_data'));
+                console.log("TOK: ", tok, "\nres:", res, "\nuserJson:", user)
+                window.location.href = '/Home';
+                // setRedirectPrev(true)
 
                 // <Redirect to="/Home" />
             }
@@ -109,7 +104,7 @@ function LoginPage() {
     return (
         <Container
             className="justify-content-center d-flex align-items-center"
-            style={{ "min-height": "90vh" }}
+            style={{ "minHeight": "90vh" }}
         >
             {/* <Row>
             <Col md lg="4"> */}

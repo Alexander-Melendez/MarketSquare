@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 // Removed FormControl to reduce unused from 'react-bootstrap'
 // import React, { useState } from "react";
@@ -28,16 +28,17 @@ const productSchema = yup.object().shape({
 });
 
 const formats = ['image/jpg', 'image/jpeg', 'image/png']
+const fields = ['title', 'firstName', 'lastName', 'email', 'role'];
 
 function checkIfFilesAreCorrectType(uploads) {
     // console.log("Upload check:" , uploads, "\nlength: ", uploads.length)
-    if (uploads.length > 1){
+    if (uploads.length > 1) {
         for (let i = 0; i < uploads.length; i++) {
             // console.log("Upload loop Check: ", uploads[i].type)
             if (!formats.includes(uploads[i].type))
                 return false
         }
-    } 
+    }
     else if (uploads.length === 1) {
         if (!formats.includes(uploads[0].type))
             return false
@@ -45,7 +46,7 @@ function checkIfFilesAreCorrectType(uploads) {
     return true
 }
 
-function NewListingPage() {
+function EditListing({ token, listingData }) {
     let bp = require('../Path.js');
 
     // Removed setValue, getValues, and errors to reduce unused errors
@@ -55,41 +56,40 @@ function NewListingPage() {
         resolver: yupResolver(productSchema),
         mode: "onChange",
         reValidateMode: "all",
+        defaultValues: listingData
     });
-    const fileInput = useRef(null)
+    const [oldInfo, setOldInfo] = useState([])
     const [files, setFiles] = useState([]);
     const [images, setImages] = useState([]);
     const [isHovered, setHover] = useState(false);
-    
-    useEffect (() => {
-        setValue("images",  files, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
-    }, [files])
 
-    const handleClick = () => {
-        fileInput.current.click()
-    }
+    // Get old data to display on initial form
+    // useEffect(() => {
+
+    //     userService.getById(id).then(user => {
+    //         setOldInfo(user)
+    //         fields.forEach(field => setValue(field, user[field]));
+    //         setFiles("images", user["images"])
+    //     });
+
+    // }, []);
+
+    // // 
+    // useEffect(() => {
+    //     setValue("images", files, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+    // }, [files])
+
+    // function restoreOld(){
+    //     fields.forEach(field => setValue(field, oldInfo[field]));
+    //     setFiles("images", oldInfo["images"])
+    // }
 
     async function uploadimg(e) {
         const fileList = e.target.files;
-        
-        /*var f
-        if (files === null){
-            f = fileList
-        }
-        else {
-            var dt = new DataTransfer()
-            for (var i = 0; i < files.length; i++) {
-                dt.items.add(files[i]) 
-            }
-            for (var i = 0; i < fileList.length; i++) {
-                dt.items.add(fileList[i])
-            }
-            f = dt.files
-        }*/
 
         let imageList
         if (fileList.length > 0) {
-             imageList = await Promise.all(Array.from(fileList).map(async (f) => {
+            imageList = await Promise.all(Array.from(fileList).map(async (f) => {
                 const image = await readFileAsync(f)
                 return image
             }))
@@ -99,8 +99,7 @@ function NewListingPage() {
             setFiles(files => [...files, ...Array.from(fileList)])
 
             // console.log("Before setvalue: ", getValues("images"))
-            
-            console.log("In upload: ", getValues("images"))
+            // console.log("In upload: ", getValues("images"))
         }
     }
 
@@ -136,12 +135,12 @@ function NewListingPage() {
         console.log("Aftter Delete: ", files, "\n values: ", getValues("images"))
     }
 
-    const postNewListing = async (data) => {
+    const requestEdit = async (data) => {
         console.log(data)
         var send = JSON.stringify(data);
         console.log(send)
         try {
-            const response = await fetch(bp.buildPath('api/addproduct'),
+            const response = await fetch(bp.buildPath('api/editProduct'),
                 {
                     method: 'POST',
                     body: send,
@@ -168,15 +167,13 @@ function NewListingPage() {
             <Card>
                 <Card.Body>
                     <Row>
-                        <Col><Card.Title>Create New Listing</Card.Title></Col>
+                        <Col><Card.Title>Edit Listing</Card.Title></Col>
                         <Col>
                         </Col>
                     </Row>
                     <hr />
                     <Row>
-                        <Form noValidate onSubmit={handleSubmit(postNewListing)} 
-                        // onReset={reset}
-                        >
+                        <Form noValidate onSubmit={handleSubmit(requestEdit)} >
                             <Row className="mb-3">
                                 <Form.Group>
                                     <Form.Label>Product Name</Form.Label>
@@ -252,7 +249,6 @@ function NewListingPage() {
                                 <Form.Group as={Col}>
                                     <Form.Label>City</Form.Label>
                                     <Form.Control
-                                        className='mb-3'
                                         type="text"
                                         name="city"
                                         {...register("city")}
@@ -265,7 +261,6 @@ function NewListingPage() {
                                 <Form.Group as={Col}>
                                     <Form.Label>State</Form.Label>
                                     <Form.Control
-                                    className='mb-3'
                                         type="text"
                                         name="state"
                                         {...register("state")}
@@ -276,12 +271,10 @@ function NewListingPage() {
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group>
-                                    <Form.Label htmlFor="fileUpload" onChange={uploadimg} ref={fileInput}></Form.Label>
+                                    <Form.Label htmlFor="fileUpload" onChange={uploadimg}></Form.Label>
                                     {/* <Icon style={{ fontSize: '20px'}} type="camera" /> */}
                                     <Form.Control
                                         // hidden
-                                        style={{ display: 'none' }}
-                                        ref={fileInput}
                                         className="mb-3"
                                         id="fileUpload"
                                         type="file"
@@ -291,59 +284,56 @@ function NewListingPage() {
                                         {...register("images", { onChange: uploadimg })}
                                         isInvalid={!!errors.images && dirtyFields.images}
                                     />
-                                    <Button onClick={handleClick}>Upload Images</Button>
                                     {/* </Form.Label> */}
                                     <Form.Control.Feedback type="invalid">
                                         {errors.images?.message}
                                     </Form.Control.Feedback>
-                                    <hr />
-                                        {/* <Container fluid> */}
-                                            <Row
-                                                className="justify-content-start mb-3" xs="auto"
+                                    <Container fluid>
+                                        <Row
+                                            className="justify-content-start mb-3" xs="auto"
 
-                                            >
-                                                {images.map((media) => (
-                                                    <Col
+                                        >
+                                            {images.map((media) => (
+                                                <Col
+                                                    key={media.id}
+                                                    onMouseOver={() => setHover(true)}
+                                                    onMouseLeave={() => setHover(false)}
+                                                    style={{
+                                                        position: 'relative',
+                                                        maxWidth: '150px',
+                                                        maxHeight: '150px'
+                                                    }}
+                                                // xs
+                                                >
+                                                    <Image
+                                                        fluid
+                                                        // thumbnail
+                                                        src={media.url}
+                                                        // alt="product"
                                                         key={media.id}
-                                                        onMouseOver={() => setHover(true)}
-                                                        onMouseLeave={() => setHover(false)}
                                                         style={{
-                                                            position: 'relative',
-                                                            maxWidth: '150px',
-                                                            maxHeight: '150px'
+                                                            maxWidth: '100%',
+                                                            maxHeight: '100%'
                                                         }}
-                                                    // xs
-                                                    >
-                                                        <Image
-                                                            fluid
-                                                            // thumbnail
-                                                            src={media.url}
-                                                            // alt="product"
-                                                            key={media.id}
+                                                    />
+                                                    {isHovered && (
+                                                        <Button
+                                                            variant="secondary"
+                                                            size="sm"
                                                             style={{
-                                                                maxWidth: '100%',
-                                                                maxHeight: '100%'
+                                                                position: 'absolute',
+                                                                left: 0,
+                                                                right: 0,
+                                                                top: 0,
+                                                                bottom: 0
                                                             }}
-                                                        />
-                                                        {isHovered && (
-                                                            <Button
-                                                                variant="secondary"
-                                                                size="sm"
-                                                                style={{
-                                                                    position: 'absolute',
-                                                                    left: 0,
-                                                                    right: 0,
-                                                                    top: 0,
-                                                                    bottom: 0
-                                                                }}
-                                                                onClick={() => deleteFile(media.id)}
-                                                            >Remove</Button>
-                                                        )}
-                                                    </Col>
-                                                ))}
-                                            </Row>
-                                            <hr />
-                                        {/* </Container> */}
+                                                            onClick={() => deleteFile(media.id)}
+                                                        >Remove</Button>
+                                                    )}
+                                                </Col>
+                                            ))}
+                                        </Row>
+                                    </Container>
                                 </Form.Group>
 
                             </Row>
@@ -354,18 +344,18 @@ function NewListingPage() {
                                 className="justify-content-start btn btn-primary">
                                 {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
                                 </span>}
-                                Create
+                                Confirm
                             </Button>
+                            <Button variant='danger' onClick={() => reset()}>Cancel</Button>
                             {/* </Form.Group> */}
-                            <Button onClick={() => reset()}>CLEAR</Button>
-                            <Button onClick={() => reset({keepValues: true})}>APPLY DEFAULT</Button>
+
                         </Form>
                     </Row>
                 </Card.Body>
 
             </Card>
         </Container>
-    );
+    )
 }
 
-export default withRouter(NewListingPage)
+export default withRouter(EditListing)

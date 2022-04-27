@@ -22,6 +22,7 @@ _createToken = function ( fn, ln, id )
                       '365d'
       */
       var ret = {accessToken:accessToken, fn:fn, ln:ln, id:id};
+      // console.log(ret)
     }
     catch(e)
     {

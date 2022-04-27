@@ -4,8 +4,8 @@ body {
 }
 
 .navbar {
-  overflow: hidden;
-  background-color: #000000;
+  /* overflow: hidden; */
+  /* background-color: #000000; */
 }
 
 .navbar input[type=text] {
