@@ -129,7 +129,7 @@ function App() {
 
   }
 
-  var userId = 0;
+  var userId = ud.userId;
   const searchCard = async event => {
     event.preventDefault();
     var obj = { userId: userId, search: search.value };

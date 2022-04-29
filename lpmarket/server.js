@@ -12,17 +12,17 @@ app.use(bodyParser.json());
 require('dotenv').config();
 
 const url = process.env.MONGODB_URI;
-/*const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 mongoose.connect(url)
   .then(() => console.log("MongoDB connected!"))
-  .catch(err => console.log(err))*/
+  .catch(err => console.log(err));
 
-const MongoClient = require('mongodb').MongoClient;
-const client = new MongoClient(url);
-client.connect();
+// const MongoClient = require('mongodb').MongoClient;
+// const client = new MongoClient(url);
+// client.connect();
 
 var api = require('./api.js');
-api.setApp(app, client);
+api.setApp(app, mongoose);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') 

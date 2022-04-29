@@ -22,13 +22,13 @@ const UserSchema = new Schema({
     required: true
   },
   DateCreated: {
-    type: String,
+    type: Date,
     required: true
   },
   PhoneNumber: {
     type: String,
     required: true
   }
-  
+
 });
-module.exports = UserInfo = mongoose.model("UserInfo", UserSchema);
+module.exports = UserInfo = mongoose.model("UserInfo", UserSchema, "UserInfo");
