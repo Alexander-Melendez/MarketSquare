@@ -134,7 +134,7 @@ app.post('/api/search', async (req, res, next) =>
   }
   else
   {
-    const results = await db.collection('ProductInfo').find().toArray();
+    const results = await Product.find();
 
     for( var i = 0; i < results.length; i++ )
     {
