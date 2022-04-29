@@ -103,23 +103,28 @@ function LoginPage() {
 
     return (
         <Container
-            className="justify-content-center d-flex align-items-center"
+            className=" justify-content-center d-flex align-items-center"
             style={{ "minHeight": "90vh" }}
         >
             {/* <Row>
             <Col md lg="4"> */}
-            <Card className='mx-auto'>
-                <Card.Body>
-                    <h5>{'Login'}</h5>
-                    <hr />
+            {/* <Card className='mx-auto'> */}
+                {/* <Card.Body className="loginCont"> */}
+                    
                     <Row >
+                        <div className='text-center'><h1 className='text-Center'>{'Login'}</h1></div>
+                    <hr />
                         <Col>
-                            <Form noValidate onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+                            <Form 
+                                noValidate 
+                                onSubmit={handleSubmit(onSubmit)} 
+                                onReset={reset}
+                                // className="loginCont"
+                            >
                                 <Row className="mb-3">
                                     <Form.Group as={Col} controlId="formGridEmail">
                                         <Form.Label>Email</Form.Label>
                                         <Form.Control
-                                            className='formFloating'
                                             type="text"
                                             name="email"
                                             {...register("email")}
@@ -159,8 +164,8 @@ function LoginPage() {
                             </Form>
                         </Col>
                     </Row>
-                </Card.Body>
-            </Card>
+                {/* </Card.Body> */}
+            {/* </Card> */}
 
             {/* </Col>
         </Row> */}

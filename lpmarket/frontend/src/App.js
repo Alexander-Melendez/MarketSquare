@@ -176,6 +176,7 @@ function App() {
   };
 
   return (
+
     <Router basename='Home'>
       {/* <div> */}
       <Navbar bg="dark" variant="dark" sticky='top'>
@@ -217,7 +218,11 @@ function App() {
         <Route path='/' exact>
           <Container fluid>
             <Row className="justify-content-start mb-3">
-              <PlacingTest />
+              {/* <body > */}
+                {/* <main > */}
+                  <PlacingTest />
+                {/* </main> */}
+              {/* </body> */}
             </Row>
           </Container>
         </Route>
