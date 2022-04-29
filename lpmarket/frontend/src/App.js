@@ -3,10 +3,9 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Redirect, Switch, Link } from 'react-router-dom';
-import { Button, Navbar, Card, Container, FormControl, Form, Nav, NavDropdown, InputGroup } from 'react-bootstrap';
+import { Button, Navbar, Card, Container, FormControl, Form, Nav, NavDropdown, InputGroup, Row, Col } from 'react-bootstrap';
 
 import NewListingPage from './pages/NewListingPage';
-import MakeListing from './components/MakeListing';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import EditProfile from './pages/EditProfile';
@@ -82,7 +81,7 @@ function App() {
     function FormattedBoxesone(index) {
       const [Switch, setSwitch] = useState(false);
       return (
-        <div>
+        <Col md="auto">
           <div class="box" onClick={() => setSwitch(true)}>
             <p class="Product">{NameArray[index]}</p>
             <p>Condition: {ConditionArray[index]}</p>
@@ -100,7 +99,7 @@ function App() {
             <p class="Description"> {DescArray[index]}</p>
             <p>Contact Info: {ContactInfoArray[index]}</p>
           </div>
-        </div>
+        </Col>
       );
     }
 
@@ -122,12 +121,10 @@ function App() {
     }
     rowone.push(boxes);
 
-
-
     return (
-      <div class="container">
+      <>
         {rowone}
-      </div>
+      </>
     );
 
   }
@@ -180,60 +177,49 @@ function App() {
 
   return (
     <Router basename='Home'>
-      <div>
-      <Navbar bg="dark" variant="dark">
-
-        <Link to='/' style={{ textDecoration: 'none' }}><Navbar.Brand>Home</Navbar.Brand></Link>
-        {/* <Navbar.Toggle aria-controls="responsive-navbar-nav" /> */}
-        <Nav>
-          <Route path='/' exact>
-            {/* <Navbar.Collapse id="responsive-navbar-nav"> */}
-            <InputGroup>
-              {/* <Form className="d-flex"> */}
-              <FormControl type="search" placeholder="Search.." ref={(c) => search = c} />
-              <Button variant="secondary" onClick={searchCard}>Submit</Button>
-              {/* </Form> */}
-            </InputGroup>
-          </Route>
-        </Nav>
-        <Container style={{ display: 'flex', justifyContent: 'flex-end' }} >
-          <Nav>
-            <Nav.Link as={Link} to="/NewListing">Sell</Nav.Link>
-            {localStorage.getItem('user_data') !== "{}"
-              ?
-              <Route path='/'><LoggedInName /></Route>
-              // <Nav>
-              // <NavDropdown
-              //   id="nav-dropdown-dark-example"
-              //   title="My Name"
-              //   menuVariant="dark"
-              // // show="false"
-              // >
-              //   <Link to='/'><NavDropdown.Item >Your Listings</NavDropdown.Item></Link>
-              //   <Link to='/'><NavDropdown.Item >Edit Profile</NavDropdown.Item></Link>
-              //   <NavDropdown.Divider />
-              //   <Link to='/'><NavDropdown.Item >Logout</NavDropdown.Item></Link>
-              // </NavDropdown>
-              // </Nav>
-              :
-              <Route path='/' exact>
-                <Nav>
-                  <Nav.Link as={Link} to="/Register">Register</Nav.Link>
-                  <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                </Nav>
-              </Route>
-            }
+      {/* <div> */}
+      <Navbar bg="dark" variant="dark" sticky='top'>
+        <Container fluid className="justify-content-start">
+          <Link to='/' style={{ textDecoration: 'none' }}><Navbar.Brand>Home</Navbar.Brand></Link>
+          {/* <Navbar.Toggle aria-controls="responsive-navbar-nav" /> */}
+          <Nav >
+            <Route path='/' exact>
+              {/* <Navbar.Collapse id="responsive-navbar-nav"> */}
+              <InputGroup >
+                {/* <Form className="d-flex"> */}
+                <Form.Control type="search" placeholder="Search.." ref={(c) => search = c} />
+                <Button variant="secondary" onClick={searchCard}>Submit</Button>
+                {/* </Form> */}
+              </InputGroup>
+            </Route>
           </Nav>
         </Container>
+        <Nav className="justify-content-end">
+          <Nav.Link as={Link} to="/NewListing">Sell</Nav.Link>
+          {localStorage.getItem('user_data') !== "{}"
+            ?
+            <Route path='/'><LoggedInName /></Route>
+            :
+            <Route path='/' exact>
+              <Nav>
+                <Nav.Link as={Link} to="/Register">Register</Nav.Link>
+                <Nav.Link as={Link} to="/login">Login</Nav.Link>
+              </Nav>
+            </Route>
+          }
+        </Nav>
+
         {/* </Navbar.Collapse> */}
         {/* </Route> */}
       </Navbar>
 
       <Switch>
         <Route path='/' exact>
-          <div class="test">
-            <PlacingTest />
-          </div>
+          <Container fluid>
+            <Row className="justify-content-start mb-3">
+              <PlacingTest />
+            </Row>
+          </Container>
         </Route>
         {/* <Route exact path='/NewListing' component={NewListingPage} /> */}
         <ProtectedRoute exact path='/NewListing' component={NewListingPage} />
@@ -243,7 +229,7 @@ function App() {
         <Route exact path='/register' component={RegisterPage} />
         <Route path='/EditListing/:listingId' element={<EditListing />} />
       </Switch>
-      </div>
+      {/* </div> */}
     </Router >
 
   );

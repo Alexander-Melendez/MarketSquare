@@ -31,13 +31,13 @@ const formats = ['image/jpg', 'image/jpeg', 'image/png']
 
 function checkIfFilesAreCorrectType(uploads) {
     // console.log("Upload check:" , uploads, "\nlength: ", uploads.length)
-    if (uploads.length > 1){
+    if (uploads.length > 1) {
         for (let i = 0; i < uploads.length; i++) {
             // console.log("Upload loop Check: ", uploads[i].type)
             if (!formats.includes(uploads[i].type))
                 return false
         }
-    } 
+    }
     else if (uploads.length === 1) {
         if (!formats.includes(uploads[0].type))
             return false
@@ -60,10 +60,29 @@ function NewListingPage() {
     const [files, setFiles] = useState([]);
     const [images, setImages] = useState([]);
     const [isHovered, setHover] = useState(false);
-    
-    useEffect (() => {
-        setValue("images",  files, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+    const [def, setDef] = useState([])
+
+    useEffect(async () => {
+        setValue("images", files, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+        let imageList = await Promise.all(files.map(async (f) => {
+            const image = await readFileAsync(f)
+            return image
+        }))
+        setImages(images => imageList);
     }, [files])
+
+    function clearForm() {
+        setFiles(def)
+        reset({keepDefaultValuesk:true})
+        console.log()
+    }
+
+    function handleReset() {
+        const current = getValues("images")
+        setFiles(current)
+        setDef(files)
+        reset({ "images": current }, { keepValues: true })
+    }
 
     const handleClick = () => {
         fileInput.current.click()
@@ -71,7 +90,7 @@ function NewListingPage() {
 
     async function uploadimg(e) {
         const fileList = e.target.files;
-        
+
         /*var f
         if (files === null){
             f = fileList
@@ -89,17 +108,17 @@ function NewListingPage() {
 
         let imageList
         if (fileList.length > 0) {
-             imageList = await Promise.all(Array.from(fileList).map(async (f) => {
-                const image = await readFileAsync(f)
-                return image
-            }))
+            // imageList = await Promise.all(Array.from(fileList).map(async (f) => {
+            //     const image = await readFileAsync(f)
+            //     return image
+            // }))
 
-            // update image array
-            setImages(images => [...images, ...imageList]);
+            // // update image array
+            // setImages(images => [...images, ...imageList]);
             setFiles(files => [...files, ...Array.from(fileList)])
 
             // console.log("Before setvalue: ", getValues("images"))
-            
+
             console.log("In upload: ", getValues("images"))
         }
     }
@@ -128,12 +147,12 @@ function NewListingPage() {
         if (imageIndex > -1) {
             const value = files.filter((_, i) => i !== imageIndex);
             setImages(images.filter(item => item.id !== id));
-            setFiles(files => value);
+            setFiles(value);
             if (images.length === 1) {
                 resetField('images');
             }
         }
-        console.log("Aftter Delete: ", files, "\n values: ", getValues("images"))
+        // console.log("Aftter Delete: ", files, "\n values: ", getValues("images"))
     }
 
     const postNewListing = async (data) => {
@@ -174,7 +193,7 @@ function NewListingPage() {
                     </Row>
                     <hr />
                     <Row>
-                        <Form noValidate onSubmit={handleSubmit(postNewListing)} 
+                        <Form noValidate onSubmit={handleSubmit(postNewListing)}
                         // onReset={reset}
                         >
                             <Row className="mb-3">
@@ -265,7 +284,7 @@ function NewListingPage() {
                                 <Form.Group as={Col}>
                                     <Form.Label>State</Form.Label>
                                     <Form.Control
-                                    className='mb-3'
+                                        className='mb-3'
                                         type="text"
                                         name="state"
                                         {...register("state")}
@@ -297,53 +316,53 @@ function NewListingPage() {
                                         {errors.images?.message}
                                     </Form.Control.Feedback>
                                     <hr />
-                                        {/* <Container fluid> */}
-                                            <Row
-                                                className="justify-content-start mb-3" xs="auto"
+                                    {/* <Container fluid> */}
+                                    <Row
+                                        className="justify-content-start mb-3" xs="auto"
 
+                                    >
+                                        {images.map((media) => (
+                                            <Col
+                                                key={media.id}
+                                                onMouseOver={() => setHover(true)}
+                                                onMouseLeave={() => setHover(false)}
+                                                style={{
+                                                    position: 'relative',
+                                                    maxWidth: '150px',
+                                                    maxHeight: '150px'
+                                                }}
+                                            // xs
                                             >
-                                                {images.map((media) => (
-                                                    <Col
-                                                        key={media.id}
-                                                        onMouseOver={() => setHover(true)}
-                                                        onMouseLeave={() => setHover(false)}
+                                                <Image
+                                                    fluid
+                                                    // thumbnail
+                                                    src={media.url}
+                                                    // alt="product"
+                                                    key={media.id}
+                                                    style={{
+                                                        maxWidth: '100%',
+                                                        maxHeight: '100%'
+                                                    }}
+                                                />
+                                                {isHovered && (
+                                                    <Button
+                                                        variant="secondary"
+                                                        size="sm"
                                                         style={{
-                                                            position: 'relative',
-                                                            maxWidth: '150px',
-                                                            maxHeight: '150px'
+                                                            position: 'absolute',
+                                                            left: 0,
+                                                            right: 0,
+                                                            top: 0,
+                                                            bottom: 0
                                                         }}
-                                                    // xs
-                                                    >
-                                                        <Image
-                                                            fluid
-                                                            // thumbnail
-                                                            src={media.url}
-                                                            // alt="product"
-                                                            key={media.id}
-                                                            style={{
-                                                                maxWidth: '100%',
-                                                                maxHeight: '100%'
-                                                            }}
-                                                        />
-                                                        {isHovered && (
-                                                            <Button
-                                                                variant="secondary"
-                                                                size="sm"
-                                                                style={{
-                                                                    position: 'absolute',
-                                                                    left: 0,
-                                                                    right: 0,
-                                                                    top: 0,
-                                                                    bottom: 0
-                                                                }}
-                                                                onClick={() => deleteFile(media.id)}
-                                                            >Remove</Button>
-                                                        )}
-                                                    </Col>
-                                                ))}
-                                            </Row>
-                                            <hr />
-                                        {/* </Container> */}
+                                                        onClick={() => deleteFile(media.id)}
+                                                    >Remove</Button>
+                                                )}
+                                            </Col>
+                                        ))}
+                                    </Row>
+                                    <hr />
+                                    {/* </Container> */}
                                 </Form.Group>
 
                             </Row>
@@ -357,8 +376,8 @@ function NewListingPage() {
                                 Create
                             </Button>
                             {/* </Form.Group> */}
-                            <Button onClick={() => reset()}>CLEAR</Button>
-                            <Button onClick={() => reset({keepValues: true})}>APPLY DEFAULT</Button>
+                            {/* <Button onClick={clearForm}>CLEAR</Button> */}
+                            {/* <Button onClick={handleReset}>APPLY DEFAULT</Button> */}
                         </Form>
                     </Row>
                 </Card.Body>

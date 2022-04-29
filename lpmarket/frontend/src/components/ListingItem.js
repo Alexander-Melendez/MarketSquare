@@ -1,51 +1,53 @@
 import React from 'react'
 
-import { Card, Carousel, Button } from 'react-bootstrap'
+import { Card, Container, Col, Row, Button, ButtonGroup, InputGroup, ListGroup } from 'react-bootstrap'
 
-function ListingItem() {
+function ListingItem({ listing, id, onEdit, onDelete }) {
   return (
-    <Card style={{ width: '18rem' }}>
-      <Carousel>
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="holder.js/800x400?text=First slide&bg=373940"
-            alt="First slide"
-          />
-          <Carousel.Caption>
-            <h3>First slide label</h3>
-            <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-          </Carousel.Caption>
-        </Carousel.Item>
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="holder.js/800x400?text=Second slide&bg=282c34"
-            alt="Second slide"
-          />
+    <Col md="auto">
+      <Card style={{ width: '18rem' }}>
+        <Card.Header></Card.Header>
+        <Container fluid>
 
-          <Carousel.Caption>
-            <h3>Second slide label</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          </Carousel.Caption>
-        </Carousel.Item>
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="holder.js/800x400?text=Third slide&bg=20232a"
-            alt="Third slide"
-          />
-        </Carousel.Item>
-      </Carousel>
-      <Card.Body>
-        <Card.Title>Card Title</Card.Title>
-        <Card.Text>
-          Some quick example text to build on the card title and make up the bulk of
-          the card's content.
-        </Card.Text>
-        <Button variant="primary">Go somewhere</Button>
-      </Card.Body>
-    </Card>
+          <Card.Img variant="top" src="holder.js/100px180" />
+          <Card.Title>Card Title</Card.Title>
+          <Card.Body>
+
+            <Card.Text>
+              Description
+            </Card.Text>
+          </Card.Body>
+
+
+        </Container>
+        <ListGroup variant='flush'>
+          <ListGroup.Item>Category</ListGroup.Item>
+          <ListGroup.Item>Date</ListGroup.Item>
+          <ListGroup.Item>Price</ListGroup.Item>
+        </ListGroup>
+        <Card.Footer className="justify-content-md-center" >
+          <Container as={Row} xs={6} >
+            {
+              onEdit &&
+              <Button
+                onClick={() => onEdit(id)}
+                as={Col}
+                variant="outline-success">
+                Edit
+              </Button>
+            }
+            {
+              onDelete &&
+              <Button as={Col}
+                onClick={() => onDelete(id)}
+                variant="outline-danger">
+                Delete
+              </Button>
+            }
+          </Container>
+        </Card.Footer>
+      </Card>
+    </Col>
   )
 }
 
