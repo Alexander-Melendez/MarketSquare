@@ -1,6 +1,5 @@
 import { Redirect, Link } from "react-router-dom";
 import { Navbar, Nav, NavDropdown, Button, Dropdown, DropdownButton } from "react-bootstrap";
-import { LinkContainer } from 'react-router-bootstrap'
 
 function LoggedInName() {
   var _ud = localStorage.getItem('user_data');
