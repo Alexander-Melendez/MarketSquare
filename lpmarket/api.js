@@ -101,7 +101,8 @@ app.post('/api/search', async (req, res, next) =>
   //   }
     
   // const db = client.db();
-  let _ret = [];
+  // let _ret = [];
+  var results;
     
   var _search = search.trim();
 
@@ -115,38 +116,38 @@ app.post('/api/search', async (req, res, next) =>
       ).toArray();
       */
 
-      const results = await Product.find(
+      results = await Product.find(
         {$or:[
         {"ProductName":{$regex:_search + '*', $options:'i',}},
         {"ProductCategory":{$regex:_search + '*', $options:'i'}}]});
 
-      for( var i = 0; i < results.length; i++ )
-      {
-        _ret.push( results[i].ProductName );
-        _ret.push( results[i].ProductCategory );
-        _ret.push( results[i].ProductDescription );
-        _ret.push( results[i].ProductPrice );
-        _ret.push( results[i].ContactInfo );
-        _ret.push( results[i].ProductState );
-        _ret.push( results[i].ProductCity );
-        _ret.push( results[i].ProductCondition );
-      }
+//       for( var i = 0; i < results.length; i++ )
+//       {
+//         _ret.push( results[i].ProductName );
+//         _ret.push( results[i].ProductCategory );
+//         _ret.push( results[i].ProductDescription );
+//         _ret.push( results[i].ProductPrice );
+//         _ret.push( results[i].ContactInfo );
+//         _ret.push( results[i].ProductState );
+//         _ret.push( results[i].ProductCity );
+//         _ret.push( results[i].ProductCondition );
+//       }
   }
   else
   {
-    const results = await Product.find();
+    results = await Product.find();
 
-    for( var i = 0; i < results.length; i++ )
-    {
-      _ret.push( results[i].ProductName );
-      _ret.push( results[i].ProductCategory );
-      _ret.push( results[i].ProductDescription );
-      _ret.push( results[i].ProductPrice );
-      _ret.push( results[i].ContactInfo );
-      _ret.push( results[i].ProductState );
-      _ret.push( results[i].ProductCity );
-      _ret.push( results[i].ProductCondition );
-    }
+//     for( var i = 0; i < results.length; i++ )
+//     {
+//       _ret.push( results[i].ProductName );
+//       _ret.push( results[i].ProductCategory );
+//       _ret.push( results[i].ProductDescription );
+//       _ret.push( results[i].ProductPrice );
+//       _ret.push( results[i].ContactInfo );
+//       _ret.push( results[i].ProductState );
+//       _ret.push( results[i].ProductCity );
+//       _ret.push( results[i].ProductCondition );
+//     }
   }
 
 //   var refreshedToken = null;
@@ -160,7 +161,7 @@ app.post('/api/search', async (req, res, next) =>
 //   }
 
   // var ret = {results:_ret, error:error, jwtToken: refreshedToken};
-  var ret = {results:_ret, error:error};
+  var ret = {results:results, error:error};
   res.status(200).json(ret);
 });
 
