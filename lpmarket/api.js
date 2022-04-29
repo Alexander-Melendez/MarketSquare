@@ -15,8 +15,9 @@ exports.setApp = function(app, client)
 
   const { email, password } = req.body;
 
-  const db = client.db();
-  const results = await db.collection('UserInfo').find({Email:email,Password:password}).toArray();
+  // const db = client.db();
+  // const results = await db.collection('UserInfo').find({Email:email,Password:password}).toArray();
+  const results = await User.find({Email:email,Password:password});
 
   var id = -1;
   var fn = '';
@@ -61,8 +62,9 @@ app.post('/api/register', async (req, res, next) =>
 
   try
   {
-    const db = client.db();
-    const result = db.collection('UserInfo').insertOne(newUser);
+    // const db = client.db();
+    // const result = db.collection('UserInfo').insertOne(newUser);
+    const result = User.create(newUser);
   }
   catch(e)
   {
@@ -98,18 +100,25 @@ app.post('/api/search', async (req, res, next) =>
   //       console.log(e.message);
   //   }
     
-  const db = client.db();
+  // const db = client.db();
   let _ret = [];
     
   var _search = search.trim();
 
   if ( _search )
   {
+      /*
       const results = await db.collection('ProductInfo').find(
+      {$or:[
+      {"ProductName":{$regex:_search + '*', $options:'i',}},
+      {"ProductCategory":{$regex:_search + '*', $options:'i'}}]}
+      ).toArray();
+      */
+
+      const results = await Product.find(
         {$or:[
         {"ProductName":{$regex:_search + '*', $options:'i',}},
-        {"ProductCategory":{$regex:_search + '*', $options:'i'}}]}
-        ).toArray();
+        {"ProductCategory":{$regex:_search + '*', $options:'i'}}]});
 
       for( var i = 0; i < results.length; i++ )
       {
@@ -183,8 +192,9 @@ app.post('/api/addproduct', async (req, res, next) =>
 
   try
   {
-    const db = client.db();
-    const result = db.collection('ProductInfo').insertOne(newProduct);
+    // const db = client.db();
+    // const result = db.collection('ProductInfo').insertOne(newProduct);
+    const result = Product.create(newProduct);
   }
   catch(e)
   {
@@ -233,8 +243,9 @@ app.post('/api/editproduct', async (req, res, next) =>
 
   try
   {
-    const db = client.db();
-    const result = db.collection('ProductInfo').updateOne(productToUpdate, updateInfo);
+    // const db = client.db();
+    // const result = db.collection('ProductInfo').updateOne(productToUpdate, updateInfo);
+    const result = Product.findOneAndUpdate(productToUpdate, updateInfo);
   }
   catch(e)
   {
@@ -272,8 +283,9 @@ app.post('/api/deleteproduct', async (req, res, next) =>
 
   try
   {
-    const db = client.db();
-    const result = db.collection('ProductInfo').deleteOne(deleteProduct);
+    // const db = client.db();
+    // const result = db.collection('ProductInfo').deleteOne(deleteProduct);
+    const result = Product.findByIdAndDelete(deleteProduct);
   }
   catch(e)
   {
@@ -314,8 +326,9 @@ app.post('/api/deleteproduct', async (req, res, next) =>
 
     try
     {
-      const db = client.db();
-      const result = db.collection('UserInfo').updateOne(userToUpdate, updateInfo);
+      // const db = client.db();
+      // const result = db.collection('UserInfo').updateOne(userToUpdate, updateInfo);
+      const result = User.findByIdAndUpdate(userToUpdate, updateInfo);
     }
     catch(e)
     {
