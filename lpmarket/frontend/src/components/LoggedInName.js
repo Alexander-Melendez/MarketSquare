@@ -3,7 +3,10 @@ import { Navbar, Nav, NavDropdown, Button, Dropdown, DropdownButton } from "reac
 
 function LoggedInName() {
   var _ud = localStorage.getItem('user_data');
-  // var ud = localStorage.getItem('user_data');
+  // if (_ud === null){
+  //   return <></>
+  // }
+  var ud = localStorage.getItem('user_data');
   // console.log("_ud: ", _ud)
   var ud = JSON.parse(_ud);
   // var userId = ud.id;
@@ -12,10 +15,11 @@ function LoggedInName() {
   const doLogout = event => {
     event.preventDefault();
     // localStorage.removeItem("user_data")
-    localStorage.setItem("user_data", JSON.stringify({}))
+    localStorage.removeItem("user_data")//, JSON.stringify({}))
     // return <Redirect to="/"/>;
-    window.location.href = '/';
+    window.location.href = '/Home';
   };
+
   return (
      <Nav>
        {/* <div><span id="userName"  style={{ color: "white" }}>Logged In As {firstName} {lastName}    </span>

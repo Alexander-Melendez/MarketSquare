@@ -1,7 +1,8 @@
+import '../App.css';
 import { createContext, useState, useEffect } from 'react'
 // InputGroup and FormControl from 'react-bootstrap' removed to reduce unused errors
 import { Row, Col, Card, Form, Button, Container, InputGroup } from 'react-bootstrap';
-
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -36,8 +37,8 @@ function RegisterPage() {
         formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState }
     } = useForm({
         resolver: yupResolver(registerSchema),
-        mode: "onBlur",
-        reValidateMode: "onBlur",
+        mode: "all",
+        reValidateMode: "all",
     });
 
     let bp = require('../Path.js');
@@ -75,124 +76,132 @@ function RegisterPage() {
     };
 
     return (
-        <Container
-            className="justify-content-center d-flex align-items-center"
-            // style={{ "min-height": "90vh" }}
-        >
-            <Card className='mx-auto'>
-                <Card.Body>
-                    <h5>{"Register"}</h5>
+        <Container className='formOverlay'>
+            <Container
+                className="justify-content-center d-flex align-items-center"
+                style={{ "minHeight": "70vh" }}
+            >
+                {/* <Card className='mx-auto'>
+                <Card.Body> */}
+                <Row>
+                    <div className='text-center'><h1>Register an Account</h1></div>
                     <hr />
-                    <Row>
-                        <Col>
-                            <Form noValidate onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-                                <Row>
-                                    <Form.Group>
-                                        <Form.Label>First Name</Form.Label>
+                    <Col>
+                        <Form noValidate onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+                            <Row>
+                                <Form.Group>
+                                    <Form.Label>First Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="firstName"
+                                        {...register("firstName")}
+                                        isInvalid={!!errors.firstName && touchedFields.firstName}
+                                    ></Form.Control>
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.firstName?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label>Last Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="lastName"
+                                        {...register("lastName")}
+                                        isInvalid={!!errors.lastName && touchedFields.lastName}
+                                    ></Form.Control>
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.lastName?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group >
+                                    <Form.Label>Email</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="email"
+                                        {...register("email")}
+                                        isInvalid={!!errors.email && touchedFields.email}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.email?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label>Phone Number</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="phoneNumber"
+                                        {...register("phoneNumber")}
+                                        isInvalid={!!errors.phoneNumber && touchedFields.phoneNumber}
+                                    ></Form.Control>
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.phoneNumber?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group>
+
+                                    <Form.Label>Password</Form.Label>
+                                    <InputGroup>
                                         <Form.Control
-                                            type="text"
-                                            name="firstName"
-                                            {...register("firstName")}
-                                            isInvalid={!!errors.firstName && touchedFields.firstName}
-                                        ></Form.Control>
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.firstName?.message}
-                                        </Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <Form.Label>Last Name</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            name="lastName"
-                                            {...register("lastName")}
-                                            isInvalid={!!errors.lastName && touchedFields.lastName}
-                                        ></Form.Control>
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.lastName?.message}
-                                        </Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group >
-                                        <Form.Label>Email</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            name="email"
-                                            {...register("email")}
-                                            isInvalid={!!errors.email && touchedFields.email}
+                                            type={passwordShown ? "text" : "password"}
+                                            name="password"
+                                            {...register("password")}
+                                            isInvalid={!!errors.password && touchedFields.password}
                                         />
+                                        <Button variant="outline-secondary"
+                                            onClick={togglePasswordVisiblity}
+                                        >
+                                            Show
+                                        </Button>
+
                                         <Form.Control.Feedback type="invalid">
-                                            {errors.email?.message}
+                                            {errors.password?.message}
                                         </Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <Form.Label>Phone Number</Form.Label>
+                                    </InputGroup>
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Confirm Password</Form.Label>
+                                    <InputGroup>
                                         <Form.Control
-                                            type="text"
-                                            name="phoneNumber"
-                                            {...register("phoneNumber")}
-                                            isInvalid={!!errors.phoneNumber && touchedFields.phoneNumber}
-                                        ></Form.Control>
+                                            type={passwordShown ? "text" : "password"}
+                                            name="passwordTwo"
+                                            {...register("passwordTwo")}
+                                            isInvalid={!!errors.passwordTwo && touchedFields.passwordTwo}
+                                        >
+                                        </Form.Control>
+                                        <Button variant="outline-secondary"
+                                            onClick={togglePasswordVisiblity}
+                                        >
+                                            Show
+                                        </Button>
                                         <Form.Control.Feedback type="invalid">
-                                            {errors.phoneNumber?.message}
+                                            {errors.passwordTwo?.message}
                                         </Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-
-                                        <Form.Label>Password</Form.Label>
-                                        <InputGroup>
-                                            <Form.Control
-                                                type={passwordShown ? "text" : "password"}
-                                                name="password"
-                                                {...register("password")}
-                                                isInvalid={!!errors.password && touchedFields.password}
-                                            />
-                                            <Button variant="outline-secondary"
-                                                onClick={togglePasswordVisiblity}
-                                            >
-                                                Show
-                                            </Button>
-
-                                            <Form.Control.Feedback type="invalid">
-                                                {errors.password?.message}
-                                            </Form.Control.Feedback>
-                                        </InputGroup>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <Form.Label>Confirm Password</Form.Label>
-                                        <InputGroup>
-                                            <Form.Control
-                                                type={passwordShown ? "text" : "password"}
-                                                name="passwordTwo"
-                                                {...register("passwordTwo")}
-                                                isInvalid={!!errors.passwordTwo && touchedFields.passwordTwo}
-                                            >
-                                            </Form.Control>
-                                            <Button variant="outline-secondary"
-                                                onClick={togglePasswordVisiblity}
-                                            >
-                                                Show
-                                            </Button>
-                                            <Form.Control.Feedback type="invalid">
-                                                {errors.passwordTwo?.message}
-                                            </Form.Control.Feedback>
-                                        </InputGroup>
-                                    </Form.Group>
-                                </Row>
-                                <Form.Group as={Col} controlId="formControls">
+                                    </InputGroup>
+                                </Form.Group>
+                                <Form.Group as={Col} className="mb-3" controlId="formControls">
                                     <Button
                                         type="submit"
-                                        disabled={formState.isSubmitting}
+                                        // disabled={formState.isSubmitting}
                                         className="btn btn-primary"
                                     >
-                                        {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
-                                        </span>}
+                                        {/* {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1"> */}
+                                        {/* </span>} */}
                                         Register
                                     </Button>
+                                    <Button as={Link} variant='link' to="/login">
+                                        Login
+                                    </Button>
+                                    <Button as={Link} variant='link' to="/Register">
+                                        Forgot Password
+                                    </Button>
                                 </Form.Group>
-                            </Form>
-                        </Col>
-                    </Row>
-                </Card.Body>
-            </Card>
+                            </Row>
+                        </Form>
+                    </Col>
+                </Row>
+                {/* </Card.Body>
+            </Card> */}
+            </Container >
         </Container>
     );
 }

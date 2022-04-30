@@ -15,7 +15,6 @@ import EditListing from './pages/EditListing';
 import LoggedInName from './components/LoggedInName'
 import ProtectedRoute from './components/ProtectedRoute';
 
-
 const Temp = [];
 
 function App() {
@@ -81,25 +80,25 @@ function App() {
     function FormattedBoxesone(index) {
       const [Switch, setSwitch] = useState(false);
       return (
-        <Col md="auto">
-          <div class="box" onClick={() => setSwitch(true)}>
-            <p class="Product">{NameArray[index]}</p>
+        <Col  md="auto">
+          <div className="box" onClick={() => setSwitch(true)}>
+            <p className="Product">{NameArray[index]}</p>
             <p>Condition: {ConditionArray[index]}</p>
             <p>$ {PriceArray[index]}</p>
             <p>{ProductCategoryArray[index]}</p>
             <p>Location: {CityArray[index]} {StateArray[index]}</p>
           </div>
           <div className={Switch ? "popupclass" : "hidden"} onClick={() => setSwitch(false)}>
-            <p class="Product">{NameArray[index]}</p>
+            <p className="Product">{NameArray[index]}</p>
             <p>Condition: {ConditionArray[index]}</p>
             <p>${PriceArray[index]}</p>
             <p> {ProductCategoryArray[index]}</p>
             <p>Location: {StateArray[index]} {CityArray[index]}</p>
-            <p class="Descriptiontwo">Description</p>
-            <p class="Description"> {DescArray[index]}</p>
+            <p className="Descriptiontwo">Description</p>
+            <p className="Description"> {DescArray[index]}</p>
             <p>Contact Info: {ContactInfoArray[index]}</p>
           </div>
-        </Col>
+        </Col >
       );
     }
 
@@ -122,14 +121,17 @@ function App() {
     rowone.push(boxes);
 
     return (
-      <>
-        {rowone}
-      </>
+      <Container className='mainOverlay'>
+        <Container fluid>
+          <Row className="justify-content-start mb-3">
+            {rowone}
+          </Row>
+        </Container>
+      </Container>
     );
-
   }
 
-  var userId = ud.userId;
+  var userId = 0;
   const searchCard = async event => {
     event.preventDefault();
     var obj = { userId: userId, search: search.value };
@@ -176,67 +178,43 @@ function App() {
   };
 
   return (
-
     <Router basename='Home'>
-      {/* <div> */}
       <Navbar bg="dark" variant="dark" sticky='top'>
         <Container fluid className="justify-content-start">
           <Link to='/' style={{ textDecoration: 'none' }}><Navbar.Brand>Home</Navbar.Brand></Link>
-          {/* <Navbar.Toggle aria-controls="responsive-navbar-nav" /> */}
           <Nav >
             <Route path='/' exact>
-              {/* <Navbar.Collapse id="responsive-navbar-nav"> */}
               <InputGroup >
-                {/* <Form className="d-flex"> */}
                 <Form.Control type="search" placeholder="Search.." ref={(c) => search = c} />
                 <Button variant="secondary" onClick={searchCard}>Submit</Button>
-                {/* </Form> */}
               </InputGroup>
             </Route>
           </Nav>
         </Container>
         <Nav className="justify-content-end">
           <Nav.Link as={Link} to="/NewListing">Sell</Nav.Link>
-          {localStorage.getItem('user_data') !== "{}"
+          {localStorage.getItem('user_data') !== null
             ?
             <Route path='/'><LoggedInName /></Route>
             :
-            <Route path='/' exact>
-              <Nav>
-                <Nav.Link as={Link} to="/Register">Register</Nav.Link>
-                <Nav.Link as={Link} to="/login">Login</Nav.Link>
-              </Nav>
-            </Route>
+            <Nav>
+              <Nav.Link as={Link} to="/Register">Register</Nav.Link>
+              <Nav.Link as={Link} to="/login">Login</Nav.Link>
+            </Nav>
           }
         </Nav>
-
-        {/* </Navbar.Collapse> */}
-        {/* </Route> */}
       </Navbar>
 
-      <Switch>
-        <Route path='/' exact>
-          <Container fluid>
-            <Row className="justify-content-start mb-3">
-              {/* <body > */}
-                {/* <main > */}
-                  <PlacingTest />
-                {/* </main> */}
-              {/* </body> */}
-            </Row>
-          </Container>
-        </Route>
-        {/* <Route exact path='/NewListing' component={NewListingPage} /> */}
-        <ProtectedRoute exact path='/NewListing' component={NewListingPage} />
+      <Switch >
+        <Route path='/' exact component={PlacingTest} />
         <ProtectedRoute exact path='/UserListings' component={UserListings} />
+        <ProtectedRoute exact path='/NewListing' component={NewListingPage} />
         <ProtectedRoute exact path='/EditProfile' component={EditProfile} />
+        <ProtectedRoute exact path='/EditListing/:listingId' component={EditListing} />
         <Route exact path='/login' component={LoginPage} />
         <Route exact path='/register' component={RegisterPage} />
-        <Route path='/EditListing/:listingId' element={<EditListing />} />
       </Switch>
-      {/* </div> */}
     </Router >
-
   );
 }
 

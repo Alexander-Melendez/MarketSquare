@@ -1,3 +1,4 @@
+import '../App.css';
 import { useState, useEffect } from 'react'
 
 // Removed FormControl to reduce unused from 'react-bootstrap'
@@ -46,7 +47,7 @@ function checkIfFilesAreCorrectType(uploads) {
     return true
 }
 
-function EditListing({ token, listingData }) {
+function EditListing() {
     let bp = require('../Path.js');
 
     // Removed setValue, getValues, and errors to reduce unused errors
@@ -54,9 +55,9 @@ function EditListing({ token, listingData }) {
         formState: { errors, dirtyFields, isSubmitting, touchedFields, submitCount, ...formState }
     } = useForm({
         resolver: yupResolver(productSchema),
-        mode: "onChange",
+        mode: "all",
         reValidateMode: "all",
-        defaultValues: listingData
+        // defaultValues: listingData
     });
     const [oldInfo, setOldInfo] = useState([])
     const [files, setFiles] = useState([]);
@@ -163,16 +164,16 @@ function EditListing({ token, listingData }) {
     };
 
     return (
-        <Container fluid>
-            <Card>
-                <Card.Body>
-                    <Row>
-                        <Col><Card.Title>Edit Listing</Card.Title></Col>
-                        <Col>
-                        </Col>
-                    </Row>
+        <Container className='formOverlay'>
+            <Container
+                // fluid
+                className="justify-content-center d-flex align-items-center"
+                style={{ "minHeight": "56vh" }}
+            >
+                <Row>
+                    <h5>Edit Listing</h5>
                     <hr />
-                    <Row>
+                    <Col>
                         <Form noValidate onSubmit={handleSubmit(requestEdit)} >
                             <Row className="mb-3">
                                 <Form.Group>
@@ -335,7 +336,6 @@ function EditListing({ token, listingData }) {
                                         </Row>
                                     </Container>
                                 </Form.Group>
-
                             </Row>
                             {/* <Form.Group controlId="formControls" > */}
                             <Button
@@ -348,12 +348,10 @@ function EditListing({ token, listingData }) {
                             </Button>
                             <Button variant='danger' onClick={() => reset()}>Cancel</Button>
                             {/* </Form.Group> */}
-
                         </Form>
-                    </Row>
-                </Card.Body>
-
-            </Card>
+                    </Col>
+                </Row>
+            </Container>
         </Container>
     )
 }

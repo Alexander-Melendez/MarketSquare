@@ -4,12 +4,12 @@ import { Card, Container, Col, Row, Button, ButtonGroup, InputGroup, ListGroup }
 
 function ListingItem({ listing, id, onEdit, onDelete }) {
   return (
-    <Col md="auto">
+    <Col md="auto mb-3">
       <Card style={{ width: '18rem' }}>
         <Card.Header></Card.Header>
         <Container fluid>
 
-          <Card.Img variant="top" src="holder.js/100px180" />
+          
           <Card.Title>Card Title</Card.Title>
           <Card.Body>
 
@@ -17,22 +17,22 @@ function ListingItem({ listing, id, onEdit, onDelete }) {
               Description
             </Card.Text>
           </Card.Body>
-
-
         </Container>
         <ListGroup variant='flush'>
           <ListGroup.Item>Category</ListGroup.Item>
           <ListGroup.Item>Date</ListGroup.Item>
           <ListGroup.Item>Price</ListGroup.Item>
         </ListGroup>
-        <Card.Footer className="justify-content-md-center" >
-          <Container as={Row} xs={6} >
+        <Card.Img variant="top" src="holder.js/100px180" />
+        <Card.Footer>
+          <Row className="justify-content-md-center"  >
             {
               onEdit &&
               <Button
                 onClick={() => onEdit(id)}
                 as={Col}
-                variant="outline-success">
+                variant="success" 
+                xs={6}>
                 Edit
               </Button>
             }
@@ -40,11 +40,12 @@ function ListingItem({ listing, id, onEdit, onDelete }) {
               onDelete &&
               <Button as={Col}
                 onClick={() => onDelete(id)}
-                variant="outline-danger">
+                variant="danger"
+                xs={6}>
                 Delete
               </Button>
             }
-          </Container>
+          </Row>
         </Card.Footer>
       </Card>
     </Col>

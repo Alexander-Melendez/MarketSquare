@@ -1,14 +1,14 @@
+import '../App.css';
 import { createContext, useState, useEffect } from 'react'
-// InputGroup and FormControl from 'react-bootstrap' removed to reduce unused errors
 import { Row, Col, Card, Form, Button, Container } from 'react-bootstrap';
 import { Link, Redirect, useLocation } from 'react-router-dom';
-// Removed import { Redirect } from "react-router-dom"; to reduce unused errors
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+
 // Keeping this here as I will fix the jwt soon
 import { useJwt, decodeToken } from "react-jwt";
-// import jwt from "jsonwebtoken"
+
 // form validation rules 
 const loginSchema = yup.object().shape({
     email: yup.string().email("example: user@site.com").required("Required"),
@@ -24,12 +24,12 @@ function LoginPage() {
         formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState }
     } = useForm({
         resolver: yupResolver(loginSchema),
-        mode: "onBlur",
-        reValidateMode: "onBlur",
+        mode: "all",
+        reValidateMode: "all",
     });
 
     // const [redirectPrev, setRedirectPrev ] = useState(false)
-    
+
     // const { decodedToken, isExpired } = useJwt("");
     const onSubmit = async (data) => {
 
@@ -66,21 +66,22 @@ function LoginPage() {
                 var user = { id: ud.payload.id, firstName: ud.payload.firstName, lastName: ud.payload.lastName }*/
 
             if (res.fn.length > 0) {
-                
+
                 // storage.storeToken(res);
                 // var jwt = require('jsonwebtoken'); 
 
                 // var ud = jwt.decode(storage.retrieveToken(),{complete:true}); 
 
                 var tok = decodeToken(res.accessToken);
+                console.log("Login Token: ", tok)
                 localStorage.setItem('token_data', tok);
                 // var user = { id: ud.payload.id, firstName: ud.payload.firstName, lastName: ud.payload.lastName }
 
                 // var user = { id: res.id, irstName: res.fn, lastName: res.ln }
-                var user = { firstName: res.fn, lastName: res.ln }
+                var user = { firstName: res.fn, lastName: res.ln, id: res.id, token: tok }
                 localStorage.setItem('user_data', JSON.stringify(user));
                 // console.log(res, user, storage.retrieveToken('user_data'));
-                console.log("TOK: ", tok, "\nres:", res, "\nuserJson:", user)
+                console.log("\nres:", res, "\nuserJson:", user)
                 window.location.href = '/Home';
                 // setRedirectPrev(true)
 
@@ -94,7 +95,7 @@ function LoginPage() {
             console.log(e.toString());
         }
     };
-    
+
 
     // const location = useLocation()
     // if (redirectPrev === true){
@@ -102,73 +103,68 @@ function LoginPage() {
     // }
 
     return (
-        <Container
-            className=" justify-content-center d-flex align-items-center"
-            style={{ "minHeight": "90vh" }}
-        >
-            {/* <Row>
-            <Col md lg="4"> */}
-            {/* <Card className='mx-auto'> */}
-                {/* <Card.Body className="loginCont"> */}
-                    
-                    <Row >
-                        <div className='text-center'><h1 className='text-Center'>{'Login'}</h1></div>
+        <Container className='formOverlay'>
+            <Container
+                className=" justify-content-center d-flex align-items-center"
+                style={{ "minHeight": "70vh" }}
+            >
+                <Row >
+                    <div className='text-center'><h1 className='text-Center'>Login</h1></div>
                     <hr />
-                        <Col>
-                            <Form 
-                                noValidate 
-                                onSubmit={handleSubmit(onSubmit)} 
-                                onReset={reset}
-                                // className="loginCont"
-                            >
-                                <Row className="mb-3">
-                                    <Form.Group as={Col} controlId="formGridEmail">
-                                        <Form.Label>Email</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            name="email"
-                                            {...register("email")}
-                                            isInvalid={!!errors.email && touchedFields.email}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.email?.message}
-                                        </Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <Form.Label>password</Form.Label>
-                                        <Form.Control
-                                            type="password"
-                                            name="password"
-                                            {...register("password")}
-                                            isInvalid={!!errors.password && touchedFields.password}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.password?.message}
-                                        </Form.Control.Feedback>
-                                    </Form.Group>
-                                </Row>
-                                {/* <Form.Group as={Row} controlId="formControls"> */}
-                                <Button
-                                    type="submit"
-                                    disabled={formState.isSubmitting}
-                                    className="btn btn-primary">
-                                    {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
-                                    </span>}
-                                    Login
-                                </Button>
-                                <Button as={Link} variant='link' to="/Register">
-                                    Register an Account
-                                </Button>
-                                {/* </Form.Group> */}
+                    <Col>
+                        <Form
+                            noValidate
+                            onSubmit={handleSubmit(onSubmit)}
+                            onReset={reset}
+                        // className="loginCont"
+                        >
+                            <Row className="mb-3">
+                                <Form.Group as={Col} controlId="formGridEmail">
+                                    <Form.Label>Email</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="email"
+                                        {...register("email")}
+                                        isInvalid={!!errors.email && touchedFields.email}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.email?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label>password</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        name="password"
+                                        {...register("password")}
+                                        isInvalid={!!errors.password && touchedFields.password}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.password?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Row>
+                            {/* <Form.Group as={Row} controlId="formControls"> */}
+                            <Button
+                                type="submit"
+                                // disabled={formState.isSubmitting}
+                                className="btn btn-primary">
+                                {/* {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
+                            </span>} */}
+                                Login
+                            </Button>
+                            <Button as={Link} variant='link' to="/Register">
+                                Register an Account
+                            </Button>
+                            <Button as={Link} variant='link' to="/Register">
+                                Forgot Password
+                            </Button>
+                            {/* </Form.Group> */}
 
-                            </Form>
-                        </Col>
-                    </Row>
-                {/* </Card.Body> */}
-            {/* </Card> */}
-
-            {/* </Col>
-        </Row> */}
+                        </Form>
+                    </Col>
+                </Row>
+            </Container>
         </Container>
     );
 }

@@ -1,13 +1,13 @@
+import '../App.css';
 import { useState, useEffect, useRef } from 'react'
 
-// Removed FormControl to reduce unused from 'react-bootstrap'
-// import React, { useState } from "react";
 import { v4 as uuid } from 'uuid';
 import { Row, Col, Card, Form, Button, InputGroup, Image, CloseButton, Container } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { withRouter } from 'react-router-dom';
+
 
 // form validation rules 
 const req = "Required field"
@@ -53,7 +53,7 @@ function NewListingPage() {
         formState: { errors, dirtyFields, isSubmitting, touchedFields, submitCount, ...formState }
     } = useForm({
         resolver: yupResolver(productSchema),
-        mode: "onChange",
+        mode: "all",
         reValidateMode: "all",
     });
     const fileInput = useRef(null)
@@ -73,7 +73,7 @@ function NewListingPage() {
 
     function clearForm() {
         setFiles(def)
-        reset({keepDefaultValuesk:true})
+        reset({ keepDefaultValuesk: true })
         console.log()
     }
 
@@ -183,20 +183,18 @@ function NewListingPage() {
     };
 
     return (
-        <Container fluid>
-            <Card>
-                <Card.Body>
-                    <Row>
-                        <Col><Card.Title>Create New Listing</Card.Title></Col>
-                        <Col>
-                        </Col>
-                    </Row>
+        <Container className='formOverlay'>
+            <Container
+                // fluid
+                className="justify-content-center d-flex align-items-center"
+                style={{ "minHeight": "56vh" }}
+            >
+                <Row>
+                    <h5>New Listing</h5>
                     <hr />
-                    <Row>
-                        <Form noValidate onSubmit={handleSubmit(postNewListing)}
-                        // onReset={reset}
-                        >
-                            <Row className="mb-3">
+                    <Col>
+                        <Form noValidate onSubmit={handleSubmit(postNewListing)}>
+                            <Row >
                                 <Form.Group>
                                     <Form.Label>Product Name</Form.Label>
                                     <Form.Control
@@ -379,10 +377,9 @@ function NewListingPage() {
                             {/* <Button onClick={clearForm}>CLEAR</Button> */}
                             {/* <Button onClick={handleReset}>APPLY DEFAULT</Button> */}
                         </Form>
-                    </Row>
-                </Card.Body>
-
-            </Card>
+                    </Col>
+                </Row>
+            </Container>
         </Container>
     );
 }
