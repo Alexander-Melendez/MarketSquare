@@ -101,7 +101,8 @@ app.post('/api/search', async (req, res, next) =>
   //   }
     
   // const db = client.db();
-  let _ret = [];
+  // let _ret = [];
+  var results;
     
   var _search = search? search.trim() : "";
 
@@ -115,7 +116,7 @@ app.post('/api/search', async (req, res, next) =>
       ).toArray();
       */
 
-      const results = await Product.find(
+      results = await Product.find(
         {$or:[
         {"ProductName":{$regex:_search + '*', $options:'i',}},
         {"ProductCategory":{$regex:_search + '*', $options:'i'}}]});
@@ -162,7 +163,7 @@ app.post('/api/search', async (req, res, next) =>
 //   }
 
   // var ret = {results:_ret, error:error, jwtToken: refreshedToken};
-  var ret = {results:_ret, error:error};
+  var ret = {results:results, error:error};
   res.status(200).json(ret);
 });
 
