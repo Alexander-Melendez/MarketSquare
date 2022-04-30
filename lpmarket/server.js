@@ -1,14 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
+const crypto = require('crypto');
+const multer = require('multer');
+const {GridFsStorage} = require('multer-gridfs-storage');
+const Grid = require('gridfs-stream');
+const methodOverride = require('method-override');
 const path = require('path');           
 const PORT = process.env.PORT || 5000;
 const app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(cors());
 app.use(bodyParser.json());
-
+app.use(methodOverride('_method'));
 require('dotenv').config();
 
 const url = process.env.MONGODB_URI;
@@ -20,6 +24,41 @@ mongoose.connect(url)
 // const MongoClient = require('mongodb').MongoClient;
 // const client = new MongoClient(url);
 // client.connect();
+
+let gfs;
+const conn = mongoose.createConnection(url);
+conn.once('open', () => {
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection('uploads');
+})
+
+const storage = new GridFsStorage({
+  url: url,
+  file: (req, file) => {
+    return new Promise((resolve, reject) => {
+      crypto.randomBytes(16, (err, buf) => {
+        if (err) {
+          return reject(err);
+        }
+        const filename = buf.toString('hex') + path.extname(file.originalname);
+        const fileInfo = {
+          filename: filename,
+          bucketName: 'uploads'
+        };
+        resolve(fileInfo);
+      });
+    });
+  }
+});
+const upload = multer({ storage });
+
+app.get('/', (req, res) => {
+  res.render('index');
+});
+
+app.post('/upload', upload.single('file'), (req, res) => {
+  res.json({file: req.file});
+});
 
 var api = require('./api.js');
 api.setApp(app, mongoose);
