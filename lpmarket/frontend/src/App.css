@@ -184,6 +184,16 @@ html, body, #root, .App {
   display: inline-block;
   font-size: 16px;
 }
+.Outside {
+  background-color: #ffffff;
+  height: 1000px;
+  width: 1000px;
+}
+.Closebutton {
+  cursor:pointer;
+  text-align: right;
+  margin-right: 12px;
+}
 
 /*.popup {
   position: fixed;
