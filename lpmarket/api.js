@@ -163,7 +163,7 @@ app.post('/api/search', async (req, res, next) =>
 //   }
 
   // var ret = {results:_ret, error:error, jwtToken: refreshedToken};
-  var ret = {results:_ret, error:error};
+  var ret = {results:_ret, res:results, error:error};
   // var ret = {results:results, error:error}; // this method returns an array of objects
   res.status(200).json(ret);
 });

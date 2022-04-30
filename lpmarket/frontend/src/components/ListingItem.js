@@ -10,18 +10,18 @@ function ListingItem({ listing, id, onEdit, onDelete }) {
         <Container fluid>
 
           
-          <Card.Title>Card Title</Card.Title>
+          <Card.Title><strong>{listing.ProductName}</strong></Card.Title>
           <Card.Body>
-
             <Card.Text>
-              Description
+              {/* Description */}
             </Card.Text>
           </Card.Body>
         </Container>
         <ListGroup variant='flush'>
-          <ListGroup.Item>Category</ListGroup.Item>
-          <ListGroup.Item>Date</ListGroup.Item>
-          <ListGroup.Item>Price</ListGroup.Item>
+          <ListGroup.Item><strong>Category: </strong>{listing.ProductCategory}</ListGroup.Item>
+          <ListGroup.Item><strong>Date: </strong>{listing.DateListed}</ListGroup.Item>
+          <ListGroup.Item><strong>Price: </strong>${listing.ProductPrice}</ListGroup.Item>
+          <ListGroup.Item><strong>Price: </strong>${listing.ProductPrice}</ListGroup.Item>
         </ListGroup>
         <Card.Img variant="top" src="holder.js/100px180" />
         <Card.Footer>

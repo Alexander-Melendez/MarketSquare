@@ -12,6 +12,7 @@ import EditProfile from './pages/EditProfile';
 import UserListings from './pages/UserListings';
 import EditListing from './pages/EditListing';
 
+import ListingItem from './components/ListingItem';
 import LoggedInName from './components/LoggedInName'
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -40,7 +41,7 @@ function App() {
         { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
       var txt = await response.text();
       var res = JSON.parse(txt);
-      // console.log(res)
+      console.log(res)
       var _results = res.results;
       var resultsName = [];
       var resultsProductCategory = [];
@@ -208,6 +209,7 @@ function App() {
 
       <Switch >
         <Route path='/' exact component={PlacingTest} />
+        {/* <Route path='/' exact component={PlacingTest} /> */}
         <ProtectedRoute exact path='/UserListings' component={UserListings} />
         <ProtectedRoute exact path='/NewListing' component={NewListingPage} />
         <ProtectedRoute exact path='/EditProfile' component={EditProfile} />

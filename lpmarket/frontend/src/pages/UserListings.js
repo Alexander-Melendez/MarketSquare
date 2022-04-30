@@ -12,9 +12,24 @@ function UserListings() {
 
   let bp = require('../Path.js');
 
-  const [listings, setListings] = useState(null)
+  const [listings, setListings] = useState([])
   const history = useHistory()
+  useEffect(async () => {
+    var obj = { userId: 0, search: "" };
+    var js = JSON.stringify(obj);
+    try {
+      const response = await fetch(bp.buildPath('api/search'),
+        { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
+      var txt = await response.text();
+      var res = JSON.parse(txt);
+      console.log(res)
+      setListings(res.res)
 
+    } catch (e) {
+      alert(e.toString());
+      // setResults(e.toString());
+    }
+  }, []);
 
   useEffect(async () => {
     var obj = { userId: JSON.parse(localStorage.getItem("user_data")).id };
@@ -78,13 +93,13 @@ function UserListings() {
       <h2 className="pb-2 text-center border-bottom">Your Listings</h2>
       <Container className='myItems' fluid>
         <Row className="justify-content-start mb-3">
-          {listingsLists.map((id) =>
+          {listings.map((item) =>
             <ListingItem
-              key={id}
-              id={id}
-              onEdit={() => onEdit(id)}
-              onDelete={() => onDelete(id)}>
-
+              listing={item}
+              key={item._id}
+              id={item._id}
+              onEdit={() => onEdit(item._id)}
+              onDelete={() => onDelete(item._id)}>
             </ListingItem>)}
         </Row>
       </Container>
