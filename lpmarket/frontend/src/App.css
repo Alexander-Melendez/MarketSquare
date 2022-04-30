@@ -67,6 +67,7 @@ grid-template-columns: 1fr 1fr 1fr 1fr;
   text-indent: 3%;
   text-align: left;
   font-size: 20px;
+  border-color:#001975;
   background-color: #f3f3f3;
 }
 
@@ -76,12 +77,13 @@ grid-template-columns: 1fr 1fr 1fr 1fr;
 
 .popupclass {
   position: fixed;
-  height: 700px;
+  height: 800px;
   width: 600px;
   font-size: 32px;
   border-style: solid;
   text-indent: 3%;
   background-color: #f3f3f3;
+  border-color:#001975;
   top: calc(50% - 350px);
   left: calc(50% - 300px);
   animation: popup 1s;
@@ -144,6 +146,43 @@ html, body, #root, .App {
   border-radius: 0px 0px 20px 20px;
   min-width: 98%;
   min-height: 80%;
+}
+
+.smallimg img{
+  display:block;
+  height: 200px;
+  width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+  object-fit: contain;
+  border-style:solid;
+  border-color:#001975;
+  object-fit: contain;
+}
+
+
+
+.bigimg img{
+  display:block;
+  height: 285px;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  object-fit: contain;
+  border-style:solid;
+  border-color:#001975;
+  object-fit: contain;
+}
+
+.navbutton button{
+  background-color: #002cca;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }
 
 /*.popup {

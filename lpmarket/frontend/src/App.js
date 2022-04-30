@@ -16,6 +16,7 @@ import LoggedInName from './components/LoggedInName'
 import ProtectedRoute from './components/ProtectedRoute';
 
 const Temp = [];
+const image = ['https://assets-global.website-files.com/5e78ee1f2f0ca263f9b67c56/5f04a4babe7bb91e10639f9a_ssat-at-home01%402x.png'];
 
 function App() {
   var search = '';
@@ -28,7 +29,11 @@ function App() {
   const [StateArray, setState] = useState(Temp);
   const [CityArray, setCity] = useState(Temp);
   const [ConditionArray, setCondition] = useState(Temp);
-  const length = NameArray.length;
+  const[ImageArray, setImage] = useState(image);
+
+  const [counter, setCounter] = useState(0);
+  let displaynumber = 4;
+
 
   let bp = require('./Path.js');
 
@@ -76,8 +81,25 @@ function App() {
       setResults(e.toString());
     }
   }, []);
+  
 
   function PlacingTest() {
+    const [currentlength, setLength] = useState(NameArray.length);
+    function Next() {
+      if(currentlength > displaynumber*(counter+1)) {
+        setCounter(counter+1)
+      }
+    }
+    
+    function Prev() {
+      if(counter > 0) {
+        setCounter(counter-1)
+      }
+    }
+    function Index() {
+      alert(currentlength)
+      alert(counter)
+    }
     function FormattedBoxesone(index) {
       const [Switch, setSwitch] = useState(false);
       return (
@@ -88,6 +110,9 @@ function App() {
             <p>$ {PriceArray[index]}</p>
             <p>{ProductCategoryArray[index]}</p>
             <p>Location: {CityArray[index]} {StateArray[index]}</p>
+            <div class="smallimg">
+              <img src={ImageArray[index]} alt = {"No image was uploaded by the user"}/>
+            </div>
           </div>
           <div className={Switch ? "popupclass" : "hidden"} onClick={() => setSwitch(false)}>
             <p className="Product">{NameArray[index]}</p>
@@ -98,27 +123,43 @@ function App() {
             <p className="Descriptiontwo">Description</p>
             <p className="Description"> {DescArray[index]}</p>
             <p>Contact Info: {ContactInfoArray[index]}</p>
+            <div class="bigimg">
+              <img src={ImageArray[index]} alt = {"No image was uploaded by the user"}/>
+            </div>
           </div>
         </Col >
       );
     }
 
     var rowone = [];
-    let numloop = (length / 4);
+    let numloop = (currentlength / 4);
     var boxes = [];
     let boxloops = 4;
-    if (length % 4 !== 0) {
-      numloop = (length / 4) - 1;
-    }
-
-    for (var i = 0; i < numloop; i++) {
-      for (var j = 0; j < boxloops; j++) {
-        boxes.push(FormattedBoxesone(i * 4 + j));
+    if(currentlength > displaynumber*(counter+1)) {
+      numloop=displaynumber/4
+      for (var i = 0; i < numloop; i++) {
+        for (var j = 0; j < boxloops; j++) {
+          boxes.push(FormattedBoxesone((i * 4 + j)+(counter*displaynumber)));
+        }
       }
     }
-    for (var k = 0; k < length % 4; k++) {
-      boxes.push(FormattedBoxesone(i * 4 + k));
+    else {
+      numloop = (currentlength / 4)-((displaynumber/4)*counter)
+      if (currentlength % 4 !== 0) {
+        numloop = numloop - 1;
+      }
+      var a = 0
+      for (a = 0; a < numloop; a++) {
+        for (var b = 0; b < boxloops; b++) {
+          boxes.push(FormattedBoxesone((a * 4 + b)+(counter*displaynumber)));
+        }
+      }
+      for (var k = 0; k < currentlength % 4; k++) {
+        boxes.push(FormattedBoxesone((a * 4 + k)+(counter*displaynumber)));
+      }
     }
+    
+    
     rowone.push(boxes);
 
     return (
@@ -128,6 +169,9 @@ function App() {
             {rowone}
           </Row>
         </Container>
+        <div class = "navbutton">
+          <button onClick={Prev}>Prev</button>  <button onClick={Next}>Next</button> <button onClick={Index}>Index</button>
+        </div>
       </Container>
     );
   }
