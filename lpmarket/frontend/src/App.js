@@ -96,10 +96,6 @@ function App() {
         setCounter(counter-1)
       }
     }
-    function Index() {
-      alert(currentlength)
-      alert(counter)
-    }
     function FormattedBoxesone(index) {
       const [Switch, setSwitch] = useState(false);
       return (
@@ -114,7 +110,8 @@ function App() {
               <img src={ImageArray[index]} alt = {"No image was uploaded by the user"}/>
             </div>
           </div>
-          <div className={Switch ? "popupclass" : "hidden"} onClick={() => setSwitch(false)}>
+          <div className={Switch ? "popupclass" : "hidden"}>
+            <div className="Closebutton" onClick={() => setSwitch(false)}>X</div>
             <p className="Product">{NameArray[index]}</p>
             <p>Condition: {ConditionArray[index]}</p>
             <p>${PriceArray[index]}</p>
@@ -170,7 +167,7 @@ function App() {
           </Row>
         </Container>
         <div class = "navbutton">
-          <button onClick={Prev}>Prev</button>  <button onClick={Next}>Next</button> <button onClick={Index}>Index</button>
+          <button onClick={Prev}>Prev</button>  <button onClick={Next}>Next</button> 
         </div>
       </Container>
     );
