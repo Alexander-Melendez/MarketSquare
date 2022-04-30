@@ -27,7 +27,7 @@ exports.setApp = function(app, client)
 
   if( results.length > 0 )
   {
-    id = results[0].UserID;
+    id = results[0]._id;
     fn = results[0].FirstName;
     ln = results[0].LastName;
 
@@ -103,9 +103,9 @@ app.post('/api/search', async (req, res, next) =>
   // const db = client.db();
   let _ret = [];
     
-  var _search = search.trim();
+  var _search = search? search.trim() : "";
 
-  if ( _search )
+  if ( _search !== "")
   {
       /*
       const results = await db.collection('ProductInfo').find(
@@ -134,7 +134,7 @@ app.post('/api/search', async (req, res, next) =>
   }
   else
   {
-    const results = await db.collection('ProductInfo').find().toArray();
+    const results = await Product.find() //db.collection('ProductInfo').find().toArray();
 
     for( var i = 0; i < results.length; i++ )
     {
