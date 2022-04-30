@@ -101,7 +101,7 @@ app.post('/api/search', async (req, res, next) =>
   //   }
     
   // const db = client.db();
-  // let _ret = [];
+  let _ret = [];
   var results;
     
   var _search = search? search.trim() : "";
@@ -123,7 +123,6 @@ app.post('/api/search', async (req, res, next) =>
 
       for( var i = 0; i < results.length; i++ )
       {
-        _ret.push( results[i]._id );
         _ret.push( results[i].ProductName );
         _ret.push( results[i].ProductCategory );
         _ret.push( results[i].ProductDescription );
@@ -132,15 +131,15 @@ app.post('/api/search', async (req, res, next) =>
         _ret.push( results[i].ProductState );
         _ret.push( results[i].ProductCity );
         _ret.push( results[i].ProductCondition );
+        // _ret.push( results[i]._id );   
       }
   }
   else
   {
-    const results = await Product.find() //db.collection('ProductInfo').find().toArray();
+    results = await Product.find() //db.collection('ProductInfo').find().toArray();
 
     for( var i = 0; i < results.length; i++ )
     {
-      _ret.push( results[i]._id );
       _ret.push( results[i].ProductName );
       _ret.push( results[i].ProductCategory );
       _ret.push( results[i].ProductDescription );
@@ -149,6 +148,7 @@ app.post('/api/search', async (req, res, next) =>
       _ret.push( results[i].ProductState );
       _ret.push( results[i].ProductCity );
       _ret.push( results[i].ProductCondition );
+      // _ret.push( results[i]._id );
     }
   }
 
@@ -163,7 +163,8 @@ app.post('/api/search', async (req, res, next) =>
 //   }
 
   // var ret = {results:_ret, error:error, jwtToken: refreshedToken};
-  var ret = {results:results, error:error};
+  var ret = {results:_ret, error:error};
+  // var ret = {results:results, error:error}; // this method returns an array of objects
   res.status(200).json(ret);
 });
 

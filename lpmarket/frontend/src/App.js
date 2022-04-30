@@ -40,6 +40,7 @@ function App() {
         { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
       var txt = await response.text();
       var res = JSON.parse(txt);
+      // console.log(res)
       var _results = res.results;
       var resultsName = [];
       var resultsProductCategory = [];
