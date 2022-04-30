@@ -122,6 +122,7 @@ app.post('/api/search', async (req, res, next) =>
 
       for( var i = 0; i < results.length; i++ )
       {
+        _ret.push( results[i]._id );
         _ret.push( results[i].ProductName );
         _ret.push( results[i].ProductCategory );
         _ret.push( results[i].ProductDescription );
@@ -138,6 +139,7 @@ app.post('/api/search', async (req, res, next) =>
 
     for( var i = 0; i < results.length; i++ )
     {
+      _ret.push( results[i]._id );
       _ret.push( results[i].ProductName );
       _ret.push( results[i].ProductCategory );
       _ret.push( results[i].ProductDescription );
