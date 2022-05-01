@@ -1,6 +1,7 @@
 import '../App.css';
 import { useState, useEffect, useRef } from 'react'
-
+import fbStorage from '../firebase';
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 as uuid } from 'uuid';
 import { Row, Col, Card, Form, Button, InputGroup, Image, CloseButton, Container } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
@@ -47,7 +48,7 @@ function checkIfFilesAreCorrectType(uploads) {
 
 function NewListingPage() {
     let bp = require('../Path.js');
-
+    let tokenStorage = require('../tokenStorage.js')
     // Removed setValue, getValues, and errors to reduce unused errors
     const { register, handleSubmit, reset, setValue, getValues, resetField,
         formState: { errors, dirtyFields, isSubmitting, touchedFields, submitCount, ...formState }
@@ -88,37 +89,30 @@ function NewListingPage() {
         fileInput.current.click()
     }
 
+    function deleteFile(id) {
+        const imageIndex = images.findIndex(item => item.id === id);
+
+        console.log("Delete: \nfiles- ", files, "\n values: ", getValues("images"))
+        if (imageIndex > -1) {
+            const value = files.filter((_, i) => i !== imageIndex);
+            setImages(images.filter(item => item.id !== id));
+            setFiles(value);
+            if (images.length === 1) {
+                resetField('images');
+            }
+        }
+        // console.log("Aftter Delete: ", files, "\n values: ", getValues("images"))
+    }
     async function uploadimg(e) {
         const fileList = e.target.files;
 
-        /*var f
-        if (files === null){
-            f = fileList
-        }
-        else {
-            var dt = new DataTransfer()
-            for (var i = 0; i < files.length; i++) {
-                dt.items.add(files[i]) 
-            }
-            for (var i = 0; i < fileList.length; i++) {
-                dt.items.add(fileList[i])
-            }
-            f = dt.files
-        }*/
-
-        let imageList
         if (fileList.length > 0) {
+            setFiles(files => [...files, ...Array.from(fileList)])
             // imageList = await Promise.all(Array.from(fileList).map(async (f) => {
             //     const image = await readFileAsync(f)
             //     return image
             // }))
-
-            // // update image array
-            // setImages(images => [...images, ...imageList]);
-            setFiles(files => [...files, ...Array.from(fileList)])
-
             // console.log("Before setvalue: ", getValues("images"))
-
             console.log("In upload: ", getValues("images"))
         }
     }
@@ -140,24 +134,55 @@ function NewListingPage() {
         });
     }
 
-    function deleteFile(id) {
-        const imageIndex = images.findIndex(item => item.id === id);
 
-        console.log("Delete: \nfiles- ", files, "\n values: ", getValues("images"))
-        if (imageIndex > -1) {
-            const value = files.filter((_, i) => i !== imageIndex);
-            setImages(images.filter(item => item.id !== id));
-            setFiles(value);
-            if (images.length === 1) {
-                resetField('images');
-            }
-        }
-        // console.log("Aftter Delete: ", files, "\n values: ", getValues("images"))
-    }
 
     const postNewListing = async (data) => {
-        console.log(data)
-        var send = JSON.stringify(data);
+        // console.log(data)
+
+        const storeImage = async (image) => {
+            return new Promise((resolve, reject) => {
+                // const fbStorage = getStorage()
+                const fileName = `${image.name}-${uuid()}`
+                const storageRef = ref(fbStorage, '/images/' + fileName)
+                const uploadTask = uploadBytesResumable(storageRef, image)
+                uploadTask.on(
+                    'state_changed',
+                    (snapshot) => {
+                        const progress =
+                            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                        console.log('Upload is ' + progress + '% done')
+                        switch (snapshot.state) {
+                            case 'paused':
+                                console.log('Upload is paused')
+                                break
+                            case 'running':
+                                console.log('Upload is running')
+                                break
+                            default:
+                                break
+                        }
+                    },
+                    (error) => {reject(error)},
+                    () => {
+                        // Handle successful uploads on complete
+                        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            resolve(downloadURL)
+                        })
+                    }
+                )
+            })
+        }
+
+        console.log("Onsubmit: ", data)
+
+        const imgUrls = await Promise.all(
+            data.images.map((image) => storeImage(image))
+        ).catch(() => {
+            return
+        })
+
+        var send = JSON.stringify({...data, ProductImages: imgUrls, jwtToken: tokenStorage.retrieveToken()});
         console.log(send)
         try {
             const response = await fetch(bp.buildPath('api/addproduct'),
