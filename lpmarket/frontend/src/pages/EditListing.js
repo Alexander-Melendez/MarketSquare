@@ -86,17 +86,18 @@ function EditListing() {
         console.log(listing)
         // fields.forEach(field => setValue(field, user[field]));
         if (listing.ProductImages)
-            setOldImages(listing.ProductImages.map((image) => ({ url: image, id: uuid() })))
+            setOldImages(listing.ProductImages.map((image) => ({ url: image, id:image })))
     }, [])
 
     useEffect(async () => {
-        if (getValues("images")) {
+        console.log("fileUseEff:", files)
+        if (files.length !== 0) {
             setValue("images", files, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
             let imageList = await Promise.all(files.map(async (f) => {
                 const image = await readFileAsync(f)
                 return image
             }))
-            setImages(images => imageList);
+            setImages(images => [...images, ...imageList]);
         }
     }, [files])
 
@@ -105,7 +106,7 @@ function EditListing() {
     }, [oldImages])
 
     useEffect(() => {
-        console.log("UseEff:", images)
+        // console.log("ImgUseEff:", images)
     }, [images])
 
     function resetForm() {
@@ -161,6 +162,75 @@ function EditListing() {
 
     }
 
+    const requestEdit = async (data) => {
+        // console.log("Formdata: ", data)
+        const storeImage = async (image) => {//(image) => { 
+            return new Promise((resolve, reject) => {
+                // const fbStorage = getStorage()
+                const fileName = `${image.name}-${uuid()}`
+                const storageRef = ref(storage, '/images/' + fileName)
+
+                const uploadTask = uploadBytesResumable(storageRef, image)
+                uploadTask.on(
+                    /**/
+                    'state_changed',
+                    (snapshot) => { },
+                    (error) => {
+                        reject(error)
+                    },
+                    () => {
+                        // Handle successful uploads on complete
+                        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            resolve(downloadURL)
+                        })
+                    }
+                )
+            })
+        }
+        // console.log("Onsubmit: ", data)
+        let prev = images.filter((image) => (!image.type))
+        prev.forEach(function(prev){ delete prev.url });
+        let kept = prev.map(function(key) {return key.id});
+
+        // console.log("Filtered existing:", kept)
+
+        const imgUrls = await Promise
+            .all(data.images.map((image) => storeImage(image))
+            ).catch(() => { return }) 
+
+        var send = {
+            ...data,
+            ProductImages: [...kept, ...imgUrls],
+            email: JSON.parse(localStorage.getItem("user_data")).email,
+            // jwtToken: tokenStorage.retrieveToken()
+        }
+        console.log(send)
+        JSON.stringify(send);
+
+        // try {
+        //     const response = await fetch(bp.buildPath('api/editProduct'),
+        //         {
+        //             method: 'POST',
+        //             body: send,
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             }
+        //         });
+        //     var txt = await response.text();
+        //     var res = JSON.parse(txt);
+        //     if (res.error.length > 0) {
+        //         console.log("API Error:" + res.error);
+        //     }
+        //     else {
+        //         console.log(res);
+        //     }
+        // }
+        // catch (e) {
+        //     console.log(e.toString());
+        // }
+    };
+
     const onDelete = async (listingId) => {
         if (window.confirm('Are you sure you want to delete?')) {
             // api call
@@ -194,70 +264,6 @@ function EditListing() {
             //   setListings(updatedListings)
         }
     }
-
-    const requestEdit = async (data) => {
-        // console.log("Formdata: ", data)
-        const storeImage = async (image) => {//(image) => { 
-            return new Promise((resolve, reject) => {
-                // const fbStorage = getStorage()
-                const fileName = `${image.name}-${uuid()}`
-                const storageRef = ref(storage, '/images/' + fileName)
-
-                const uploadTask = uploadBytesResumable(storageRef, image)
-                uploadTask.on(
-                    /**/
-                    'state_changed',
-                    (snapshot) => { },
-                    (error) => {
-                        reject(error)
-                    },
-                    () => {
-                        // Handle successful uploads on complete
-                        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                            resolve(downloadURL)
-                        })
-                    }
-                )
-            })
-        }
-        // console.log("Onsubmit: ", data)
-
-        const imgUrls = await Promise
-            .all(files.map((image) => storeImage(image))
-            ).catch(() => { return })
-
-        var send = {
-            ...data,
-            ProductImages: imgUrls,
-            email: JSON.parse(localStorage.getItem("user_data")).email,
-            jwtToken: tokenStorage.retrieveToken()
-        }
-        console.log(send)
-        JSON.stringify(send);
-
-        try {
-            const response = await fetch(bp.buildPath('api/editProduct'),
-                {
-                    method: 'POST',
-                    body: send,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-            var txt = await response.text();
-            var res = JSON.parse(txt);
-            if (res.error.length > 0) {
-                console.log("API Error:" + res.error);
-            }
-            else {
-                console.log(res);
-            }
-        }
-        catch (e) {
-            console.log(e.toString());
-        }
-    };
 
     return (
         <Container className='formOverlay'>
