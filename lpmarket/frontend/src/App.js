@@ -110,27 +110,29 @@ function App() {
       return (
         <Col  md="auto">
           <div className={Switching ? "box" : "hidden"} onClick={TrueSwitch}>
-            <p className="Product">{NameArray[index]}</p>
-            <p>Condition: {ConditionArray[index]}</p>
-            <p>$ {PriceArray[index]}</p>
-            <p>{ProductCategoryArray[index]}</p>
-            <p>Location: {CityArray[index]} {StateArray[index]}</p>
+            <p></p>
             <div class="smallimg">
               <img src={ImageArray[index]} alt = {"No image was uploaded by the user"}/>
             </div>
+            <p className="Product">{NameArray[index]}</p>
+            <p>Catagory:{ProductCategoryArray[index]}</p>
+            <p>Price: $ {PriceArray[index]}</p>
+            <p>Condition: {ConditionArray[index]}</p>
+            <p>Location: {CityArray[index]} {StateArray[index]}</p>
           </div>
           <div className={Switch ? "OpenPage" : "hidden"}>
             <div className="Closebutton" onClick={FalseSwitch}>X</div>
-            <p className="Product">{NameArray[index]}</p>
-            <p>Condition: {ConditionArray[index]}</p>
-            <p>${PriceArray[index]}</p>
-            <p> {ProductCategoryArray[index]}</p>
-            <p>Location: {StateArray[index]} {CityArray[index]}</p>
-            <p className="Descriptiontwo">Description</p>
-            <p className="Description"> {DescArray[index]}</p>
-            <p>Contact Info: {ContactInfoArray[index]}</p>
             <div class="bigimg">
               <img src={ImageArray[index]} alt = {"No image was uploaded by the user"}/>
+            </div>
+              <p className="Product">{NameArray[index]}</p>
+            <div className = "alignment">
+              <p>Price: ${PriceArray[index]}</p>
+              <p>Condition: {ConditionArray[index]}</p>
+              <p>Location: {StateArray[index]} {CityArray[index]}</p>
+              <p className="Descriptiontwo">Description</p>
+              <p className="Description"> {DescArray[index]}</p>
+              <p>Contact Info: {ContactInfoArray[index]}</p>
             </div>
           </div>
         </Col >
