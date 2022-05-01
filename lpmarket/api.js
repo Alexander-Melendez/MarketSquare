@@ -315,7 +315,7 @@ app.post('/api/activateAccount', async (req, res, next) =>
     // incoming: productName
     // outgoing: error
 
-    const { productName, email, newName, newDescription, newCategory, newPrice, newContactInfo, newProductState, newProductCity, newProductCondition } = req.body;
+    const { productName, email, newName, newDescription, newCategory, newPrice, newContactInfo, newProductState, newProductCity, newProductCondition, newProductImages } = req.body;
     const productToUpdate = { ProductName: productName, Email: email };
     const updateInfo =
     {
@@ -327,7 +327,8 @@ app.post('/api/activateAccount', async (req, res, next) =>
         ContactInfo: newContactInfo,
         ProductState: newProductState,
         ProductCity: newProductCity,
-        ProductCondition: newProductCondition
+        ProductCondition: newProductCondition,
+        ProductImages: newProductImages
       },
     };
 
