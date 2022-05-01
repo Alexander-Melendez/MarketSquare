@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 // import { BrowserRouter as Router, Route, Redirect, Switch, Link } from 'react-router-dom';
 import { Button, Navbar, Card, Container, FormControl, Form, Nav, NavDropdown, InputGroup, Row, Col } from 'react-bootstrap';
 
-import { withRouter, useHistory } from "react-router-dom"
+import { withRouter, useHistory, Redirect, Link } from "react-router-dom"
 
 import ListingItem from "../components/ListingItem.js";
 import EditListing from "./EditListing.js";
@@ -53,7 +53,10 @@ function UserListings() {
 
   }, [])
 
-  const onEdit = (listingId) => history.push(`/EditListing/${listingId}`)
+  const onEdit = (listing) => { (
+    <Link to={{pathname: `/EditListing/${listing._id}`, state: listing}}/>
+    )}
+  // history.push(`/EditListing/${listingId}`)
   const onDelete = async (listingId) => {
     if (window.confirm('Are you sure you want to delete?')) {
       // api call
@@ -98,7 +101,7 @@ function UserListings() {
               listing={item}
               key={item._id}
               id={item._id}
-              onEdit={() => onEdit(item._id)}
+              onEdit={() => onEdit(item)}
               onDelete={() => onDelete(item._id)}>
             </ListingItem>)}
         </Row>

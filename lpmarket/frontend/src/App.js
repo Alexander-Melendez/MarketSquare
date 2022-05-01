@@ -266,7 +266,10 @@ function App() {
         <ProtectedRoute exact path='/UserListings' component={UserListings} />
         <ProtectedRoute exact path='/NewListing' component={NewListingPage} />
         <ProtectedRoute exact path='/EditProfile' component={EditProfile} />
-        <ProtectedRoute exact path='/EditListing/:listingId' component={EditListing} />
+        <Route exact path='/EditListing/:listingId' 
+        render = {(props) => <EditListing {...props}/>}
+        // component={EditListing} 
+        />
         <Route exact path='/login' component={LoginPage} />
         <Route exact path='/register' component={RegisterPage} />
       </Switch>

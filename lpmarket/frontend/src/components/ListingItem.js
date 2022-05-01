@@ -1,15 +1,15 @@
 import React from 'react'
-
+import { Link } from 'react-router-dom'
 import { Card, Container, Col, Row, Button, ButtonGroup, InputGroup, ListGroup } from 'react-bootstrap'
 
-function ListingItem({ listing, id, onEdit, onDelete }) {
+function ListingItem( {listing, id, onEdit, onDelete}) {
   return (
     <Col md="auto mb-3">
       <Card style={{ width: '18rem' }}>
         <Card.Header></Card.Header>
         <Container fluid>
 
-          
+
           <Card.Title><strong>{listing.ProductName}</strong></Card.Title>
           <Card.Body>
             <Card.Text>
@@ -29,9 +29,16 @@ function ListingItem({ listing, id, onEdit, onDelete }) {
             {
               onEdit &&
               <Button
-                onClick={() => onEdit(id)}
-                as={Col}
-                variant="success" 
+                to={{
+                  pathname: `/EditListing/${listing._id}`,
+                  state: {
+                    listing:listing,
+                  }
+                }}
+                // onClick={() => onEdit(id)}
+                className="Link Col"
+                as={Link}
+                variant="success"
                 xs={6}>
                 Edit
               </Button>

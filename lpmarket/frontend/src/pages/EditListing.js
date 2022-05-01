@@ -1,27 +1,26 @@
 import '../App.css';
-import { useState, useEffect } from 'react'
-
-// Removed FormControl to reduce unused from 'react-bootstrap'
-// import React, { useState } from "react";
+import { useState, useEffect, useRef } from 'react'
+import storage from '../firebase.js';
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 as uuid } from 'uuid';
-import { Row, Col, Card, Form, Button, InputGroup, Image, CloseButton, Container } from 'react-bootstrap';
+import { Row, Col, Card, Form, Button, InputGroup, Image, ButtonGroup, Container } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { withRouter } from 'react-router-dom';
+import { withRouter, useLocation } from 'react-router-dom';
 
 // form validation rules 
 const req = "Required field"
 const productSchema = yup.object().shape({
-    productName: yup.string().required(req),
-    productCategory: yup.string().required(req),
-    productCondition: yup.string()
+    ProductName: yup.string().required(req),
+    ProductCategory: yup.string().required(req),
+    ProductCondition: yup.string()
         .oneOf(["New", "Like New", "Good", "Fair", "Poor"])
         .required(req),
-    productDescription: yup.string().required(req),
-    city: yup.string().required(req),
-    state: yup.string().required(req),
-    productPrice: yup.number().positive().integer().required(req),
+    ProductDescription: yup.string().required(req),
+    ProductCity: yup.string().required(req),
+    ProductState: yup.string().required(req),
+    ProductPrice: yup.number().positive().integer().required(req),
     images: yup.mixed().nullable().test("type", "Must be a jpeg, jpg, or png", (value) => checkIfFilesAreCorrectType(value))
         .required(req)
     // contactInfo: yup.string().required(), 
@@ -46,9 +45,13 @@ function checkIfFilesAreCorrectType(uploads) {
     }
     return true
 }
+let bp = require('../Path.js');
+let tokenStorage = require('../tokenStorage.js')
 
 function EditListing() {
-    let bp = require('../Path.js');
+
+    const location = useLocation()
+    const { listing } = location.state
 
     // Removed setValue, getValues, and errors to reduce unused errors
     const { register, handleSubmit, reset, setValue, getValues, resetField,
@@ -57,13 +60,15 @@ function EditListing() {
         resolver: yupResolver(productSchema),
         mode: "all",
         reValidateMode: "all",
-        // defaultValues: listingData
+        defaultValues: listing
     });
-    const [oldInfo, setOldInfo] = useState([])
+    const fileInput = useRef(null)
+    const [oldImages, setOldImages] = useState([])
     const [files, setFiles] = useState([]);
     const [images, setImages] = useState([]);
     const [isHovered, setHover] = useState(false);
 
+    const handleClick = () => fileInput.current.click()
     // Get old data to display on initial form
     // useEffect(() => {
 
@@ -76,30 +81,46 @@ function EditListing() {
     // }, []);
 
     // // 
-    // useEffect(() => {
-    //     setValue("images", files, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
-    // }, [files])
 
-    // function restoreOld(){
-    //     fields.forEach(field => setValue(field, oldInfo[field]));
-    //     setFiles("images", oldInfo["images"])
-    // }
+    useEffect(() => {
+        console.log(listing)
+        // fields.forEach(field => setValue(field, user[field]));
+        if (listing.ProductImages)
+            setOldImages(listing.ProductImages.map((image) => ({ url: image, id: uuid() })))
+    }, [])
+
+    useEffect(async () => {
+        if (getValues("images")) {
+            setValue("images", files, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+            let imageList = await Promise.all(files.map(async (f) => {
+                const image = await readFileAsync(f)
+                return image
+            }))
+            setImages(images => imageList);
+        }
+    }, [files])
+
+    useEffect(() => {
+        setImages(oldImages)
+    }, [oldImages])
+
+    useEffect(() => {
+        console.log("UseEff:", images)
+    }, [images])
+
+    function resetForm() {
+        setFiles([])
+        setImages(oldImages)
+        reset()
+    }
 
     async function uploadimg(e) {
         const fileList = e.target.files;
 
-        let imageList
+        // let imageList
         if (fileList.length > 0) {
-            imageList = await Promise.all(Array.from(fileList).map(async (f) => {
-                const image = await readFileAsync(f)
-                return image
-            }))
-
-            // update image array
-            setImages(images => [...images, ...imageList]);
+            // setImages(images => [...images, ...imageList]);
             setFiles(files => [...files, ...Array.from(fileList)])
-
-            // console.log("Before setvalue: ", getValues("images"))
             // console.log("In upload: ", getValues("images"))
         }
     }
@@ -110,6 +131,7 @@ function EditListing() {
 
             reader.onload = () => {
                 resolve({
+                    name: file.name,
                     id: uuid(),
                     url: reader.result,
                     type: "image"
@@ -128,18 +150,92 @@ function EditListing() {
         if (imageIndex > -1) {
             const value = files.filter((_, i) => i !== imageIndex);
             setImages(images.filter(item => item.id !== id));
-            setFiles(files => value);
-            if (images.length === 1) {
+            setFiles(prev => value);
+            if (files.length === 1) {
                 resetField('images');
             }
         }
-        console.log("Aftter Delete: ", files, "\n values: ", getValues("images"))
+        // console.log("Aftter Delete: ", files, "\n values: ", getValues("images"))
+    }
+    function goBack() {
+
+    }
+
+    const onDelete = async (listingId) => {
+        if (window.confirm('Are you sure you want to delete?')) {
+            // api call
+            let storage = require("../tokenStorage")
+            let send = { ProductName: listingId, jwtToken: storage.retrieveToken() }
+            console.log(send)
+            try {
+                const response = await fetch(bp.buildPath('api/addproduct'),
+                    {
+                        method: 'POST',
+                        body: send,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                var txt = await response.text();
+                var res = JSON.parse(txt);
+                if (res.error.length > 0) {
+                    console.log("API Error:" + res.error);
+                }
+                else {
+                    console.log(res);
+                }
+            }
+            catch (e) {
+                console.log(e.toString());
+            }
+            //   const updatedListings = listings.filter(
+            //     (listing) => listing.id !== listingId
+            //   )
+            //   setListings(updatedListings)
+        }
     }
 
     const requestEdit = async (data) => {
-        console.log(data)
-        var send = JSON.stringify(data);
+        // console.log("Formdata: ", data)
+        const storeImage = async (image) => {//(image) => { 
+            return new Promise((resolve, reject) => {
+                // const fbStorage = getStorage()
+                const fileName = `${image.name}-${uuid()}`
+                const storageRef = ref(storage, '/images/' + fileName)
+
+                const uploadTask = uploadBytesResumable(storageRef, image)
+                uploadTask.on(
+                    /**/
+                    'state_changed',
+                    (snapshot) => { },
+                    (error) => {
+                        reject(error)
+                    },
+                    () => {
+                        // Handle successful uploads on complete
+                        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            resolve(downloadURL)
+                        })
+                    }
+                )
+            })
+        }
+        // console.log("Onsubmit: ", data)
+
+        const imgUrls = await Promise
+            .all(files.map((image) => storeImage(image))
+            ).catch(() => { return })
+
+        var send = {
+            ...data,
+            ProductImages: imgUrls,
+            email: JSON.parse(localStorage.getItem("user_data")).email,
+            jwtToken: tokenStorage.retrieveToken()
+        }
         console.log(send)
+        JSON.stringify(send);
+
         try {
             const response = await fetch(bp.buildPath('api/editProduct'),
                 {
@@ -180,21 +276,21 @@ function EditListing() {
                                     <Form.Label>Product Name</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        name="productName"
-                                        {...register("productName")}
-                                        isInvalid={!!errors.productName && touchedFields.productName}
+                                        name="ProductName"
+                                        {...register("ProductName")}
+                                        isInvalid={!!errors.ProductName && touchedFields.ProductName}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.productName?.message}
+                                        {errors.ProductName?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label>Product Category</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        name="productCategory"
-                                        {...register("productCategory")}
-                                        isInvalid={!!errors.productCategory && touchedFields.productCategory}
+                                        name="ProductCategory"
+                                        {...register("ProductCategory")}
+                                        isInvalid={!!errors.ProductCategory && touchedFields.ProductCategory}
                                     />
                                 </Form.Group>
                                 <Form.Group>
@@ -202,9 +298,9 @@ function EditListing() {
                                     <Form.Control
                                         as="select"
                                         type="text"
-                                        name="productCondition"
-                                        {...register("productCondition")}
-                                        isInvalid={!!errors.productCondition && touchedFields.productCondition}
+                                        name="ProductCondition"
+                                        {...register("ProductCondition")}
+                                        isInvalid={!!errors.ProductCondition && touchedFields.ProductCondition}
                                     >
                                         <option value="">Select condition...</option>
                                         <option value="New">New</option>
@@ -215,7 +311,7 @@ function EditListing() {
 
                                     </Form.Control>
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.productCondition?.message}
+                                        {errors.ProductCondition?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group>
@@ -223,12 +319,12 @@ function EditListing() {
                                     <Form.Control
                                         as="textarea"
                                         type="text"
-                                        name="productDescription"
-                                        {...register("productDescription")}
-                                        isInvalid={!!errors.productDescription && touchedFields.productDescription}
+                                        name="ProductDescription"
+                                        {...register("ProductDescription")}
+                                        isInvalid={!!errors.ProductDescription && touchedFields.ProductDescription}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.productDescription?.message}
+                                        {errors.ProductDescription?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group  >
@@ -237,45 +333,47 @@ function EditListing() {
                                         <InputGroup.Text>$</InputGroup.Text>
                                         <Form.Control
                                             type="text"
-                                            name="productPrice"
-                                            {...register("productPrice")}
-                                            isInvalid={!!errors.productPrice && touchedFields.productPrice}
+                                            name="ProductPrice"
+                                            {...register("ProductPrice")}
+                                            isInvalid={!!errors.ProductPrice && touchedFields.ProductPrice}
                                         />
                                         <InputGroup.Text>.00</InputGroup.Text>
                                     </InputGroup>
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.productPrice?.message}
+                                        {errors.ProductPrice?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group as={Col}>
                                     <Form.Label>City</Form.Label>
                                     <Form.Control
+                                        className='mb-3'
                                         type="text"
-                                        name="city"
-                                        {...register("city")}
-                                        isInvalid={!!errors.city && touchedFields.city}
+                                        name="ProductCity"
+                                        {...register("ProductCity")}
+                                        isInvalid={!!errors.ProductCity && touchedFields.ProductCity}
                                     ></Form.Control>
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.city?.message}
+                                        {errors.ProductCity?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group as={Col}>
                                     <Form.Label>State</Form.Label>
                                     <Form.Control
+                                        className='mb-3'
                                         type="text"
-                                        name="state"
-                                        {...register("state")}
-                                        isInvalid={!!errors.state && touchedFields.state}
+                                        name="ProductState"
+                                        {...register("ProductState")}
+                                        isInvalid={!!errors.ProductState && touchedFields.ProductState}
                                     ></Form.Control>
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.state?.message}
+                                        {errors.ProductState?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group>
-                                    <Form.Label htmlFor="fileUpload" onChange={uploadimg}></Form.Label>
+                                    <Form.Label htmlFor="fileUpload" onChange={uploadimg} ref={fileInput}></Form.Label>
                                     {/* <Icon style={{ fontSize: '20px'}} type="camera" /> */}
                                     <Form.Control
-                                        // hidden
+                                        style={{ display: 'none' }}
                                         className="mb-3"
                                         id="fileUpload"
                                         type="file"
@@ -286,68 +384,78 @@ function EditListing() {
                                         isInvalid={!!errors.images && dirtyFields.images}
                                     />
                                     {/* </Form.Label> */}
+                                    <Button onClick={handleClick}>Upload Images</Button>
                                     <Form.Control.Feedback type="invalid">
                                         {errors.images?.message}
                                     </Form.Control.Feedback>
-                                    <Container fluid>
-                                        <Row
-                                            className="justify-content-start mb-3" xs="auto"
+                                    <hr />
+                                    {/* <Container 
+                                    fluid 
+                                    // style={{  borderStyle:"solid",borderColor:"#001975"}}
+                                    > */}
+                                    <Row
+                                        className="justify-content-start mb-3" xs="auto"
 
-                                        >
-                                            {images.map((media) => (
-                                                <Col
+                                    >
+                                        {images.map((media) => (
+                                            <Col
+                                                key={media.id}
+                                                onMouseOver={() => setHover(true)}
+                                                onMouseLeave={() => setHover(false)}
+                                                style={{
+                                                    position: 'relative',
+                                                    maxWidth: '150px',
+                                                    maxHeight: '150px'
+                                                }}
+                                            // xs
+                                            >
+                                                <Image
+                                                    fluid
+                                                    // thumbnail
+                                                    src={media.url}
+                                                    // alt="product"
                                                     key={media.id}
-                                                    onMouseOver={() => setHover(true)}
-                                                    onMouseLeave={() => setHover(false)}
                                                     style={{
-                                                        position: 'relative',
-                                                        maxWidth: '150px',
-                                                        maxHeight: '150px'
+                                                        maxWidth: '100%',
+                                                        maxHeight: '100%'
                                                     }}
-                                                // xs
-                                                >
-                                                    <Image
-                                                        fluid
-                                                        // thumbnail
-                                                        src={media.url}
-                                                        // alt="product"
-                                                        key={media.id}
+                                                />
+                                                {isHovered && (
+                                                    <Button
+                                                        variant="secondary"
+                                                        size="sm"
                                                         style={{
-                                                            maxWidth: '100%',
-                                                            maxHeight: '100%'
+                                                            position: 'absolute',
+                                                            left: 0,
+                                                            right: 0,
+                                                            top: 0,
+                                                            bottom: 0
                                                         }}
-                                                    />
-                                                    {isHovered && (
-                                                        <Button
-                                                            variant="secondary"
-                                                            size="sm"
-                                                            style={{
-                                                                position: 'absolute',
-                                                                left: 0,
-                                                                right: 0,
-                                                                top: 0,
-                                                                bottom: 0
-                                                            }}
-                                                            onClick={() => deleteFile(media.id)}
-                                                        >Remove</Button>
-                                                    )}
-                                                </Col>
-                                            ))}
-                                        </Row>
-                                    </Container>
+                                                        onClick={() => deleteFile(media.id)}
+                                                    >Remove</Button>
+                                                )}
+                                            </Col>
+                                        ))}
+                                    </Row>
+                                    {/* </Container> */}
                                 </Form.Group>
                             </Row>
                             {/* <Form.Group controlId="formControls" > */}
-                            <Button
-                                type="submit"
-                                disabled={formState.isSubmitting}
-                                className="justify-content-start btn btn-primary">
-                                {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
-                                </span>}
-                                Confirm
-                            </Button>
-                            <Button variant='danger' onClick={() => reset()}>Cancel</Button>
-                            {/* </Form.Group> */}
+                            <ButtonGroup>
+                                <Button
+                                    variant="success"
+                                    type="submit"
+                                    disabled={formState.isSubmitting}
+                                    className="justify-content-start btn btn-primary">
+                                    {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
+                                    </span>}
+                                    Confirm
+                                </Button>
+                                <Button variant='warning' onClick={() => resetForm()}>Reset</Button>
+                                <Button variant='danger' onClick={() => onDelete()}>Delete</Button>
+                                <Button variant="secondary" onClick={() => goBack()}>Return</Button>
+                            </ButtonGroup>
+
                         </Form>
                     </Col>
                 </Row>

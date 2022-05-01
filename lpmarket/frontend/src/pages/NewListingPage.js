@@ -165,8 +165,7 @@ function NewListingPage() {
         }
         // console.log("Onsubmit: ", data)
 
-        const imgUrls =
-            await Promise.all(data.images.map((image) => storeImage(image))).catch(() => { return })
+        const imgUrls =await Promise.all(data.images.map((image) => storeImage(image))).catch(() => { return })
 
         var send = {
             ...data,
@@ -377,10 +376,9 @@ function NewListingPage() {
                                             </Col>
                                         ))}
                                     </Row>
-                                    <hr />
+                                    {/* <hr /> */}
                                     {/* </Container> */}
                                 </Form.Group>
-
                             </Row>
                             {/* <Form.Group controlId="formControls" > */}
                             <Button

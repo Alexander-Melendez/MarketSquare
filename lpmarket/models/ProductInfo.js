@@ -26,6 +26,12 @@ const ProductSchema = new Schema({
   ProductPrice: {
     type: Number
   },
+  ProductCity: {
+    type: String
+  },
+  ProductState: {
+    type: String
+  },
   Email: {
     type: String,
     required: true
