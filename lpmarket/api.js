@@ -123,7 +123,7 @@ exports.setApp = function (app, client) {
         _ret.push(results[i].ProductState);
         _ret.push(results[i].ProductCity);
         _ret.push(results[i].ProductCondition);
-        // _ret.push( results[i]._id );   
+        _ret.push( results[i].ProductImages );   
       }
     }
     else {
@@ -138,7 +138,7 @@ exports.setApp = function (app, client) {
         _ret.push(results[i].ProductState);
         _ret.push(results[i].ProductCity);
         _ret.push(results[i].ProductCondition);
-        // _ret.push( results[i]._id );
+        _ret.push( results[i].ProductImages );
       }
     }
 
