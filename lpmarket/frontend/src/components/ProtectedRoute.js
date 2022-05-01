@@ -5,7 +5,7 @@ function ProtectedRoute({ /*isAuth: isAuth,*/ component: Component, ...rest }) {
     let storage = require('../tokenStorage.js');
     // token = storage.retrieveToken()
     // let isAuth = !isExpired(token) && localStorage.getItem('user_data') !== "{}" 
-    let isAuth = localStorage.getItem('user_data') !== "{}" 
+    let isAuth = localStorage.getItem('user_data') !== null
     // || true
     return (
         <Route
