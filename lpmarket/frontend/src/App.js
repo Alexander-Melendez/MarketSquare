@@ -85,6 +85,7 @@ function App() {
 
   function PlacingTest() {
     const [currentlength, setLength] = useState(NameArray.length);
+    const [Switching, setSwitching] = useState(true);
     function Next() {
       if(currentlength > displaynumber*(counter+1)) {
         setCounter(counter+1)
@@ -98,9 +99,17 @@ function App() {
     }
     function FormattedBoxesone(index) {
       const [Switch, setSwitch] = useState(false);
+      function TrueSwitch() {
+        setSwitch(true)
+        setSwitching(false)
+      }
+      function FalseSwitch() {
+        setSwitch(false)
+        setSwitching(true)
+      }
       return (
         <Col  md="auto">
-          <div className="box" onClick={() => setSwitch(true)}>
+          <div className={Switching ? "box" : "hidden"} onClick={TrueSwitch}>
             <p className="Product">{NameArray[index]}</p>
             <p>Condition: {ConditionArray[index]}</p>
             <p>$ {PriceArray[index]}</p>
@@ -110,8 +119,8 @@ function App() {
               <img src={ImageArray[index]} alt = {"No image was uploaded by the user"}/>
             </div>
           </div>
-          <div className={Switch ? "popupclass" : "hidden"}>
-            <div className="Closebutton" onClick={() => setSwitch(false)}>X</div>
+          <div className={Switch ? "OpenPage" : "hidden"}>
+            <div className="Closebutton" onClick={FalseSwitch}>X</div>
             <p className="Product">{NameArray[index]}</p>
             <p>Condition: {ConditionArray[index]}</p>
             <p>${PriceArray[index]}</p>
@@ -166,7 +175,7 @@ function App() {
             {rowone}
           </Row>
         </Container>
-        <div class = "navbutton">
+        <div class ={Switching ? "navbutton" : "hidden"} >
           <button onClick={Prev}>Prev</button>  <button onClick={Next}>Next</button> 
         </div>
       </Container>
