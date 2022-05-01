@@ -18,7 +18,8 @@ import LoggedInName from './components/LoggedInName'
 import ProtectedRoute from './components/ProtectedRoute';
 
 const Temp = [];
-const image = ['https://assets-global.website-files.com/5e78ee1f2f0ca263f9b67c56/5f04a4babe7bb91e10639f9a_ssat-at-home01%402x.png'];
+const image = ['https://assets-global.website-files.com/5e78ee1f2f0ca263f9b67c56/5f04a4babe7bb91e10639f9a_ssat-at-home01%402x.png', 'https://assets-global.website-files.com/5e78ee1f2f0ca263f9b67c56/5f04a4babe7bb91e10639f9a_ssat-at-home01%402x.png'];
+const image2 = [image, image, image, image, image, image];
 
 function App() {
   var search = '';
@@ -112,6 +113,24 @@ function App() {
         setSwitch(false)
         setSwitching(true)
       }
+      function imagearray(index) {
+        if (ImageArray[index] == undefined) {
+          return(
+            <div class="bigimg">
+              <img src={ImageArray[index]} alt = {"No image was uploaded by the user"}/>
+            </div>
+          );
+          
+        }
+        else {
+          const currentimage = Object.values(ImageArray[index]); 
+          return(
+            <div class="bigimgtwo">
+              {currentimage.map((i) => <img src={i} alt = {"No image was uploaded by the user"}/>)}
+            </div>
+          );
+        }
+      }
       return (
         <Col  md="auto">
           <div className={Switching ? "box" : "hidden"} onClick={TrueSwitch}>
@@ -127,8 +146,8 @@ function App() {
           </div>
           <div className={Switch ? "OpenPage" : "hidden"}>
             <div className="Closebutton" onClick={FalseSwitch}>X</div>
-            <div class="bigimg">
-              <img src={ImageArray[index]} alt = {"No image was uploaded by the user"}/>
+            <div>
+            {imagearray(index)}
             </div>
               <p className="Product">{NameArray[index]}</p>
             <div className = "alignment">
