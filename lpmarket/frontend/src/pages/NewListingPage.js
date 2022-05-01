@@ -1,7 +1,7 @@
 import '../App.css';
 import { useState, useEffect, useRef } from 'react'
-import fbStorage from '../firebase';
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import storage from '../firebase.js';
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 as uuid } from 'uuid';
 import { Row, Col, Card, Form, Button, InputGroup, Image, CloseButton, Container } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
@@ -45,10 +45,11 @@ function checkIfFilesAreCorrectType(uploads) {
     }
     return true
 }
+let bp = require('../Path.js');
+let tokenStorage = require('../tokenStorage.js')
 
 function NewListingPage() {
-    let bp = require('../Path.js');
-    let tokenStorage = require('../tokenStorage.js')
+
     // Removed setValue, getValues, and errors to reduce unused errors
     const { register, handleSubmit, reset, setValue, getValues, resetField,
         formState: { errors, dirtyFields, isSubmitting, touchedFields, submitCount, ...formState }
@@ -58,6 +59,7 @@ function NewListingPage() {
         reValidateMode: "all",
     });
     const fileInput = useRef(null)
+    // const [uploads, setUploads] = useState(undefined)
     const [files, setFiles] = useState([]);
     const [images, setImages] = useState([]);
     const [isHovered, setHover] = useState(false);
@@ -105,6 +107,7 @@ function NewListingPage() {
     }
     async function uploadimg(e) {
         const fileList = e.target.files;
+        // setUploads(fileList)
 
         if (fileList.length > 0) {
             setFiles(files => [...files, ...Array.from(fileList)])
@@ -134,35 +137,22 @@ function NewListingPage() {
         });
     }
 
-
-
     const postNewListing = async (data) => {
         // console.log(data)
 
-        const storeImage = async (image) => {
+        const storeImage = async (image) => {//(image) => { 
             return new Promise((resolve, reject) => {
                 // const fbStorage = getStorage()
                 const fileName = `${image.name}-${uuid()}`
-                const storageRef = ref(fbStorage, '/images/' + fileName)
+                const storageRef = ref(storage, '/images/' + fileName)
+
                 const uploadTask = uploadBytesResumable(storageRef, image)
                 uploadTask.on(
+                    /**/
                     'state_changed',
-                    (snapshot) => {
-                        const progress =
-                            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                        console.log('Upload is ' + progress + '% done')
-                        switch (snapshot.state) {
-                            case 'paused':
-                                console.log('Upload is paused')
-                                break
-                            case 'running':
-                                console.log('Upload is running')
-                                break
-                            default:
-                                break
-                        }
-                    },
-                    (error) => {reject(error)},
+                    (snapshot) => {},
+                    (error) => {
+                        reject(error) },
                     () => {
                         // Handle successful uploads on complete
                         // For instance, get the download URL: https://firebasestorage.googleapis.com/...
@@ -173,22 +163,25 @@ function NewListingPage() {
                 )
             })
         }
+        // console.log("Onsubmit: ", data)
 
-        console.log("Onsubmit: ", data)
+        const imgUrls =
+            await Promise.all(data.images.map((image) => storeImage(image))).catch(() => { return })
 
-        const imgUrls = await Promise.all(
-            data.images.map((image) => storeImage(image))
-        ).catch(() => {
-            return
-        })
-
-        var send = JSON.stringify({...data, ProductImages: imgUrls, jwtToken: tokenStorage.retrieveToken()});
-        console.log(send)
+        var send = {
+            ...data,
+            ProductImages: imgUrls,
+            email: JSON.parse(localStorage.getItem("user_data")).email,
+            jwtToken: tokenStorage.retrieveToken()
+        }
+        console.log("Send data: ", send)
+        var stringy = JSON.stringify(send)
+        console.log("Stringified: ", stringy)
         try {
             const response = await fetch(bp.buildPath('api/addproduct'),
                 {
                     method: 'POST',
-                    body: send,
+                    body: stringy,
                     headers: {
                         'Content-Type': 'application/json'
                     }

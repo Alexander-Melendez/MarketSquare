@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Redirect, Switch, Link } from 'react-router-dom';
 import { Button, Navbar, Card, Container, FormControl, Form, Nav, NavDropdown, InputGroup, Row, Col } from 'react-bootstrap';
+import fbStorage from './firebase.js';
 
 import NewListingPage from './pages/NewListingPage';
 import LoginPage from './pages/LoginPage';

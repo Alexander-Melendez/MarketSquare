@@ -30,5 +30,9 @@ const ProductSchema = new Schema({
     type: String,
     required: true
   },
+  ProductImages: {
+    type:[String], 
+    required: true //did not test with this uncommented
+  }
 });
 module.exports = ProductInfo = mongoose.model('ProductInfo', ProductSchema, 'ProductInfo');
