@@ -57,9 +57,10 @@ function App() {
       var resultState = [];
       var resultCity = [];
       var resultCondition = [];
+      var resultImage = [];
 
       var resultlength = _results.length;
-      for (var i = 0; i < resultlength; i = i + 8) {
+      for (var i = 0; i < resultlength; i = i + 9) {
         resultsName.push(_results[i]);
         resultsProductCategory.push(_results[i + 1]);
         resultsDesc.push(_results[i + 2]);
@@ -68,6 +69,7 @@ function App() {
         resultState.push(_results[i + 5]);
         resultCity.push(_results[i + 6]);
         resultCondition.push(_results[i + 7]);
+        resultImage.push(_results[i + 8]);
       }
       setName(resultsName);
       setPrice(resultsPrice);
@@ -77,6 +79,7 @@ function App() {
       setState(resultState);
       setCity(resultCity);
       setCondition(resultCondition);
+      setImage(resultImage);
     }
     catch (e) {
       alert(e.toString());
@@ -129,11 +132,11 @@ function App() {
             </div>
               <p className="Product">{NameArray[index]}</p>
             <div className = "alignment">
+              <p className="Descriptiontwo">Description</p>
+              <p className="Description"> {DescArray[index]}</p>
               <p>Price: ${PriceArray[index]}</p>
               <p>Condition: {ConditionArray[index]}</p>
               <p>Location: {StateArray[index]} {CityArray[index]}</p>
-              <p className="Descriptiontwo">Description</p>
-              <p className="Description"> {DescArray[index]}</p>
               <p>Contact Info: {ContactInfoArray[index]}</p>
             </div>
           </div>
@@ -205,9 +208,10 @@ function App() {
       var resultState = [];
       var resultCity = [];
       var resultCondition = [];
+      var resultImage = [];
 
       var resultlength = _results.length;
-      for (var i = 0; i < resultlength; i = i + 8) {
+      for (var i = 0; i < resultlength; i = i + 9) {
         resultsName.push(_results[i]);
         resultsProductCategory.push(_results[i + 1]);
         resultsDesc.push(_results[i + 2]);
@@ -216,6 +220,7 @@ function App() {
         resultState.push(_results[i + 5]);
         resultCity.push(_results[i + 6]);
         resultCondition.push(_results[i + 7]);
+        resultImage.push(_results[i + 8]);
       }
       setName(resultsName);
       setPrice(resultsPrice);
@@ -225,6 +230,8 @@ function App() {
       setState(resultState);
       setCity(resultCity);
       setCondition(resultCondition);
+      setImage(resultImage);
+      setCounter(0);
     }
     catch (e) {
       alert(e.toString());
