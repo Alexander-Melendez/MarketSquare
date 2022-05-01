@@ -1,9 +1,17 @@
 require('express');
 require('mongodb');
+require("dotenv").config();
+const User = require("./models/UserInfo.js");
+const Product = require("./models/ProductInfo.js");
+const jwt = require("jsonwebtoken");
+
+
+const mailgun = require("mailgun-js");
+const DOMAIN = "sandboxa6cd3c694cc1442789c54e64a83edfd7.mailgun.org";
+const mg = mailgun({apiKey: process.env.MAILGUN_APIKEY, domain: DOMAIN});
+
 
 exports.setApp = function (app, client) {
-  const User = require("./models/UserInfo.js");
-  const Product = require("./models/ProductInfo.js");
 
   app.post('/api/login', async (req, res, next) => {
     // incoming: email, password
@@ -46,27 +54,98 @@ exports.setApp = function (app, client) {
     res.status(200).json(ret);
   });
 
-  app.post('/api/register', async (req, res, next) => {
-    // incoming: firstName, lastName, email, password, phoneNumber
-    // outgoing: error
+  app.post('/api/register', async (req, res, next) =>
+{
+  // incoming: firstName, lastName, email, password, phoneNumber
+  // outgoing: error
 
-    const { firstName, lastName, email, password, phoneNumber } = req.body;
+  const { firstName, lastName, email, password, phoneNumber } = req.body;
 
-    const newUser = { FirstName: firstName, LastName: lastName, Email: email, Password: password, PhoneNumber: phoneNumber, DateCreated: new Date() };
-    var error = '';
+  const emailCheck = await User.findOne({ Email: email });
 
-    try {
-      // const db = client.db();
-      // const result = db.collection('UserInfo').insertOne(newUser);
-      const result = User.create(newUser);
+  if (emailCheck)
+    return res.status(400).json({success: false, error: "This email already exists!"});
+
+  const token = jwt.sign({firstName, lastName, email, password, phoneNumber }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '20m'});
+
+  const data = {
+    from: "noreply@marketsquare.com",
+    to: email,
+    subject: 'Account Activation Link',
+    html: `
+          <body>
+          <h2>Please click on the given link to activate your account!</h2>
+          <p>
+             <a href="${process.env.CLIENT_URL}/authentication/activate/${token}">Click Here to Verify your Account</a>
+          </p>
+          </body>
+    `     
+  };
+  mg.messages().send(data, function (error, body){
+    if(error)
+    {
+      return res.json({
+        error: err.message
+      })
     }
-    catch (e) {
-      error = e.toString();
-    }
-
-    var ret = { error: error };
-    res.status(200).json(ret);
+    return res.json({message: 'Email has been sent, kindly activate your account'});
   });
+
+  /*const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()};
+  var error = '';
+
+
+  try
+  {
+    // const db = client.db();
+    // const result = db.collection('UserInfo').insertOne(newUser);
+    const result = User.create(newUser);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);*/
+});
+
+app.post('/api/activateAccount', async (req, res, next) =>
+{
+  const {token} = req.body;
+
+  if (token)
+  {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function(err, decodedToken) {
+      if (err)
+      {
+        return res.status(400).json({error: 'Incorrect or Expired Link.'});
+      }
+
+      const {firstName,lastName, email, password, phoneNumber} = decodedToken;
+      const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()};
+      var error = '';
+
+
+      try
+      {
+        // const db = client.db();
+        // const result = db.collection('UserInfo').insertOne(newUser);
+        const result = User.create(newUser);
+      }
+      catch(e)
+      {
+        error = e.toString();
+      }
+
+      var ret = { error: "No Errors, Signup Successful!" };
+      res.status(200).json(ret);
+    });
+  } else {
+    console.log("error in activating account");
+    return res.json({error: "Error activating account"});
+  }
+});
 
   app.post('/api/search', async (req, res, next) => {
     // incoming: userId, search
@@ -123,7 +202,8 @@ exports.setApp = function (app, client) {
         _ret.push(results[i].ProductState);
         _ret.push(results[i].ProductCity);
         _ret.push(results[i].ProductCondition);
-        // _ret.push( results[i]._id );   
+        // _ret.push( results[i]._id );
+        _ret.push( results[i].ProductImages );
       }
     }
     else {
@@ -139,6 +219,7 @@ exports.setApp = function (app, client) {
         _ret.push(results[i].ProductCity);
         _ret.push(results[i].ProductCondition);
         // _ret.push( results[i]._id );
+        _ret.push( results[i].ProductImages );
       }
     }
 
@@ -234,7 +315,7 @@ exports.setApp = function (app, client) {
     // incoming: productName
     // outgoing: error
 
-    const { productName, email, newName, newDescription, newCategory, newPrice, newContactInfo, newProductState, newProductCity, newProductCondition } = req.body;
+    const { productName, email, newName, newDescription, newCategory, newPrice, newContactInfo, newProductState, newProductCity, newProductCondition, newProductImages } = req.body;
     const productToUpdate = { ProductName: productName, Email: email };
     const updateInfo =
     {
@@ -246,7 +327,8 @@ exports.setApp = function (app, client) {
         ContactInfo: newContactInfo,
         ProductState: newProductState,
         ProductCity: newProductCity,
-        ProductCondition: newProductCondition
+        ProductCondition: newProductCondition,
+        ProductImages: newProductImages
       },
     };
 
