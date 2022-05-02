@@ -231,6 +231,47 @@ exports.setApp = function (app, client) {
     // var ret = {results:results, error:error}; // this method returns an array of objects
     res.status(200).json(ret);
   });
+  
+    app.post('/api/ownedByUser', async (req, res, next) => {
+    // incoming: email
+    // outgoing: results[], error
+
+    var error = '';
+
+    // const { email } = req.body;
+    let token = require('./createJWT.js');
+    const { email, jwtToken } = req.body;
+
+      try
+      {
+          if( token.isExpired(jwtToken))
+          {
+              var r = {error:'The JWT is no longer valid', jwtToken: ''};
+              res.status(200).json(r);
+              return;
+          }
+      }
+      catch(e)
+      {
+          console.log(e.message);
+      }
+
+    var results = await Product.find({"Email": email });
+
+      var refreshedToken = null;
+      try
+      {
+        refreshedToken = token.refresh(jwtToken);
+      }
+      catch(e)
+      {
+          console.log(e.message);
+      }
+
+    var ret = {results:results, error:error, jwtToken: refreshedToken};
+    // var ret = { results: results, error: error };
+    res.status(200).json(ret);
+  });
 
   app.post('/api/addproduct', async (req, res, next) => {
     // incoming: productName, productCategory, productDescription, productPrice, contactInfo, email, 
