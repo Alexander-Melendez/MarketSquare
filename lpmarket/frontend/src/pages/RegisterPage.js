@@ -69,7 +69,7 @@ function RegisterPage() {
             }
             else {
                 console.log(res);
-                
+
                 setSuccess(true)
                 setMsg(res.message)
                 // var user =  {id:res.id,firstName:res.firstName,lastName:res.lastName}
@@ -90,8 +90,6 @@ function RegisterPage() {
                 className="justify-content-center d-flex align-items-center"
                 style={{ "minHeight": "70vh" }}
             >
-                {/* <Card className='mx-auto'>
-                <Card.Body> */}
                 <Row>
                     <Alert className="text-center" variant={success ? "success" : "danger"} hidden={msg === ""}>
                         {msg}
@@ -203,7 +201,7 @@ function RegisterPage() {
                                     <Button as={Link} variant='link' to="/login">
                                         Login
                                     </Button>
-                                    <Button as={Link} variant='link' to="/Register">
+                                    <Button as={Link} variant='link' to="/ResetPassword">
                                         Forgot Password
                                     </Button>
                                 </Form.Group>
@@ -211,8 +209,6 @@ function RegisterPage() {
                         </Form>
                     </Col>
                 </Row>
-                {/* </Card.Body>
-            </Card> */}
             </Container >
         </Container>
     );

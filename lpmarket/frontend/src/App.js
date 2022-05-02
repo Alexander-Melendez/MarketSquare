@@ -13,6 +13,8 @@ import EditProfile from './pages/EditProfile';
 import UserListings from './pages/UserListings';
 import EditListing from './pages/EditListing';
 import ActivateEmail from './pages/ActivateEmail';
+import ResetPassword from './pages/ResetPassword';
+import ForgotPassword from './pages/ForgotPassword';
 
 // import ListingItem from './components/ListingItem';
 import LoggedInName from './components/LoggedInName'
@@ -312,6 +314,8 @@ function App() {
         <Route exact path='/login' component={LoginPage} />
         <Route exact path='/register' component={RegisterPage} />
         <Route  path='/emailverification/:token' component={ActivateEmail}/>
+        <Route path="/resetpassword/:token" component={ResetPassword}/>
+        <Route path="/ForgotPassword" component={ForgotPassword}/>
       </Switch>
     </Router >
   );

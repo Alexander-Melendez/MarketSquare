@@ -190,7 +190,7 @@ exports.setApp = function (app, client) {
       if(error)
       {
         return res.json({
-          error: err.message
+          error: error.message
         })
       }
       return res.json({message: 'Email has been sent, Reset your password'});
@@ -249,7 +249,7 @@ app.post('/api/resetPassword', async (req, res, next) =>
             error = e.toString();
           }
 
-          var ret = { error: "No Errors, Reset Successful!" };
+          var ret = { message: "No Errors, Reset Successful!" };
           return res.status(200).json(ret);
       });
     }
