@@ -350,31 +350,31 @@ exports.setApp = function (app, client) {
     // outgoing: error
 
     const {
-      productName,
-      email,
-      newName,
-      newDescription,
-      newCategory,
-      newPrice,
-      newContactInfo,
-      newProductState,
-      newProductCity,
-      newProductCondition,
-      newProductImages
+      _id,
+      Email,
+      ProductName,
+      ProductDescription,
+      ProductCategory,
+      ProductPrice,
+      ContactInfo,
+      ProductState,
+      ProductCity,
+      ProductCondition,
+      ProductImages
     } = req.body;
 
-    const productToUpdate = { ProductName: productName, Email: email };
+    const productToUpdate = { _id: _id, Email: Email };
     const updateInfo =
     {
-      ProductName: newName,
-      ProductDescription: newDescription,
-      ProductCategory: newCategory,
-      ProductPrice: newPrice,
-      ContactInfo: newContactInfo,
-      ProductState: newProductState,
-      ProductCity: newProductCity,
-      ProductCondition: newProductCondition,
-      ProductImages: newProductImages
+      ProductName: ProductName,
+      ProductDescription: ProductDescription,
+      ProductCategory: ProductCategory,
+      ProductPrice: ProductPrice,
+      ContactInfo: ContactInfo,
+      ProductState: ProductState,
+      ProductCity: ProductCity,
+      ProductCondition: ProductCondition,
+      ProductImages: ProductImages
     };
 
     var error = '';
