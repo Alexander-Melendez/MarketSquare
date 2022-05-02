@@ -366,17 +366,15 @@ exports.setApp = function (app, client) {
     const productToUpdate = { ProductName: productName, Email: email };
     const updateInfo =
     {
-      $set: {
-        ProductName: newName,
-        ProductDescription: newDescription,
-        ProductCategory: newCategory,
-        ProductPrice: newPrice,
-        ContactInfo: newContactInfo,
-        ProductState: newProductState,
-        ProductCity: newProductCity,
-        ProductCondition: newProductCondition,
-        ProductImages: newProductImages
-      },
+      ProductName: newName,
+      ProductDescription: newDescription,
+      ProductCategory: newCategory,
+      ProductPrice: newPrice,
+      ContactInfo: newContactInfo,
+      ProductState: newProductState,
+      ProductCity: newProductCity,
+      ProductCondition: newProductCondition,
+      ProductImages: newProductImages
     };
 
     var error = '';
@@ -384,7 +382,7 @@ exports.setApp = function (app, client) {
     try {
       // const db = client.db();
       // const result = db.collection('ProductInfo').updateOne(productToUpdate, updateInfo);
-      const result = Product.findOneAndUpdate(productToUpdate, updateInfo);
+      const result = await Product.findOneAndUpdate(productToUpdate, updateInfo);
     }
     catch (e) {
       error = e.toString();
