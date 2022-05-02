@@ -177,7 +177,7 @@ exports.setApp = function (app, client) {
       subject: 'Reset Password Link',
       html: `
             <body>
-            <h2>Hello ${fn} ${ln},Please click on the given link to reset your password!</h2>
+            <h2>Hello, Please click on the given link to reset your password!</h2>
             <p>
               <a href="${process.env.CLIENT_URL}resetpassword/${token}">Click Here to Reset your Password</a>
             </p>
@@ -234,13 +234,7 @@ app.post('/api/resetPassword', async (req, res, next) =>
           ret = { Email: email};
 
           const userToUpdate = { Email: email};
-
-          /*const emailCheck = await User.findOne({ Email: email });
-
-          if (emailCheck) {
-            return res.status(400).json({error: "User with this email already exists."});
-          }
-          */
+          
           var error = '';
 
 
