@@ -66,22 +66,16 @@ function LoginPage() {
                 var user = { id: ud.payload.id, firstName: ud.payload.firstName, lastName: ud.payload.lastName }*/
 
             if (!res.error) {
-
-                // storage.storeToken(res);
-                // var jwt = require('jsonwebtoken'); 
-
-                // var ud = jwt.decode(storage.retrieveToken(),{complete:true}); 
-
                 var tok = res.accessToken//decodeToken(res.accessToken);
-                console.log("Login Token: ", tok)
+                // console.log("Login Token: ", decodeToken(tok))
                 storage.storeToken(tok)
                 // var user = { id: ud.payload.id, firstName: ud.payload.firstName, lastName: ud.payload.lastName }
 
                 // var user = { id: res.id, irstName: res.fn, lastName: res.ln }
-                var user = { firstName: res.fn, lastName: res.ln, id: res.id, email: res.email }
+                var user = { firstName: res.fn, lastName: res.ln, id: res.id, email: res.email, phoneNumber: res.pn }
                 localStorage.setItem('user_data', JSON.stringify(user));
-                // console.log(res, user, storage.retrieveToken('user_data'));
-                console.log("\nres:", res, "\nuserJson:", user)
+                // console.log("res", res, "Storage", localStorage.getItem('user_data'));
+                // console.log("\nres:", res, "\nuserJson:", user)
                 window.location.href = '/Home';
                 // setRedirectPrev(true)
 

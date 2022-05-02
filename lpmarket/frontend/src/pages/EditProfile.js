@@ -16,7 +16,6 @@ const req = "Required field"
 const editSchema = yup.object().shape({
     firstName: yup.string().required(req),
     lastName: yup.string().required(req),
-    email: yup.string().email("example: user@site.com").required(req),
     phoneNumber: yup.string().matches(
         /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
         , "###-###-#### or ##########"
@@ -29,7 +28,8 @@ const editSchema = yup.object().shape({
     // passwordTwo: yup.string().oneOf([yup.ref("password"), null], "Passwords do not match").required(req),
 });
 
-const oldData = { firstName: "d", lastName: "d" }//JSON.parse(localStorage.getItem("user_data"))
+const oldData = JSON.parse(localStorage.getItem("user_data"))
+const bp = require('../Path.js');
 
 function EditProfile() {
 
@@ -39,31 +39,17 @@ function EditProfile() {
         resolver: yupResolver(editSchema),
         mode: "all",
         reValidateMode: "all",
-        defaultValues: { firstName: "d", lastName: "d" }//oldData,
+        defaultValues: oldData,
         // clone: (original) => ({ ...original })
     });
 
-    const [oldInfo, setOldInfo] = useState([])
-    const [files, setFiles] = useState([]);
-    const [images, setImages] = useState([]);
-    const [isHovered, setHover] = useState(false);
     const [passwordShown, setPasswordShown] = useState(false);
-
-    // Get old data to display on initial form
-    // useEffect(() => {
-
-    //     // setOldInfo(JSON.parse(localStorage.getItem("user_data")))
-    //     // fields.forEach(field => setValue(field, oldInfo[field]));
-    //     // oldInfo.forEach(field => console.log(field))
-    // }, []);
-
 
     const togglePasswordVisiblity = () => {
         setPasswordShown(passwordShown ? false : true);
     };
 
 
-    let bp = require('../Path.js');
 
     const onSubmit = async (data) => {
         console.log(data)
@@ -131,18 +117,6 @@ function EditProfile() {
                                     ></Form.Control>
                                     <Form.Control.Feedback type="invalid">
                                         {errors.lastName?.message}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-                                <Form.Group >
-                                    <Form.Label>Email</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="email"
-                                        {...register("email")}
-                                        isInvalid={!!errors.email && touchedFields.email}
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {errors.email?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className='mb-3'>
