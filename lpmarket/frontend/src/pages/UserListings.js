@@ -43,17 +43,17 @@ function UserListings() {
     )
   }
   // history.push(`/EditListing/${listingId}`)
-  const onDelete = async (listingId) => {
+  const onDelete = async (listing) => {
     if (window.confirm('Are you sure you want to delete?')) {
       // api call
       let storage = require("../tokenStorage")
-      let send = { ProductName: listingId, jwtToken: storage.retrieveToken() }
+      let send = { productName: listing.ProductName, jwtToken: storage.retrieveToken() }
       console.log(send)
       try {
-        const response = await fetch(bp.buildPath('api/addproduct'),
+        const response = await fetch(bp.buildPath('api/deleteproduct'),
           {
             method: 'POST',
-            body: send,
+            body: JSON.stringify(send),
             headers: {
               'Content-Type': 'application/json'
             }
@@ -64,16 +64,14 @@ function UserListings() {
           console.log("API Error:" + res.error);
         }
         else {
+          const updatedListings = listings.filter((item) => item.id !== listing.id)
+          setListings(updatedListings)
           console.log(res);
         }
       }
       catch (e) {
         console.log(e.toString());
       }
-      const updatedListings = listings.filter(
-        (listing) => listing.id !== listingId
-      )
-      setListings(updatedListings)
     }
   }
   let listingsLists = [1, 2, 3, 4, 5, 6, 7]
@@ -88,7 +86,7 @@ function UserListings() {
               key={item._id}
               id={item._id}
               onEdit={() => onEdit(item)}
-              onDelete={() => onDelete(item._id)}>
+              onDelete={() => onDelete(item)}>
             </ListingItem>)}
         </Row>
       </Container>
