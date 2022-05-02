@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 // import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Switch, Link, /*Redirect*/ } from 'react-router-dom';
-import { Button, Navbar, Container, Form, Nav, Row, Col, InputGroup/*, ButtonGroup,  NavDropdown, FormControl*/ } from 'react-bootstrap';
+import { Button, Navbar, Container, Form, Nav, Row, Col, InputGroup} from 'react-bootstrap';
 // import storage from './firebase.js';
 
 import NewListingPage from './pages/NewListingPage';
@@ -51,7 +51,7 @@ function App() {
         { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
       var txt = await response.text();
       var res = JSON.parse(txt);
-      // console.log(res)
+      console.log(res)
       var _results = res.results;
       var resultsName = [];
       var resultsProductCategory = [];
