@@ -24,11 +24,11 @@ const productSchema = yup.object().shape({
     images: yup.mixed().nullable()
         .test("type", "jpeg/jpg/png",
             (value) => checkIfFilesAreCorrectType(value)),
-    contactInfo: yup.string().matches(
+    ContactInfo: yup.string().matches(
         /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
         , "###-###-#### or ##########"
     ).required(req),
-    email: yup.string().email("example: user@site.com").required(req)
+    Email: yup.string().email("example: user@site.com").required(req)
 });
 
 const formats = ['image/jpg', 'image/jpeg', 'image/png']
@@ -371,24 +371,24 @@ function EditListing() {
                                     <Form.Label>Email</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        name="email"
-                                        {...register("email")}
-                                        isInvalid={!!errors.email && touchedFields.email}
+                                        name="Email"
+                                        {...register("Email")}
+                                        isInvalid={!!errors.Email && touchedFields.Email}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.email?.message}
+                                        {errors.Email?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group  >
-                                    <Form.Label>Phonenumber</Form.Label>
+                                    <Form.Label>Phone Number</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        name="contactInfo"
-                                        {...register("contactInfo")}
-                                        isInvalid={!!errors.contactInfo && touchedFields.contactInfo}
+                                        name="ContactInfo"
+                                        {...register("ContactInfo")}
+                                        isInvalid={!!errors.ContactInfo && touchedFields.ContactInfo}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.contactInfo?.message}
+                                        {errors.ContactInfo?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group as={Col}>

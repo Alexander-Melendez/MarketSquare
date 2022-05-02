@@ -32,6 +32,10 @@ const ProductSchema = new Schema({
   ProductState: {
     type: String
   },
+  ContactInfo: {
+    type: String,
+    required: true
+  },
   Email: {
     type: String,
     required: true

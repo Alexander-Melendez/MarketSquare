@@ -174,7 +174,6 @@ function NewListingPage() {
         var send = {
             ...data,
             ProductImages: imgUrls,
-            email: JSON.parse(localStorage.getItem("user_data")).email,
             jwtToken: tokenStorage.retrieveToken()
         }
         console.log("Send data: ", send)
