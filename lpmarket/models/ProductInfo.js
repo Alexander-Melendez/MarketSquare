@@ -12,6 +12,10 @@ const ProductSchema = new Schema({
   ProductCategory: {
     type: String
   },
+  ProductCondition: {
+    type: String,
+    required: true
+  },
   ProductDescription: {
     type: String,
     required: true
