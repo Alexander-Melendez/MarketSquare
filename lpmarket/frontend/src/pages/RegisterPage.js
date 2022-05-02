@@ -69,6 +69,7 @@ function RegisterPage() {
             }
             else {
                 console.log(res);
+                
                 setSuccess(true)
                 setMsg(res.message)
                 // var user =  {id:res.id,firstName:res.firstName,lastName:res.lastName}

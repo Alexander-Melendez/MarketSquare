@@ -2,6 +2,7 @@ import '../App.css';
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from 'react-router-dom';
 import { Container, Row, Col, Alert } from 'react-bootstrap';
+import { useJwt, decodeToken } from "react-jwt";
 
 let bp = require('../Path.js');
 
@@ -14,7 +15,7 @@ function ActivateEmail() {
         // console.log("Email Token", token)
 
         var obj = {
-            jwtToken: token
+            token: token
         };
         console.log("Email Token", obj)
         var js = JSON.stringify(obj);
@@ -31,9 +32,10 @@ function ActivateEmail() {
                 setMsg(res.error)
             }
             else {
-                console.log("Message:", res.message);
+                
                 setSuccess(true)
-                setMsg(res.message)
+                setMsg(res.error)
+                // console.log("success:", success, "Message:", res.error)
                 // var user =  {id:res.id,firstName:res.firstName,lastName:res.lastName}
                 // localStorage.setItem('user_data', JSON.stringify(user));
                 // console.log(res);
@@ -46,16 +48,16 @@ function ActivateEmail() {
         }
     }, [])
 
-
     return (
         <Container className='formOverlay'>
             <Container
                 className="justify-content-center d-flex align-items-center"
-            // style={{ "minHeight": "70vh" }}
+            style={{ "minHeight": "70vh" }}
             >
                 <Row>
                     <Alert className="text-center" variant={success ? "success" : "danger"} hidden={msg === ""}>
-                        {msg + success?<Link to="/login" />:"Please try again"}
+                        {msg}<br></br>
+                        {(success ?  <Link to="/login" >You may now login</Link> : <p>Please try again</p>)}
                     </Alert>
                 </Row>
             </Container >

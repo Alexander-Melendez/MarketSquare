@@ -203,26 +203,29 @@ app.post('/api/resetPassword', async (req, res, next) =>
 {
     var ret;
 
-    const { token, Password } = req.body;
+    const { token, newPassword } = req.body;
     const updateInfo =
     {
-        Password: Password
+        Password: newPassword
     };
+
+    
+
 
     try
     {
     if (token)
     {
       console.log("Entered token statement");
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async function(err, decodedToken) {
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function(err, decodedToken) {
           if (err)
           {
             return res.status(400).json({error: 'Incorrect or Expired Link.'});
           }
 
-          const {firstName, lastName, email, password, phoneNumber} = decodedToken;
+          const {firstName,lastName, email, password, phoneNumber} = decodedToken;
 
-          const checkedUser = await User.findOne({ Email: email });
+          const checkedUser = User.findOne({ Email: email });
 
           if (!checkedUser)
           {
@@ -230,17 +233,17 @@ app.post('/api/resetPassword', async (req, res, next) =>
             return res.status(400).json(ret);
           }
 
-          // ret = { Email: email};
+          ret = { Email: email};
 
-          const userToUpdate = {Email: email};
-          
+          const userToUpdate = { Email: email};
+
           var error = '';
 
 
           try {
             // const db = client.db();
             // const result = db.collection('UserInfo').updateOne(userToUpdate, updateInfo);
-            const result = await User.findOneAndUpdate(userToUpdate, updateInfo);
+            const result = User.findOneAndUpdate(userToUpdate, updateInfo);
           }
           catch (e) {
             error = e.toString();
@@ -556,13 +559,14 @@ app.post('/api/resetPassword', async (req, res, next) =>
     // incoming: productName
     // outgoing: error
 
-    const { Email, FirstName, LastName, PhoneNumber } = req.body;
+    const { Email, FirstName, LastName, PhoneNumber, Password } = req.body;
     const userToUpdate = { Email: Email };
     const updateInfo =
     {
       FirstName: FirstName,
       LastName: LastName,
       PhoneNumber: PhoneNumber,
+      Password: Password
     };
 
     var error = '';
