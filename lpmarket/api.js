@@ -438,15 +438,14 @@ exports.setApp = function (app, client) {
     // incoming: productName
     // outgoing: error
 
-    const { email, newFirstName, newLastName, newPhoneNumber } = req.body;
-    const userToUpdate = { Email: email };
+    const { Email, FirstName, LastName, PhoneNumber, Password } = req.body;
+    const userToUpdate = { Email: Email };
     const updateInfo =
     {
-      $set: {
-        FirstName: newFirstName,
-        LastName: newLastName,
-        PhoneNumber: newPhoneNumber
-      },
+      FirstName: FirstName,
+      LastName: LastName,
+      PhoneNumber: PhoneNumber,
+      Password: Password
     };
 
     var error = '';
@@ -454,7 +453,7 @@ exports.setApp = function (app, client) {
     try {
       // const db = client.db();
       // const result = db.collection('UserInfo').updateOne(userToUpdate, updateInfo);
-      const result = User.findByIdAndUpdate(userToUpdate, updateInfo);
+      const result = await User.findByIdAndUpdate(userToUpdate, updateInfo);
     }
     catch (e) {
       error = e.toString();
