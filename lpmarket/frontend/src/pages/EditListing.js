@@ -21,14 +21,17 @@ const productSchema = yup.object().shape({
     ProductCity: yup.string().required(req),
     ProductState: yup.string().required(req),
     ProductPrice: yup.number().positive().integer().required(req),
-    images: yup.mixed().nullable().test("type", "Must be a jpeg, jpg, or png", (value) => checkIfFilesAreCorrectType(value))
-        .required(req)
-    // contactInfo: yup.string().required(), 
-    // email: yup.string().required()
+    images: yup.mixed().nullable()
+        .test("type", "jpeg/jpg/png",
+            (value) => checkIfFilesAreCorrectType(value)),
+    contactInfo: yup.string().matches(
+        /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+        , "###-###-#### or ##########"
+    ).required(req),
+    email: yup.string().email("example: user@site.com").required(req)
 });
 
 const formats = ['image/jpg', 'image/jpeg', 'image/png']
-const fields = ['title', 'firstName', 'lastName', 'email', 'role'];
 
 function checkIfFilesAreCorrectType(uploads) {
     // console.log("Upload check:" , uploads, "\nlength: ", uploads.length)
@@ -83,46 +86,67 @@ function EditListing() {
     // // 
 
     useEffect(() => {
-        console.log(listing)
-        // fields.forEach(field => setValue(field, user[field]));
+        console.log("Init listing data:", listing)
         if (listing.ProductImages)
-            setOldImages(listing.ProductImages.map((image) => ({ url: image, id:image })))
+            setOldImages(listing.ProductImages.map((image) => ({ url: image, id: uuid() })))
     }, [])
-
-    useEffect(async () => {
-        console.log("fileUseEff:", files)
-        if (files.length !== 0) {
-            setValue("images", files, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
-            let imageList = await Promise.all(files.map(async (f) => {
-                const image = await readFileAsync(f)
-                return image
-            }))
-            setImages(images => [...images, ...imageList]);
-        }
-    }, [files])
 
     useEffect(() => {
         setImages(oldImages)
+        setFiles([])
+        // console.log("OldImgUseEff:", oldImages)
     }, [oldImages])
 
-    useEffect(() => {
-        // console.log("ImgUseEff:", images)
-    }, [images])
+    // updates images on file change
+    useEffect(async () => {
+        // console.log("fileUseEff:", files)
+        setValue("images", files, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+        let imageList = await Promise.all(files.map(async (f) => {
+            const image = await readFileAsync(f)
+            return image
+        }))
+        setImages([...images, ...imageList]);
+    }, [files])
 
+    // useEffect(() => {
+    //     console.log("ImgUseEff:", images)
+    // }, [images])
+
+    // resets the form, new files list, and images
     function resetForm() {
         setFiles([])
         setImages(oldImages)
+        // console.log("reset: oldimages", oldImages)
         reset()
     }
 
+    function deleteFile(id) {
+        const imageIndex = images.findIndex(item => item.id === id);
+        const fileIndex = files.findIndex(item => item.id === id);
+
+        // console.log("Delete: \nfiles- ", files, "\n values: ", getValues("images"))
+        if (fileIndex > -1 && imageIndex > -1) {
+            const values = files.filter((_, i) => i !== fileIndex);
+            // values.length === files.length? 
+            // setImages(images.filter(item => item.id !== id)): 
+            setFiles(values)
+            if (files.length === 1) {
+                resetField('images');
+            }
+        }
+        else if (fileIndex < 0 && imageIndex > -1) {
+            setImages(images.filter(item => item.id !== id))
+        }
+        else {
+            console.log("no images to delete")
+        }
+    }
+    // upload button
     async function uploadimg(e) {
         const fileList = e.target.files;
-
-        // let imageList
         if (fileList.length > 0) {
-            // setImages(images => [...images, ...imageList]);
             setFiles(files => [...files, ...Array.from(fileList)])
-            // console.log("In upload: ", getValues("images"))
+            // console.log("in upload", files)
         }
     }
 
@@ -144,26 +168,9 @@ function EditListing() {
         });
     }
 
-    function deleteFile(id) {
-        const imageIndex = images.findIndex(item => item.id === id);
-
-        console.log("Delete: \nfiles- ", files, "\n values: ", getValues("images"))
-        if (imageIndex > -1) {
-            const value = files.filter((_, i) => i !== imageIndex);
-            setImages(images.filter(item => item.id !== id));
-            setFiles(prev => value);
-            if (files.length === 1) {
-                resetField('images');
-            }
-        }
-        // console.log("Aftter Delete: ", files, "\n values: ", getValues("images"))
-    }
-    function goBack() {
-
-    }
-
     const requestEdit = async (data) => {
         // console.log("Formdata: ", data)
+
         const storeImage = async (image) => {//(image) => { 
             return new Promise((resolve, reject) => {
                 // const fbStorage = getStorage()
@@ -172,7 +179,6 @@ function EditListing() {
 
                 const uploadTask = uploadBytesResumable(storageRef, image)
                 uploadTask.on(
-                    /**/
                     'state_changed',
                     (snapshot) => { },
                     (error) => {
@@ -189,46 +195,54 @@ function EditListing() {
             })
         }
         // console.log("Onsubmit: ", data)
+        // console.log("Before filter existing:", images)
         let prev = images.filter((image) => (!image.type))
-        prev.forEach(function(prev){ delete prev.url });
-        let kept = prev.map(function(key) {return key.id});
+        // console.log("after filter existing:", prev)
 
-        // console.log("Filtered existing:", kept)
+        prev.forEach(function (prev) { delete prev.id });
+        let kept = prev.map(function (key) { return key.url });
+        console.log("Filtered existing:", kept)
 
-        const imgUrls = await Promise
-            .all(data.images.map((image) => storeImage(image))
-            ).catch(() => { return }) 
+        let imgUrls = []
+        // console.log("uploaded images: ", data.images)
+        if (data.images.length > 0) {
+            imgUrls = await Promise
+                .all(data.images.map((image) => storeImage(image))
+                ).catch(() => { return })
+        }
 
         var send = {
             ...data,
             ProductImages: [...kept, ...imgUrls],
             email: JSON.parse(localStorage.getItem("user_data")).email,
-            // jwtToken: tokenStorage.retrieveToken()
+            jwtToken: tokenStorage.retrieveToken()
         }
         console.log(send)
-        JSON.stringify(send);
+        let stringified = JSON.stringify(send);
+        // console.log(stringified)
+        try {
+            const response = await fetch(bp.buildPath('api/editproduct'),
+                {
+                    method: 'POST',
+                    body: stringified,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            var txt = await response.text();
+            var res = JSON.parse(txt);
+            if (res.error.length > 0) {
+                console.log("API Error:" + res.error);
+            }
+            else {
+                console.log(res);
+            }
+        }
+        catch (e) {
+            console.log(e.toString());
+        }
 
-        // try {
-        //     const response = await fetch(bp.buildPath('api/editProduct'),
-        //         {
-        //             method: 'POST',
-        //             body: send,
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             }
-        //         });
-        //     var txt = await response.text();
-        //     var res = JSON.parse(txt);
-        //     if (res.error.length > 0) {
-        //         console.log("API Error:" + res.error);
-        //     }
-        //     else {
-        //         console.log(res);
-        //     }
-        // }
-        // catch (e) {
-        //     console.log(e.toString());
-        // }
+        // window.location.href = '/Home/UserListings';
     };
 
     const onDelete = async (listingId) => {
@@ -265,10 +279,13 @@ function EditListing() {
         }
     }
 
+    function goBack() {
+
+    }
+
     return (
         <Container className='formOverlay'>
             <Container
-                // fluid
                 className="justify-content-center d-flex align-items-center"
                 style={{ "minHeight": "56vh" }}
             >
@@ -307,6 +324,7 @@ function EditListing() {
                                         name="ProductCondition"
                                         {...register("ProductCondition")}
                                         isInvalid={!!errors.ProductCondition && touchedFields.ProductCondition}
+                                    // defaultValue={value}
                                     >
                                         <option value="">Select condition...</option>
                                         <option value="New">New</option>
@@ -347,6 +365,30 @@ function EditListing() {
                                     </InputGroup>
                                     <Form.Control.Feedback type="invalid">
                                         {errors.ProductPrice?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group  >
+                                    <Form.Label>Email</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="email"
+                                        {...register("email")}
+                                        isInvalid={!!errors.email && touchedFields.email}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.email?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group  >
+                                    <Form.Label>Phonenumber</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="contactInfo"
+                                        {...register("contactInfo")}
+                                        isInvalid={!!errors.contactInfo && touchedFields.contactInfo}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.contactInfo?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group as={Col}>
@@ -395,24 +437,15 @@ function EditListing() {
                                         {errors.images?.message}
                                     </Form.Control.Feedback>
                                     <hr />
-                                    {/* <Container 
-                                    fluid 
-                                    // style={{  borderStyle:"solid",borderColor:"#001975"}}
-                                    > */}
                                     <Row
                                         className="justify-content-start mb-3" xs="auto"
-
                                     >
                                         {images.map((media) => (
                                             <Col
                                                 key={media.id}
                                                 onMouseOver={() => setHover(true)}
                                                 onMouseLeave={() => setHover(false)}
-                                                style={{
-                                                    position: 'relative',
-                                                    maxWidth: '150px',
-                                                    maxHeight: '150px'
-                                                }}
+                                                style={{ position: 'relative', maxWidth: '150px', maxHeight: '150px' }}
                                             // xs
                                             >
                                                 <Image
@@ -421,10 +454,7 @@ function EditListing() {
                                                     src={media.url}
                                                     // alt="product"
                                                     key={media.id}
-                                                    style={{
-                                                        maxWidth: '100%',
-                                                        maxHeight: '100%'
-                                                    }}
+                                                    style={{ maxWidth: '100%', maxHeight: '100%' }}
                                                 />
                                                 {isHovered && (
                                                     <Button

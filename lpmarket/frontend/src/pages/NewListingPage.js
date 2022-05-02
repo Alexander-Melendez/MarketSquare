@@ -23,9 +23,12 @@ const productSchema = yup.object().shape({
     state: yup.string().required(req),
     productPrice: yup.number().positive().integer().required(req),
     images: yup.mixed().nullable().test("type", "Must be a jpeg, jpg, or png", (value) => checkIfFilesAreCorrectType(value))
-        .required(req)
-    // contactInfo: yup.string().required(), 
-    // email: yup.string().required()
+        .required(req),
+    contactInfo: yup.string().matches(
+        /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+        , "###-###-#### or ##########"
+    ).required(req),
+    email: yup.string().email("example: user@site.com").required(req)
 });
 
 const formats = ['image/jpg', 'image/jpeg', 'image/png']
@@ -116,7 +119,7 @@ function NewListingPage() {
             //     return image
             // }))
             // console.log("Before setvalue: ", getValues("images"))
-            console.log("In upload: ", getValues("images"))
+            // console.log("In upload: ", getValues("images"))
         }
     }
 
@@ -150,9 +153,10 @@ function NewListingPage() {
                 uploadTask.on(
                     /**/
                     'state_changed',
-                    (snapshot) => {},
+                    (snapshot) => { },
                     (error) => {
-                        reject(error) },
+                        reject(error)
+                    },
                     () => {
                         // Handle successful uploads on complete
                         // For instance, get the download URL: https://firebasestorage.googleapis.com/...
@@ -165,7 +169,7 @@ function NewListingPage() {
         }
         // console.log("Onsubmit: ", data)
 
-        const imgUrls =await Promise.all(data.images.map((image) => storeImage(image))).catch(() => { return })
+        const imgUrls = await Promise.all(data.images.map((image) => storeImage(image))).catch(() => { return })
 
         var send = {
             ...data,
@@ -281,6 +285,30 @@ function NewListingPage() {
                                     </InputGroup>
                                     <Form.Control.Feedback type="invalid">
                                         {errors.productPrice?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group  >
+                                    <Form.Label>Email</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="email"
+                                        {...register("email")}
+                                        isInvalid={!!errors.email && touchedFields.email}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.email?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group  >
+                                    <Form.Label>Phonenumber</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="contactInfo"
+                                        {...register("contactInfo")}
+                                        isInvalid={!!errors.contactInfo && touchedFields.contactInfo}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.contactInfo?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group as={Col}>

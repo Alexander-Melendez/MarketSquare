@@ -74,7 +74,7 @@ function LoginPage() {
 
                 var tok = res.accessToken//decodeToken(res.accessToken);
                 console.log("Login Token: ", tok)
-                storage.storeToken(res.accessToken)
+                storage.storeToken(tok)
                 // var user = { id: ud.payload.id, firstName: ud.payload.firstName, lastName: ud.payload.lastName }
 
                 // var user = { id: res.id, irstName: res.fn, lastName: res.ln }

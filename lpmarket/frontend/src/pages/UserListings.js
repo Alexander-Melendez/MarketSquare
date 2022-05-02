@@ -8,54 +8,40 @@ import { withRouter, useHistory, Redirect, Link } from "react-router-dom"
 import ListingItem from "../components/ListingItem.js";
 import EditListing from "./EditListing.js";
 
-function UserListings() {
+let storage = require('../tokenStorage.js')
+let bp = require('../Path.js');
 
-  let bp = require('../Path.js');
+function UserListings() {
 
   const [listings, setListings] = useState([])
   const history = useHistory()
   useEffect(async () => {
-    var obj = { userId: 0, search: "" };
+    var obj = {
+      email: JSON.parse(localStorage.getItem("user_data")).email,
+      jwtToken: storage.retrieveToken()
+    };
+    console.log(obj)
     var js = JSON.stringify(obj);
     try {
-      const response = await fetch(bp.buildPath('api/search'),
+      const response = await fetch(bp.buildPath('api/ownedByUser'),
         { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
       var txt = await response.text();
       var res = JSON.parse(txt);
-      console.log(res)
-      setListings(res.res)
-
+      console.log("userlisting results: ", res)
+      if (!res.error) {
+        setListings(res.results)
+      }
     } catch (e) {
       alert(e.toString());
       // setResults(e.toString());
     }
   }, []);
 
-  useEffect(async () => {
-    var obj = { userId: JSON.parse(localStorage.getItem("user_data")).id };
-    var js = JSON.stringify(obj);
-    /*try {
-      // subject to change
-      const response = await fetch(bp.buildPath('api/userListings'),
-      {
-        method: 'POST',
-        body: js,
-        headers: { 'Content-Type': 'application/json' }
-      });
-      var txt = await response.text();
-      var res = JSON.parse(txt);
-      var data = res.results;
-      let listings = []
-    }
-    catch (e) {
-      alert(e.toString());
-    }*/
-
-  }, [])
-
-  const onEdit = (listing) => { (
-    <Link to={{pathname: `/EditListing/${listing._id}`, state: listing}}/>
-    )}
+  const onEdit = (listing) => {
+    (
+      <Link to={{ pathname: `/EditListing/${listing._id}`, state: listing }} />
+    )
+  }
   // history.push(`/EditListing/${listingId}`)
   const onDelete = async (listingId) => {
     if (window.confirm('Are you sure you want to delete?')) {
