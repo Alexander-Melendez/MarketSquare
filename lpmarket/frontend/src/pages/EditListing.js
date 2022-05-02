@@ -489,7 +489,7 @@ function EditListing() {
                                 </Button>
                                 <Button variant='warning' onClick={() => resetForm()}>Reset</Button>
                                 <Button variant='danger' onClick={() => onDelete()}>Delete</Button>
-                                <Button variant="secondary" onClick={() => goBack()}>Return</Button>
+                                {/* <Button variant="secondary" onClick={() => goBack()}>Return</Button> */}
                             </ButtonGroup>
 
                         </Form>

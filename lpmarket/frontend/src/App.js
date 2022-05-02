@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Redirect, Switch, Link } from 'react-router-dom';
-import { Button, Navbar, Card, Container, FormControl, Form, Nav, NavDropdown, InputGroup, Row, Col } from 'react-bootstrap';
+import { Button, Navbar, ButtonGroup, Container, FormControl, Form, Nav, NavDropdown, InputGroup, Row, Col } from 'react-bootstrap';
 import fbStorage from './firebase.js';
 
 import NewListingPage from './pages/NewListingPage';
@@ -134,43 +134,40 @@ function App() {
         }
       }
       return (<>        <Col md="auto">
-          <div className={Switching ? "box" : "hidden"} onClick={TrueSwitch}>
-            <p></p>
-            <div className="smallimg">
-              <img src={ImageArray[index]} alt={"No image was uploaded by the user"} />
-            </div>
-            <p className="Product">{NameArray[index]}</p>
-            <p>Catagory:{ProductCategoryArray[index]}</p>
-            <p>Price: $ {PriceArray[index]}</p>
-            <p>Condition: {ConditionArray[index]}</p>
-            <p>Location: {CityArray[index]} {StateArray[index]}</p>
+        <div className={Switching ? "box" : "hidden"} onClick={TrueSwitch}>
+          <p></p>
+          <div className="smallimg">
+            <img src={ImageArray[index]} alt={"No image was uploaded by the user"} />
           </div>
-          </Col >
-          <Container fluid className={Switch ? "OpenPage" : "hidden"}>
-            <div onClick={FalseSwitch}>X</div>
-            {/* <div>             */}
-            {/* <Container fluid> */}
-
-            {/* </Container> */}
-            {/* </div> */}
-            <p className="Product">{NameArray[index]}</p>
-            <Row className="justify-content-start mb-3">
-                <Col 
-                // className="alignment"
-                >
-                  <p className="Descriptiontwo">Description</p>
-                  <p className="Description"> {DescArray[index]}</p>
-                  <p>Price: ${PriceArray[index]}</p>
-                  <p>Condition: {ConditionArray[index]}</p>
-                  <p>Location: {StateArray[index]} {CityArray[index]}</p>
-                  <p>Contact Info: {ContactInfoArray[index]}</p>
-                </Col>
-            </Row>
-            <Row className="justify-content-start mb-3">
-              {imagearray(index)}
-            </Row>
-          </Container>
-          </>
+          <p className="Product">{NameArray[index]}</p>
+          <p>Catagory:{ProductCategoryArray[index]}</p>
+          <p>Price: $ {PriceArray[index]}</p>
+          <p>Condition: {ConditionArray[index]}</p>
+          <p>Location: {CityArray[index]} {StateArray[index]}</p>
+        </div>
+      </Col >
+        <Container fluid className={Switch ? "OpenPage" : "hidden"}>
+          <div onClick={FalseSwitch}>X</div>
+          <p className="Product">{NameArray[index]}</p>
+          <hr/>
+          <Row className="justify-content-start mb-3">
+            <Col
+            // className="alignment"
+            >
+              <p className="Descriptiontwo">Description</p>
+              <p className="Description"> {DescArray[index]}</p>
+              <p>Price: ${PriceArray[index]}</p>
+              <p>Condition: {ConditionArray[index]}</p>
+              <p>Location: {StateArray[index]} {CityArray[index]}</p>
+              <p>Contact Info: {ContactInfoArray[index]}</p>
+            </Col>
+          </Row>
+          <hr/>
+          <Row className="justify-content-start mb-3">
+            {imagearray(index)}
+          </Row>
+        </Container>
+      </>
 
       );
     }
@@ -213,9 +210,12 @@ function App() {
             {rowone}
           </Row>
         </Container>
-        <div class={Switching ? "navbutton" : "hidden"} >
-          <button onClick={Prev}>Prev</button>  <button onClick={Next}>Next</button>
-        </div>
+        <Container className={"justify-content-start " + (Switching ? "navbutton" : "hidden")}>
+          <Row  >
+            <Col as={Button} onClick={Prev}>Prev</Col>
+            <Col as={Button} onClick={Next}>Next</Col>
+          </Row></Container>
+
       </Container>
     );
   }
@@ -300,7 +300,6 @@ function App() {
 
       <Switch >
         <Route path='/' exact component={PlacingTest} />
-        {/* <Route path='/' exact component={PlacingTest} /> */}
         <ProtectedRoute exact path='/UserListings' component={UserListings} />
         <ProtectedRoute exact path='/NewListing' component={NewListingPage} />
         <ProtectedRoute exact path='/EditProfile' component={EditProfile} />

@@ -79,7 +79,7 @@ function UserListings() {
     <Container className='mainOverlay'>
       <h2 className="pb-2 text-center border-bottom">Your Listings</h2>
       <Container className='myItems' fluid>
-        <Row className="justify-content-start mb-3">
+        <Row className="justify-content-start mb-3"style={{alignItems:"stretch"}}>
           {listings.map((item) =>
             <ListingItem
               listing={item}
