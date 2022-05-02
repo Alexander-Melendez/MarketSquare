@@ -65,7 +65,7 @@ function LoginPage() {
                 // var user = { id: res.id, firstName: res.firstName, lastName: res.lastName }
                 var user = { id: ud.payload.id, firstName: ud.payload.firstName, lastName: ud.payload.lastName }*/
 
-            if (res.fn.length > 0) {
+            if (!res.error) {
 
                 // storage.storeToken(res);
                 // var jwt = require('jsonwebtoken'); 

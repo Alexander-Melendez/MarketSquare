@@ -22,11 +22,11 @@ const productSchema = yup.object().shape({
     city: yup.string().required(req),
     state: yup.string().required(req),
     productPrice: yup.number().positive().integer().required(req),
-    images: yup.mixed().nullable().test("type", "Must be a jpeg, jpg, or png", (value) => checkIfFilesAreCorrectType(value))
+    images: yup.mixed().nullable().test("type", ".jpeg, .jpg, or .png", (value) => checkIfFilesAreCorrectType(value))
         .required(req),
     contactInfo: yup.string().matches(
         /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-        , "###-###-#### or ##########"
+        , "e.g. 123-456-7890 or 1234567890"
     ).required(req),
     email: yup.string().email("example: user@site.com").required(req)
 });
@@ -97,7 +97,7 @@ function NewListingPage() {
     function deleteFile(id) {
         const imageIndex = images.findIndex(item => item.id === id);
 
-        console.log("Delete: \nfiles- ", files, "\n values: ", getValues("images"))
+        // console.log("Delete: \nfiles- ", files, "\n values: ", getValues("images"))
         if (imageIndex > -1) {
             const value = files.filter((_, i) => i !== imageIndex);
             setImages(images.filter(item => item.id !== id));

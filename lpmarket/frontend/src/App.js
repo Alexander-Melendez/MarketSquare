@@ -1,10 +1,10 @@
 import './App.css';
 import React, { useState, useEffect } from "react";
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router, Route, Redirect, Switch, Link } from 'react-router-dom';
-import { Button, Navbar, ButtonGroup, Container, FormControl, Form, Nav, NavDropdown, InputGroup, Row, Col } from 'react-bootstrap';
-import fbStorage from './firebase.js';
+import { BrowserRouter as Router, Route, Switch, Link, /*Redirect*/ } from 'react-router-dom';
+import { Button, Navbar, Container, Form, Nav, Row, Col, InputGroup/*, ButtonGroup,  NavDropdown, FormControl*/ } from 'react-bootstrap';
+// import storage from './firebase.js';
 
 import NewListingPage from './pages/NewListingPage';
 import LoginPage from './pages/LoginPage';
@@ -12,8 +12,9 @@ import RegisterPage from './pages/RegisterPage';
 import EditProfile from './pages/EditProfile';
 import UserListings from './pages/UserListings';
 import EditListing from './pages/EditListing';
+import ActivateEmail from './pages/ActivateEmail';
 
-import ListingItem from './components/ListingItem';
+// import ListingItem from './components/ListingItem';
 import LoggedInName from './components/LoggedInName'
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -35,7 +36,7 @@ function App() {
   const [ImageArray, setImage] = useState(image);
 
   const [counter, setCounter] = useState(0);
-  let displaynumber = 4;
+  let displaynumber = 8;
 
 
   let bp = require('./Path.js');
@@ -48,7 +49,7 @@ function App() {
         { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
       var txt = await response.text();
       var res = JSON.parse(txt);
-      console.log(res)
+      // console.log(res)
       var _results = res.results;
       var resultsName = [];
       var resultsProductCategory = [];
@@ -116,7 +117,7 @@ function App() {
       function imagearray(index) {
         if (ImageArray[index] == undefined) {
           return (
-            <div class="bigimg">
+            <div className="bigimg">
               <img src={ImageArray[index]} alt={"No image was uploaded by the user"} />
             </div>
           );
@@ -126,49 +127,50 @@ function App() {
           const currentimage = Object.values(ImageArray[index]);
           return (
             <Col>
-              <div class="bigimgtwo">
+              <div className="bigimgtwo">
                 {currentimage.map((i) => <img src={i} alt={"No image was uploaded by the user"} />)}
               </div>
             </Col>
           );
         }
       }
-      return (<>        <Col md="auto">
-        <div className={Switching ? "box" : "hidden"} onClick={TrueSwitch}>
-          <p></p>
-          <div className="smallimg">
-            <img src={ImageArray[index]} alt={"No image was uploaded by the user"} />
-          </div>
-          <p className="Product">{NameArray[index]}</p>
-          <p>Catagory:{ProductCategoryArray[index]}</p>
-          <p>Price: $ {PriceArray[index]}</p>
-          <p>Condition: {ConditionArray[index]}</p>
-          <p>Location: {CityArray[index]} {StateArray[index]}</p>
-        </div>
-      </Col >
-        <Container fluid className={Switch ? "OpenPage" : "hidden"}>
-          <div onClick={FalseSwitch}>X</div>
-          <p className="Product">{NameArray[index]}</p>
-          <hr/>
-          <Row className="justify-content-start mb-3">
-            <Col
-            // className="alignment"
-            >
-              <p className="Descriptiontwo">Description</p>
-              <p className="Description"> {DescArray[index]}</p>
-              <p>Price: ${PriceArray[index]}</p>
+      return (
+        <>
+          <Col md="auto">
+            <div className={Switching ? "box" : "hidden"} onClick={TrueSwitch}>
+              <p></p>
+              <div className="smallimg">
+                <img src={ImageArray[index]} alt={"No image was uploaded by the user"} />
+              </div>
+              <p className="Product">{NameArray[index]}</p>
+              <p>Catagory:{ProductCategoryArray[index]}</p>
+              <p>Price: $ {PriceArray[index]}</p>
               <p>Condition: {ConditionArray[index]}</p>
-              <p>Location: {StateArray[index]} {CityArray[index]}</p>
-              <p>Contact Info: {ContactInfoArray[index]}</p>
-            </Col>
-          </Row>
-          <hr/>
-          <Row className="justify-content-start mb-3">
-            {imagearray(index)}
-          </Row>
-        </Container>
-      </>
-
+              <p>Location: {CityArray[index]} {StateArray[index]}</p>
+            </div>
+          </Col >
+          <Container fluid className={Switch ? "OpenPage" : "hidden"}>
+            <div onClick={FalseSwitch}>X</div>
+            <p className="Product">{NameArray[index]}</p>
+            <hr />
+            <Row className="justify-content-start mb-3">
+              <Col
+              // className="alignment"
+              >
+                <p className="Descriptiontwo">Description</p>
+                <p className="Description"> {DescArray[index]}</p>
+                <p>Price: ${PriceArray[index]}</p>
+                <p>Condition: {ConditionArray[index]}</p>
+                <p>Location: {StateArray[index]} {CityArray[index]}</p>
+                <p>Contact Info: {ContactInfoArray[index]}</p>
+              </Col>
+            </Row>
+            <hr />
+            <Row className="justify-content-start mb-3">
+              {imagearray(index)}
+            </Row>
+          </Container>
+        </>
       );
     }
 
@@ -214,8 +216,8 @@ function App() {
           <Row  >
             <Col as={Button} onClick={Prev}>Prev</Col>
             <Col as={Button} onClick={Next}>Next</Col>
-          </Row></Container>
-
+          </Row>
+        </Container>
       </Container>
     );
   }
@@ -309,6 +311,7 @@ function App() {
         />
         <Route exact path='/login' component={LoginPage} />
         <Route exact path='/register' component={RegisterPage} />
+        <Route exact path='/emailverification/:token' component={ActivateEmail}/>
       </Switch>
     </Router >
   );

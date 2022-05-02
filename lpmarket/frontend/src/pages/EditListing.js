@@ -22,12 +22,11 @@ const productSchema = yup.object().shape({
     ProductState: yup.string().required(req),
     ProductPrice: yup.number().positive().integer().required(req),
     images: yup.mixed().nullable()
-        .test("type", "jpeg/jpg/png",
+        .test("type", ".jpeg, .jpg, or .png",
             (value) => checkIfFilesAreCorrectType(value)),
     ContactInfo: yup.string().matches(
-        /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-        , "###-###-#### or ##########"
-    ).required(req),
+        /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/,
+        "e.g. 123-456-7890 or 1234567890").required(req),
     Email: yup.string().email("example: user@site.com").required(req)
 });
 
@@ -48,6 +47,7 @@ function checkIfFilesAreCorrectType(uploads) {
     }
     return true
 }
+
 let bp = require('../Path.js');
 let tokenStorage = require('../tokenStorage.js')
 
@@ -141,6 +141,7 @@ function EditListing() {
             console.log("no images to delete")
         }
     }
+    
     // upload button
     async function uploadimg(e) {
         const fileList = e.target.files;
@@ -488,7 +489,7 @@ function EditListing() {
                                     Confirm
                                 </Button>
                                 <Button variant='warning' onClick={() => resetForm()}>Reset</Button>
-                                <Button variant='danger' onClick={() => onDelete()}>Delete</Button>
+                                {/* <Button variant='danger' onClick={() => onDelete()}>Delete</Button> */}
                                 {/* <Button variant="secondary" onClick={() => goBack()}>Return</Button> */}
                             </ButtonGroup>
 

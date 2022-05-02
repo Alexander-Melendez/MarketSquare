@@ -1,7 +1,7 @@
 import '../App.css';
-import { createContext, useState, useEffect } from 'react'
+import { useState } from 'react'
 // InputGroup and FormControl from 'react-bootstrap' removed to reduce unused errors
-import { Row, Col, Card, Form, Button, Container, InputGroup } from 'react-bootstrap';
+import { Row, Col, Form, Button, Container, InputGroup, Alert, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -28,6 +28,9 @@ const registerSchema = yup.object().shape({
 
 function RegisterPage() {
 
+    const [success, setSuccess] = useState(false)
+    // const [err, setErr] = useState(false)
+    const [msg, setMsg] = useState('')
     const [passwordShown, setPasswordShown] = useState(false);
     const togglePasswordVisiblity = () => {
         setPasswordShown(passwordShown ? false : true);
@@ -46,7 +49,7 @@ function RegisterPage() {
     const onSubmit = async (data) => {
         console.log(data)
         var send = JSON.stringify(data);
-        console.log("Send: " + send)
+        // console.log("Send: " + send)
         try {
             const response = await fetch(bp.buildPath('api/register'),
                 {
@@ -58,15 +61,20 @@ function RegisterPage() {
                 });
             var txt = await response.text();
             var res = JSON.parse(txt);
-            if (res.error.length > 0) {
-                console.log("API Error:" + res.error);
+            // if (res.error.length > 0) {
+            if (res.error) {
+                // console.log("API Error:" + res.error);
+                setSuccess(false)
+                setMsg(res.error)
             }
             else {
-                // var user =  {id:res.id,firstName:res.firstName,lastName:res.lastName}
                 console.log(res);
+                setSuccess(true)
+                setMsg(res.message)
+                // var user =  {id:res.id,firstName:res.firstName,lastName:res.lastName}
                 // localStorage.setItem('user_data', JSON.stringify(user));
                 // console.log(res);
-                window.location.href = "/Home/login"
+                // window.location.href = "/Home/login"
                 // <Redirect to="/Home" />
             }
         }
@@ -84,6 +92,9 @@ function RegisterPage() {
                 {/* <Card className='mx-auto'>
                 <Card.Body> */}
                 <Row>
+                    <Alert className="text-center" variant={success ? "success" : "danger"} hidden={msg === ""}>
+                        {msg}
+                    </Alert>
                     <div className='text-center'><h1>Register an Account</h1></div>
                     <hr />
                     <Col>

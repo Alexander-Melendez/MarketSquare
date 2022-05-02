@@ -83,7 +83,7 @@ exports.setApp = function (app, client) {
     mg.messages().send(data, function (error, body) {
       if (error) {
         return res.json({
-          error: err.message
+          error: error.message
         })
       }
       return res.json({ message: 'Email has been sent, kindly activate your account' });
