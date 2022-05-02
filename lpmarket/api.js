@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 
 
 const mailgun = require("mailgun-js");
-const DOMAIN = "sandboxa6cd3c694cc1442789c54e64a83edfd7.mailgun.org";
+const DOMAIN = "smarketsquare.com";
 const mg = mailgun({ apiKey: process.env.MAILGUN_APIKEY, domain: DOMAIN });
 
 
@@ -75,7 +75,7 @@ exports.setApp = function (app, client) {
           <body>
           <h2>Please click on the given link to activate your account!</h2>
           <p>
-             <a href="${process.env.CLIENT_URL}/authentication/activate/${token}">Click Here to Verify your Account</a>
+             <a href="${process.env.CLIENT_URL}emailverification/${token}">Click Here to Verify your Account</a>
           </p>
           </body>
     `
@@ -108,36 +108,161 @@ exports.setApp = function (app, client) {
     res.status(200).json(ret);*/
   });
 
-  app.post('/api/activateAccount', async (req, res, next) => {
-    const { token } = req.body;
+  app.post('/api/activateAccount', async (req, res, next) =>
+  {
+      const {token} = req.body;
+  
+      if (token)
+      {
+          jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function(err, decodedToken) {
+            if (err)
+            {
+              return res.status(400).json({error: 'Incorrect or Expired Link.'});
+            }
+  
+            const {firstName,lastName, email, password, phoneNumber} = decodedToken;
+  
+            User.findOne({email}).exec((err, user) => {
+  
+              if (user)
+              {
+                return res.status(400).json({error: "User with this email already exists!"});
+              }
+              const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()};
+              var error = '';
+  
+  
+            try
+            {
+              // const db = client.db();
+              // const result = db.collection('UserInfo').insertOne(newUser);
+              const result = User.create(newUser);
+            }
+            catch(e)
+            {
+              error = e.toString();
+            }
+  
+            var ret = { error: "No Errors, Signup Successful!" };
+            res.status(200).json(ret);
+          });
+        });
+      }
+    });
 
-    if (token) {
-      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decodedToken) {
-        if (err) {
-          return res.status(400).json({ error: 'Incorrect or Expired Link.' });
-        }
+    // Sends email to reset password
+  app.post('/api/forgotPassword', async (req, res, next) =>
+  {
+    const { email } = req.body;
+    var ret;
 
-        const { firstName, lastName, email, password, phoneNumber } = decodedToken;
-        const newUser = { FirstName: firstName, LastName: lastName, Email: email, Password: password, PhoneNumber: phoneNumber, DateCreated: new Date() };
-        var error = '';
+    const emailCheck = await User.findOne({ Email: email });
 
-
-        try {
-          // const db = client.db();
-          // const result = db.collection('UserInfo').insertOne(newUser);
-          const result = User.create(newUser);
-        }
-        catch (e) {
-          error = e.toString();
-        }
-
-        var ret = { error: "No Errors, Signup Successful!" };
-        res.status(200).json(ret);
-      });
-    } else {
-      console.log("error in activating account");
-      return res.json({ error: "Error activating account" });
+    if (!emailCheck)
+    {
+      ret = { error: "No users found with this email"}
+      return res.status(400).json({success: false, error: ret});
     }
+    
+    const id = emailCheck._id;
+    const fn = emailCheck.firstName;
+    const ln = emailCheck.lastName;
+
+
+    const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '20m'});
+
+    const data = {
+      from: "noreply@marketsquare.com",
+      to: email,
+      subject: 'Reset Password Link',
+      html: `
+            <body>
+            <h2>Hello ${fn} ${ln},Please click on the given link to reset your password!</h2>
+            <p>
+              <a href="${process.env.CLIENT_URL}resetpassword/${token}">Click Here to Reset your Password</a>
+            </p>
+            </body>
+      `     
+    };
+    mg.messages().send(data, function (error, body){
+      if(error)
+      {
+        return res.json({
+          error: err.message
+        })
+      }
+      return res.json({message: 'Email has been sent, Reset your password'});
+    });
+  });
+
+
+  // Actually resets the password
+app.post('/api/resetPassword', async (req, res, next) =>
+{
+    var ret;
+
+    const { token, newPassword } = req.body;
+    const updateInfo =
+    {
+        Password: newPassword
+    };
+
+    
+
+
+    try
+    {
+    if (token)
+    {
+      console.log("Entered token statement");
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function(err, decodedToken) {
+          if (err)
+          {
+            return res.status(400).json({error: 'Incorrect or Expired Link.'});
+          }
+
+          const {firstName,lastName, email, password, phoneNumber} = decodedToken;
+
+          const checkedUser = User.findOne({ Email: email });
+
+          if (!checkedUser)
+          {
+            ret = { error: "Unable to find user"}
+            return res.status(400).json(ret);
+          }
+
+          ret = { Email: email};
+
+          const userToUpdate = { Email: email};
+
+          /*const emailCheck = await User.findOne({ Email: email });
+
+          if (emailCheck) {
+            return res.status(400).json({error: "User with this email already exists."});
+          }
+          */
+          var error = '';
+
+
+          try {
+            // const db = client.db();
+            // const result = db.collection('UserInfo').updateOne(userToUpdate, updateInfo);
+            const result = User.findOneAndUpdate(userToUpdate, updateInfo);
+          }
+          catch (e) {
+            error = e.toString();
+          }
+
+          var ret = { error: "No Errors, Reset Successful!" };
+          return res.status(200).json(ret);
+      });
+    }
+  }
+  catch{ 
+  
+      console.log("error in resetting password");
+      return res.json({error: "Error resetting password"});
+  }
   });
 
   app.post('/api/search', async (req, res, next) => {
