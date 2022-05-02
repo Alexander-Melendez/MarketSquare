@@ -32,7 +32,7 @@ function App() {
   const [StateArray, setState] = useState(Temp);
   const [CityArray, setCity] = useState(Temp);
   const [ConditionArray, setCondition] = useState(Temp);
-  const[ImageArray, setImage] = useState(image);
+  const [ImageArray, setImage] = useState(image);
 
   const [counter, setCounter] = useState(0);
   let displaynumber = 4;
@@ -87,20 +87,20 @@ function App() {
       setResults(e.toString());
     }
   }, []);
-  
+
 
   function PlacingTest() {
     const [currentlength, setLength] = useState(NameArray.length);
     const [Switching, setSwitching] = useState(true);
     function Next() {
-      if(currentlength > displaynumber*(counter+1)) {
-        setCounter(counter+1)
+      if (currentlength > displaynumber * (counter + 1)) {
+        setCounter(counter + 1)
       }
     }
-    
+
     function Prev() {
-      if(counter > 0) {
-        setCounter(counter-1)
+      if (counter > 0) {
+        setCounter(counter - 1)
       }
     }
     function FormattedBoxesone(index) {
@@ -115,28 +115,30 @@ function App() {
       }
       function imagearray(index) {
         if (ImageArray[index] == undefined) {
-          return(
+          return (
             <div class="bigimg">
-              <img src={ImageArray[index]} alt = {"No image was uploaded by the user"}/>
+              <img src={ImageArray[index]} alt={"No image was uploaded by the user"} />
             </div>
           );
-          
+
         }
         else {
-          const currentimage = Object.values(ImageArray[index]); 
-          return(
-            <div class="bigimgtwo">
-              {currentimage.map((i) => <img src={i} alt = {"No image was uploaded by the user"}/>)}
-            </div>
+          const currentimage = Object.values(ImageArray[index]);
+          return (
+            <Col>
+              <div class="bigimgtwo">
+                {currentimage.map((i) => <img src={i} alt={"No image was uploaded by the user"} />)}
+              </div>
+            </Col>
           );
         }
       }
       return (
-        <Col  md="auto">
+        <Col md="auto">
           <div className={Switching ? "box" : "hidden"} onClick={TrueSwitch}>
             <p></p>
             <div class="smallimg">
-              <img src={ImageArray[index]} alt = {"No image was uploaded by the user"}/>
+              <img src={ImageArray[index]} alt={"No image was uploaded by the user"} />
             </div>
             <p className="Product">{NameArray[index]}</p>
             <p>Catagory:{ProductCategoryArray[index]}</p>
@@ -144,13 +146,17 @@ function App() {
             <p>Condition: {ConditionArray[index]}</p>
             <p>Location: {CityArray[index]} {StateArray[index]}</p>
           </div>
-          <div className={Switch ? "OpenPage" : "hidden"}>
+          <Container fluid className={Switch ? "OpenPage" : "hidden"}>
             <div className="Closebutton" onClick={FalseSwitch}>X</div>
-            <div>
-            {imagearray(index)}
-            </div>
-              <p className="Product">{NameArray[index]}</p>
-            <div className = "alignment">
+            {/* <div>             */}
+            {/* <Container fluid> */}
+            <Row className="justify-content-start mb-3">
+              {imagearray(index)}
+            </Row>
+            {/* </Container> */}
+            {/* </div> */}
+            <p className="Product">{NameArray[index]}</p>
+            <div className="alignment">
               <p className="Descriptiontwo">Description</p>
               <p className="Description"> {DescArray[index]}</p>
               <p>Price: ${PriceArray[index]}</p>
@@ -158,7 +164,7 @@ function App() {
               <p>Location: {StateArray[index]} {CityArray[index]}</p>
               <p>Contact Info: {ContactInfoArray[index]}</p>
             </div>
-          </div>
+          </Container>
         </Col >
       );
     }
@@ -167,31 +173,31 @@ function App() {
     let numloop = (currentlength / 4);
     var boxes = [];
     let boxloops = 4;
-    if(currentlength > displaynumber*(counter+1)) {
-      numloop=displaynumber/4
+    if (currentlength > displaynumber * (counter + 1)) {
+      numloop = displaynumber / 4
       for (var i = 0; i < numloop; i++) {
         for (var j = 0; j < boxloops; j++) {
-          boxes.push(FormattedBoxesone((i * 4 + j)+(counter*displaynumber)));
+          boxes.push(FormattedBoxesone((i * 4 + j) + (counter * displaynumber)));
         }
       }
     }
     else {
-      numloop = (currentlength / 4)-((displaynumber/4)*counter)
+      numloop = (currentlength / 4) - ((displaynumber / 4) * counter)
       if (currentlength % 4 !== 0) {
         numloop = numloop - 1;
       }
       var a = 0
       for (a = 0; a < numloop; a++) {
         for (var b = 0; b < boxloops; b++) {
-          boxes.push(FormattedBoxesone((a * 4 + b)+(counter*displaynumber)));
+          boxes.push(FormattedBoxesone((a * 4 + b) + (counter * displaynumber)));
         }
       }
       for (var k = 0; k < currentlength % 4; k++) {
-        boxes.push(FormattedBoxesone((a * 4 + k)+(counter*displaynumber)));
+        boxes.push(FormattedBoxesone((a * 4 + k) + (counter * displaynumber)));
       }
     }
-    
-    
+
+
     rowone.push(boxes);
 
     return (
@@ -201,8 +207,8 @@ function App() {
             {rowone}
           </Row>
         </Container>
-        <div class ={Switching ? "navbutton" : "hidden"} >
-          <button onClick={Prev}>Prev</button>  <button onClick={Next}>Next</button> 
+        <div class={Switching ? "navbutton" : "hidden"} >
+          <button onClick={Prev}>Prev</button>  <button onClick={Next}>Next</button>
         </div>
       </Container>
     );
@@ -292,8 +298,8 @@ function App() {
         <ProtectedRoute exact path='/UserListings' component={UserListings} />
         <ProtectedRoute exact path='/NewListing' component={NewListingPage} />
         <ProtectedRoute exact path='/EditProfile' component={EditProfile} />
-        <Route exact path='/EditListing/:listingId' 
-        render = {(props) => <EditListing {...props}/>}
+        <Route exact path='/EditListing/:listingId'
+          render={(props) => <EditListing {...props} />}
         // component={EditListing} 
         />
         <Route exact path='/login' component={LoginPage} />
