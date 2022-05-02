@@ -123,11 +123,13 @@ exports.setApp = function (app, client) {
             const {firstName,lastName, email, password, phoneNumber} = decodedToken;
   
             User.findOne({email}).exec((err, user) => {
-  
+              
+              /*
               if (user)
               {
                 return res.status(400).json({error: "User with this email already exists!"});
               }
+              */
               const newUser = {FirstName:firstName,LastName:lastName,Email:email,Password:password,PhoneNumber:phoneNumber,DateCreated: new Date()};
               var error = '';
   
@@ -234,7 +236,7 @@ app.post('/api/resetPassword', async (req, res, next) =>
           ret = { Email: email};
 
           const userToUpdate = { Email: email};
-          
+
           var error = '';
 
 
