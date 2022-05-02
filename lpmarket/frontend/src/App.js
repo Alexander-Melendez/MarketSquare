@@ -133,11 +133,10 @@ function App() {
           );
         }
       }
-      return (
-        <Col md="auto">
+      return (<>        <Col md="auto">
           <div className={Switching ? "box" : "hidden"} onClick={TrueSwitch}>
             <p></p>
-            <div class="smallimg">
+            <div className="smallimg">
               <img src={ImageArray[index]} alt={"No image was uploaded by the user"} />
             </div>
             <p className="Product">{NameArray[index]}</p>
@@ -146,26 +145,33 @@ function App() {
             <p>Condition: {ConditionArray[index]}</p>
             <p>Location: {CityArray[index]} {StateArray[index]}</p>
           </div>
+          </Col >
           <Container fluid className={Switch ? "OpenPage" : "hidden"}>
-            <div className="Closebutton" onClick={FalseSwitch}>X</div>
+            <div onClick={FalseSwitch}>X</div>
             {/* <div>             */}
             {/* <Container fluid> */}
-            <Row className="justify-content-start mb-3">
-              {imagearray(index)}
-            </Row>
+
             {/* </Container> */}
             {/* </div> */}
             <p className="Product">{NameArray[index]}</p>
-            <div className="alignment">
-              <p className="Descriptiontwo">Description</p>
-              <p className="Description"> {DescArray[index]}</p>
-              <p>Price: ${PriceArray[index]}</p>
-              <p>Condition: {ConditionArray[index]}</p>
-              <p>Location: {StateArray[index]} {CityArray[index]}</p>
-              <p>Contact Info: {ContactInfoArray[index]}</p>
-            </div>
+            <Row className="justify-content-start mb-3">
+                <Col 
+                // className="alignment"
+                >
+                  <p className="Descriptiontwo">Description</p>
+                  <p className="Description"> {DescArray[index]}</p>
+                  <p>Price: ${PriceArray[index]}</p>
+                  <p>Condition: {ConditionArray[index]}</p>
+                  <p>Location: {StateArray[index]} {CityArray[index]}</p>
+                  <p>Contact Info: {ContactInfoArray[index]}</p>
+                </Col>
+            </Row>
+            <Row className="justify-content-start mb-3">
+              {imagearray(index)}
+            </Row>
           </Container>
-        </Col >
+          </>
+
       );
     }
 
