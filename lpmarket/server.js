@@ -9,7 +9,9 @@ const methodOverride = require('method-override');
 const path = require('path');           
 const PORT = process.env.PORT || 5000;
 const app = express();
+const ejs = require('ejs');
 app.set('port', (process.env.PORT || 5000));
+app.set('view engine', 'ejs');
 app.use(cors());
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
@@ -51,10 +53,6 @@ const storage = new GridFsStorage({
   }
 });
 const upload = multer({ storage });
-
-app.get('/', (req, res) => {
-  res.render('index');
-});
 
 app.post('/upload', upload.single('file'), (req, res) => {
   res.json({file: req.file});
