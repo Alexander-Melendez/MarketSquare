@@ -28,7 +28,8 @@ exports.setApp = function (app, client) {
     var id = -1;
     var fn = '';
     var ln = '';
-    var em
+    var em = '';
+    var pn = '';
 
     var ret;
 
@@ -36,11 +37,12 @@ exports.setApp = function (app, client) {
       id = results[0]._id;
       fn = results[0].FirstName;
       ln = results[0].LastName;
-      em = results[0].Email
+      em = results[0].Email;
+      pn = results[0].PhoneNumber;
 
       try {
         const token = require("./createJWT.js");
-        ret = token.createToken(fn, ln, id, em);
+        ret = token.createToken(fn, ln, id, em, pn);
       }
       catch (e) {
         ret = { error: e.message };
