@@ -145,7 +145,7 @@ function App() {
                 <img src={ImageArray[index]} alt={"No image was uploaded by the user"} />
               </div>
               <p className="Product">{NameArray[index]}</p>
-              <p>Catagory:{ProductCategoryArray[index]}</p>
+              <p>Category:{ProductCategoryArray[index]}</p>
               <p>Price: $ {PriceArray[index]}</p>
               <p>Condition: {ConditionArray[index]}</p>
               <p>Location: {CityArray[index]} {StateArray[index]}</p>
