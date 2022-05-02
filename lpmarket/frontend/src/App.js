@@ -228,7 +228,7 @@ function App() {
     var obj = { userId: userId, search: search.value };
     var js = JSON.stringify(obj);
     try {
-      const response = await fetch('http://localhost:5000/api/search',
+      const response = await fetch(bp.buildPath('api/search'),
         { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
       var txt = await response.text();
       var res = JSON.parse(txt);
