@@ -205,29 +205,26 @@ app.post('/api/resetPassword', async (req, res, next) =>
 {
     var ret;
 
-    const { token, newPassword } = req.body;
+    const { token, Password } = req.body;
     const updateInfo =
     {
-        Password: newPassword
+        Password: Password
     };
-
-    
-
 
     try
     {
     if (token)
     {
       console.log("Entered token statement");
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function(err, decodedToken) {
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async function(err, decodedToken) {
           if (err)
           {
             return res.status(400).json({error: 'Incorrect or Expired Link.'});
           }
 
-          const {firstName,lastName, email, password, phoneNumber} = decodedToken;
+          const {firstName, lastName, email, password, phoneNumber} = decodedToken;
 
-          const checkedUser = User.findOne({ Email: email });
+          const checkedUser = await User.findOne({ Email: email });
 
           if (!checkedUser)
           {
@@ -235,23 +232,23 @@ app.post('/api/resetPassword', async (req, res, next) =>
             return res.status(400).json(ret);
           }
 
-          ret = { Email: email};
+          // ret = { Email: email};
 
-          const userToUpdate = { Email: email};
-
+          const userToUpdate = {Email: email};
+          
           var error = '';
 
 
           try {
             // const db = client.db();
             // const result = db.collection('UserInfo').updateOne(userToUpdate, updateInfo);
-            const result = User.findOneAndUpdate(userToUpdate, updateInfo);
+            const result = await User.findOneAndUpdate(userToUpdate, updateInfo);
           }
           catch (e) {
             error = e.toString();
           }
 
-          var ret = { message: "No Errors, Reset Successful!" };
+          var ret = { error: "No Errors, Reset Successful!" };
           return res.status(200).json(ret);
       });
     }
