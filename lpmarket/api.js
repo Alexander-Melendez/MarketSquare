@@ -564,6 +564,7 @@ app.post('/api/resetPassword', async (req, res, next) =>
     // outgoing: error
 
     const { Email, FirstName, LastName, PhoneNumber, Password } = req.body;
+    
     const userToUpdate = { Email: Email };
     const updateInfo =
     {
@@ -579,12 +580,23 @@ app.post('/api/resetPassword', async (req, res, next) =>
       // const db = client.db();
       // const result = db.collection('UserInfo').updateOne(userToUpdate, updateInfo);
       const result = await User.findByIdAndUpdate(userToUpdate, updateInfo);
+      result = await User.find({ Email:em, _id:id })
+      if (results.length > 0)
+      {
+        id = results[0]._id;
+        fn = results[0].FirstName;
+        ln = results[0].LastName;
+        em = results[0].Email;
+        pn = results[0].PhoneNumber;
+      }
+      const token = require("./createJWT.js");
+      ret = token.createToken(fn, ln, id, em, pn);
     }
     catch (e) {
       error = e.toString();
     }
 
-    var ret = { error: error };
+    // var ret = { error: error, jwtToken: refreshedToken, fn: FirstName, ln: LastName, id: id, em: user.Email, pn: PhoneNumber };
     res.status(200).json(ret);
   });
 }
