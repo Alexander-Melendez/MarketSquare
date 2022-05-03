@@ -105,12 +105,13 @@ function LoginPage() {
                 style={{ "minHeight": "70vh" }}
             >
                 <Row >
-                    <Alert className="text-center" variant={success ? "success" : "danger"} hidden={msg === ""}>
-                        {msg}
-                    </Alert>
+
                     <div className='text-center'><h1 className='text-Center'>Login</h1></div>
                     <hr />
                     <Col>
+                        <Alert className="text-center" variant={success ? "success" : "danger"} hidden={msg === ""}>
+                            {msg}
+                        </Alert>
                         <Form
                             noValidate
                             onSubmit={handleSubmit(onSubmit)}
