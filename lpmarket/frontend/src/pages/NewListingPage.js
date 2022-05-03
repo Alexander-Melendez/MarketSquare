@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import storage from '../firebase.js';
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 as uuid } from 'uuid';
-import { Row, Col, Card, Form, Button, InputGroup, Image, CloseButton, Container } from 'react-bootstrap';
+import { Row, Col, Form, Button, InputGroup, Image, Container, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -67,6 +67,8 @@ function NewListingPage() {
     const [images, setImages] = useState([]);
     const [isHovered, setHover] = useState(false);
     const [def, setDef] = useState([])
+    const [success, setSuccess] = useState(false)
+    const [msg, setMsg] = useState('')
 
     useEffect(async () => {
         setValue("images", files, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
@@ -168,7 +170,6 @@ function NewListingPage() {
             })
         }
         // console.log("Onsubmit: ", data)
-
         const imgUrls = await Promise.all(data.images.map((image) => storeImage(image))).catch(() => { return })
 
         var send = {
@@ -190,11 +191,14 @@ function NewListingPage() {
                 });
             var txt = await response.text();
             var res = JSON.parse(txt);
-            if (res.error.length > 0) {
-                console.log("API Error:" + res.error);
+            console.log(res);
+            if (res.error === "") {
+                setSuccess(true)
+                setMsg("Listing successfully made!")
             }
             else {
-                console.log(res);
+                setSuccess(false)
+                setMsg(res.error)
             }
         }
         catch (e) {
@@ -420,6 +424,9 @@ function NewListingPage() {
                             {/* <Button onClick={clearForm}>CLEAR</Button> */}
                             {/* <Button onClick={handleReset}>APPLY DEFAULT</Button> */}
                         </Form>
+                        <Alert className="text-center" variant={success ? "success" : "danger"} hidden={msg === ""}>
+                            {msg}
+                        </Alert>
                     </Col>
                 </Row>
             </Container>

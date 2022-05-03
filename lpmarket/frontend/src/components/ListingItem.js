@@ -1,7 +1,8 @@
 import React from 'react'
 import '../App.css';
 import { Link } from 'react-router-dom'
-import { Card, Container, Col, Row, Button, ButtonGroup, InputGroup, ListGroup } from 'react-bootstrap'
+import { Card, Container, Col, Row, Button, ButtonGroup, Carousel, ListGroup, CarouselItem } from 'react-bootstrap'
+
 
 function ListingItem({ listing, id, onEdit, onDelete }) {
   return (
@@ -12,11 +13,7 @@ function ListingItem({ listing, id, onEdit, onDelete }) {
 
 
           <Card.Title><strong>{listing.ProductName}</strong></Card.Title>
-          {/* <Card.Body>
-            <Card.Text>
-              Description
-            </Card.Text>
-          </Card.Body> */}
+
         </Container>
         <ListGroup variant='flush'>
           <ListGroup.Item><strong>Category: </strong>{listing.ProductCategory}</ListGroup.Item>
@@ -24,12 +21,33 @@ function ListingItem({ listing, id, onEdit, onDelete }) {
           <ListGroup.Item><strong>Price: </strong>${listing.ProductPrice}</ListGroup.Item>
           {/* <ListGroup.Item><strong>Price: </strong>${listing.ProductPrice}</ListGroup.Item> */}
         </ListGroup>
-        <Container>
-        {/* <Card.Img variant="top" 
-        src={listing.ProductImages[0]} 
-        style={{objectFit: "cover" }}
-        /> */}
-        </Container>
+        {/* <Container
+                        style={{
+                          // position: 'relative',
+                          width: '150px',
+                          height: '150px'
+                      }}>
+          <Carousel>
+            {
+              listing.ProductImages &&
+              listing.ProductImages.map((image) =>
+              (<Carousel.Item
+              >
+                <img
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: "cover"
+                  }}
+                  key={listing._id}
+                  className="d-block w-100"
+                  src={image}
+                  alt=""
+                />
+              </Carousel.Item>)
+              )}
+          </Carousel>
+        </Container> */}
         <Card.Footer>
 
           <Row className="justify-content-md-center"  >

@@ -1,7 +1,7 @@
 import '../App.css';
 import React, { useState, useEffect } from "react";
 // import { BrowserRouter as Router, Route, Redirect, Switch, Link } from 'react-router-dom';
-import { Button, Navbar, Card, Container, FormControl, Form, Nav, NavDropdown, InputGroup, Row, Col } from 'react-bootstrap';
+import { Button, Container, Row, Col, Carousel } from 'react-bootstrap';
 
 import { withRouter, useHistory, Redirect, Link } from "react-router-dom"
 

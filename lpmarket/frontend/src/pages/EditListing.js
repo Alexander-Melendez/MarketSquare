@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import storage from '../firebase.js';
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 as uuid } from 'uuid';
-import { Row, Col, Card, Form, Button, InputGroup, Image, ButtonGroup, Container } from 'react-bootstrap';
+import { Row, Col, Form, Button, InputGroup, Image, ButtonGroup, Container, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -52,11 +52,8 @@ let bp = require('../Path.js');
 let tokenStorage = require('../tokenStorage.js')
 
 function EditListing() {
-
     const location = useLocation()
     const { listing } = location.state
-
-    // Removed setValue, getValues, and errors to reduce unused errors
     const { register, handleSubmit, reset, setValue, getValues, resetField,
         formState: { errors, dirtyFields, isSubmitting, touchedFields, submitCount, ...formState }
     } = useForm({
@@ -65,11 +62,15 @@ function EditListing() {
         reValidateMode: "all",
         defaultValues: listing
     });
+
     const fileInput = useRef(null)
     const [oldImages, setOldImages] = useState([])
     const [files, setFiles] = useState([]);
     const [images, setImages] = useState([]);
     const [isHovered, setHover] = useState(false);
+    const [def, setDef] = useState([])
+    const [success, setSuccess] = useState(false)
+    const [msg, setMsg] = useState('')
 
     const handleClick = () => fileInput.current.click()
     // Get old data to display on initial form
@@ -141,7 +142,7 @@ function EditListing() {
             console.log("no images to delete")
         }
     }
-    
+
     // upload button
     async function uploadimg(e) {
         const fileList = e.target.files;
@@ -171,7 +172,6 @@ function EditListing() {
 
     const requestEdit = async (data) => {
         // console.log("Formdata: ", data)
-
         const storeImage = async (image) => {//(image) => { 
             return new Promise((resolve, reject) => {
                 // const fbStorage = getStorage()
@@ -202,7 +202,7 @@ function EditListing() {
 
         prev.forEach(function (prev) { delete prev.id });
         let kept = prev.map(function (key) { return key.url });
-        console.log("Filtered existing:", kept)
+        // console.log("Filtered existing:", kept)
 
         let imgUrls = []
         // console.log("uploaded images: ", data.images)
@@ -232,57 +232,20 @@ function EditListing() {
                 });
             var txt = await response.text();
             var res = JSON.parse(txt);
-            if (res.error.length > 0) {
-                console.log("API Error:" + res.error);
+            console.log(res)
+            if (res.error === "") {
+                setSuccess(true)
+                setMsg("Changes successful!")
             }
             else {
-                console.log(res);
+                setSuccess(false)
+                setMsg(res.error)
             }
         }
         catch (e) {
             console.log(e.toString());
         }
-
-        // window.location.href = '/Home/UserListings';
     };
-
-    const onDelete = async (listingId) => {
-        if (window.confirm('Are you sure you want to delete?')) {
-            // api call
-            let storage = require("../tokenStorage")
-            let send = { ProductName: listingId, jwtToken: storage.retrieveToken() }
-            console.log(send)
-            try {
-                const response = await fetch(bp.buildPath('api/addproduct'),
-                    {
-                        method: 'POST',
-                        body: send,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                var txt = await response.text();
-                var res = JSON.parse(txt);
-                if (res.error.length > 0) {
-                    console.log("API Error:" + res.error);
-                }
-                else {
-                    console.log(res);
-                }
-            }
-            catch (e) {
-                console.log(e.toString());
-            }
-            //   const updatedListings = listings.filter(
-            //     (listing) => listing.id !== listingId
-            //   )
-            //   setListings(updatedListings)
-        }
-    }
-
-    function goBack() {
-
-    }
 
     return (
         <Container className='formOverlay'>
@@ -492,8 +455,10 @@ function EditListing() {
                                 {/* <Button variant='danger' onClick={() => onDelete()}>Delete</Button> */}
                                 {/* <Button variant="secondary" onClick={() => goBack()}>Return</Button> */}
                             </ButtonGroup>
-
                         </Form>
+                        <Alert className="text-center" variant={success ? "success" : "danger"} hidden={msg === ""}>
+                            {msg}
+                        </Alert>
                     </Col>
                 </Row>
             </Container>
