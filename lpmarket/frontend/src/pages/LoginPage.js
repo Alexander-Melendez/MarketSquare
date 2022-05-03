@@ -1,7 +1,7 @@
 import '../App.css';
 import { createContext, useState, useEffect } from 'react'
-import { Row, Col, Card, Form, Button, Container } from 'react-bootstrap';
-import { Link, Redirect, useLocation } from 'react-router-dom';
+import { Row, Col, Alert, Form, Button, Container } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -18,8 +18,9 @@ const loginSchema = yup.object().shape({
 function LoginPage() {
 
     let bp = require('../Path.js');
+    const [success, setSuccess] = useState(false)
+    const [msg, setMsg] = useState('')
 
-    // Removed setValue, getValues, and errors to reduce unused errors
     const { register, handleSubmit, reset,
         formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState }
     } = useForm({
@@ -28,9 +29,6 @@ function LoginPage() {
         reValidateMode: "all",
     });
 
-    // const [redirectPrev, setRedirectPrev ] = useState(false)
-
-    // const { decodedToken, isExpired } = useJwt("");
     const onSubmit = async (data) => {
 
         // JWT Set Up WIP
@@ -76,6 +74,8 @@ function LoginPage() {
                 localStorage.setItem('user_data', JSON.stringify(user));
                 // console.log("res", res, "Storage", localStorage.getItem('user_data'));
                 // console.log("\nres:", res, "\nuserJson:", user)
+                setSuccess(false)
+                setMsg("")
                 window.location.href = '/Home';
                 // setRedirectPrev(true)
 
@@ -83,6 +83,8 @@ function LoginPage() {
             }
             else {
                 console.log("API Error:" + res.error);
+                setSuccess(false)
+                setMsg(res.error)
             }
         }
         catch (e) {
@@ -103,6 +105,9 @@ function LoginPage() {
                 style={{ "minHeight": "70vh" }}
             >
                 <Row >
+                    <Alert className="text-center" variant={success ? "success" : "danger"} hidden={msg === ""}>
+                        {msg}
+                    </Alert>
                     <div className='text-center'><h1 className='text-Center'>Login</h1></div>
                     <hr />
                     <Col>

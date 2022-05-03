@@ -150,7 +150,7 @@ function App() {
                 <img src={ImageArray[index]} alt={"No image was uploaded by the user"} />
               </div>
               <p className="Product">{NameArray[index]}</p>
-              <p>Category:{ProductCategoryArray[index]}</p>
+              <p>Category: {ProductCategoryArray[index]}</p>
               <p>Price: $ {PriceArray[index]}</p>
               <p>Condition: {ConditionArray[index]}</p>
               <p>Location: {CityArray[index]} {StateArray[index]}</p>
@@ -164,8 +164,8 @@ function App() {
               <Col
               // className="alignment"
               >
-                <p className="Descriptiontwo">Description</p>
-                <p className="Description"> {DescArray[index]}</p>
+                <p className="Descriptiontwo mb-2">Description</p>
+                <p className="Description mb-2"> {DescArray[index]}</p>
                 <p>Price: ${PriceArray[index]}</p>
                 <p>Condition: {ConditionArray[index]}</p>
                 <p>Location: {StateArray[index]} {CityArray[index]}</p>
