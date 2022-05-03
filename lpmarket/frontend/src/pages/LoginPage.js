@@ -1,6 +1,6 @@
 import '../App.css';
 import { createContext, useState, useEffect } from 'react'
-import { Row, Col, Alert, Form, Button, Container } from 'react-bootstrap';
+import { Row, Col, Alert, Form, Button, Container, InputGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -20,6 +20,10 @@ function LoginPage() {
     let bp = require('../Path.js');
     const [success, setSuccess] = useState(false)
     const [msg, setMsg] = useState('')
+    const [passwordShown, setPasswordShown] = useState(false);
+    const togglePasswordVisiblity = () => {
+        setPasswordShown(passwordShown ? false : true);
+    };
 
     const { register, handleSubmit, reset,
         formState: { errors, isDirty, isSubmitting, touchedFields, submitCount, ...formState }
@@ -131,18 +135,21 @@ function LoginPage() {
                                         {errors.email?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
-                                <Form.Group>
-                                    <Form.Label>password</Form.Label>
+                                <Form.Label>password</Form.Label>
+                                <InputGroup>    
                                     <Form.Control
-                                        type="password"
+                                        type={passwordShown ? "text" : "password"}
                                         name="password"
                                         {...register("password")}
                                         isInvalid={!!errors.password && touchedFields.password}
                                     />
+                                    <Button variant="outline-secondary" onClick={togglePasswordVisiblity}>
+                                        Show
+                                    </Button>
                                     <Form.Control.Feedback type="invalid">
                                         {errors.password?.message}
                                     </Form.Control.Feedback>
-                                </Form.Group>
+                                </InputGroup>
                             </Row>
                             {/* <Form.Group as={Row} controlId="formControls"> */}
                             <Button
