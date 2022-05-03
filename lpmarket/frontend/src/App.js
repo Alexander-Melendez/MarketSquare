@@ -290,7 +290,7 @@ function App() {
           <Nav >
             <Route path='/' exact>
               <InputGroup >
-                <Form.Control type="search" placeholder="Search.." ref={(c) => search = c} />
+                <Form.Control type="search" placeholder="Search.." ref={(c) => search = c} onChange={searchCard}/>
                 <Button variant="secondary" onClick={searchCard}>Submit</Button>
               </InputGroup>
             </Route>
