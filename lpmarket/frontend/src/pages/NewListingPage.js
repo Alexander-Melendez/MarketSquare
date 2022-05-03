@@ -198,7 +198,7 @@ function NewListingPage() {
             }
             else {
                 setSuccess(false)
-                setMsg(res.error)
+                setMsg("Listing could not be made, please try again.")
             }
         }
         catch (e) {
