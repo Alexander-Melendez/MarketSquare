@@ -5,6 +5,7 @@ import { Row, Col, Form, Button, InputGroup, Container, Alert } from 'react-boot
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { decodeToken } from 'react-jwt';
 
 const req = "Required field"
 
@@ -29,7 +30,7 @@ function EditProfile() {
     const oldData = { LastName: stored.lastName, FirstName: stored.firstName, PhoneNumber: stored.phoneNumber }
     const bp = require('../Path.js');
     let storage = require('../tokenStorage.js');
-
+    console.log("Decoded token: ", decodeToken(storage.retrieveToken()))
     const { register, handleSubmit, reset,
         formState: { errors, isDirty, isSubmitting, touchedFields, ...formState }
     } = useForm({
@@ -75,7 +76,7 @@ function EditProfile() {
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setSuccess(true)
                 setMsg("Changes successful!")
-                // window.location.href = '/Home/EditProfile';
+                window.location.href = '/Home/EditProfile';
             }
             else {
                 setSuccess(false)

@@ -68,6 +68,7 @@ function UserListings() {
           const updatedListings = listings.filter((item) => item._id !== listing._id)
           setListings(updatedListings)
           console.log(res);
+          window.location.href = '/Home/UserListings';
         }
       }
       catch (e) {
