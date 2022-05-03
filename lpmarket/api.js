@@ -320,6 +320,7 @@ app.post('/api/resetPassword', async (req, res, next) =>
         _ret.push(results[i].ProductCondition);
         // _ret.push( results[i]._id );
         _ret.push(results[i].ProductImages);
+        _ret.push(results[i].Email)
       }
     }
     else {
@@ -336,6 +337,7 @@ app.post('/api/resetPassword', async (req, res, next) =>
         _ret.push(results[i].ProductCondition);
         // _ret.push( results[i]._id );
         _ret.push(results[i].ProductImages);
+        _ret.push(results[i].Email)
       }
     }
 
