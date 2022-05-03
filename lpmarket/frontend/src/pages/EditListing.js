@@ -236,10 +236,11 @@ function EditListing() {
             if (res.error === "") {
                 setSuccess(true)
                 setMsg("Changes successful!")
+                window.location.href = '/Home';
             }
             else {
                 setSuccess(false)
-                setMsg(res.error)
+                setMsg("Changes unsuccessful, please try again.")
             }
         }
         catch (e) {

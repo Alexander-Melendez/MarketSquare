@@ -195,6 +195,7 @@ function NewListingPage() {
             if (res.error === "") {
                 setSuccess(true)
                 setMsg("Listing successfully made!")
+                window.location.href = '/Home';
             }
             else {
                 setSuccess(false)
