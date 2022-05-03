@@ -561,20 +561,7 @@ app.post('/api/resetPassword', async (req, res, next) =>
     // incoming: productName
     // outgoing: error
 
-    let token = require('./createJWT.js');
-    const { Email, FirstName, LastName, PhoneNumber, Password, jwtToken } = req.body;
-    
-    try {
-      if (token.isExpired(jwtToken)) {
-        var r = { error: 'The JWT is no longer valid', jwtToken: '' };
-        res.status(200).json(r);
-        return;
-      }
-    }
-    catch (e) {
-      console.log(e.message);
-    }
-    
+    const { Email, FirstName, LastName, PhoneNumber, Password } = req.body;
     const userToUpdate = { Email: Email };
     const updateInfo =
     {
@@ -594,19 +581,8 @@ app.post('/api/resetPassword', async (req, res, next) =>
     catch (e) {
       error = e.toString();
     }
-    
-    var refreshedToken = null;
-    try {
-      refreshedToken = token.refresh(jwtToken);
-    }
-    catch (e) {
-      console.log(e.message);
-    }
-    
-    const user = await User.findOne(userToUpdate);
-    var id = user._id;
 
-    var ret = { error: error, jwtToken: refreshedToken, fn: FirstName, ln: LastName, id: id, em: user.Email, pn: PhoneNumber };
+    var ret = { error: error };
     res.status(200).json(ret);
   });
 }

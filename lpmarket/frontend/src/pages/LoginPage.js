@@ -51,7 +51,7 @@ function LoginPage() {
                 });
             var txt = await response.text();
             var res = JSON.parse(txt);
-            // console.log(res)
+            // console.log("Res",res)
             /*if (res.error.length > 0) {
                 console.log("API Error:" + res.error);
             }

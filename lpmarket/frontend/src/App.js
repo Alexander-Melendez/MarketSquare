@@ -36,6 +36,7 @@ function App() {
   const [CityArray, setCity] = useState(Temp);
   const [ConditionArray, setCondition] = useState(Temp);
   const [ImageArray, setImage] = useState(image);
+  const [EmailArray, setEmail] = useState(image);
 
   const [counter, setCounter] = useState(0);
   let displaynumber = 8;
@@ -164,7 +165,8 @@ function App() {
                 <p>Price: ${PriceArray[index]}</p>
                 <p>Condition: {ConditionArray[index]}</p>
                 <p>Location: {StateArray[index]} {CityArray[index]}</p>
-                <p>Contact Info: {ContactInfoArray[index]}</p>
+                <p>Phonenumber: {ContactInfoArray[index]}</p>
+                <p></p>
               </Col>
             </Row>
             <hr />

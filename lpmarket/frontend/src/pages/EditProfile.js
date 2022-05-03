@@ -24,13 +24,14 @@ const editSchema = yup.object().shape({
     // passwordTwo: yup.string().oneOf([yup.ref("password"), null], "Passwords do not match").required(req),
 });
 
-const stored = JSON.parse(localStorage.getItem("user_data"))
-const oldData = { LastName: stored.lastName, FirstName: stored.firstName, PhoneNumber: stored.phoneNumber}
-const bp = require('../Path.js');
-let storage = require('../tokenStorage.js');
+
 
 function EditProfile() {
-
+    const stored = JSON.parse(localStorage.getItem("user_data"))
+    const oldData = { LastName: stored.lastName, FirstName: stored.firstName, PhoneNumber: stored.phoneNumber }
+    const bp = require('../Path.js');
+    let storage = require('../tokenStorage.js');
+    
     const { register, handleSubmit, reset,
         formState: { errors, isDirty, isSubmitting, touchedFields, ...formState }
     } = useForm({
