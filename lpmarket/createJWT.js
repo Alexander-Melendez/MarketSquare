@@ -56,6 +56,7 @@ exports.refresh = function( token )
   let firstName = ud.payload.firstName;
   let lastName = ud.payload.lastName;
   let email = ud.payload.email
+  let pn = ud.payload.phoneNumber
     
   return _createToken( firstName, lastName, userId, email, pn );
 }

@@ -19,7 +19,7 @@ function UserListings() {
       email: JSON.parse(localStorage.getItem("user_data")).email,
       jwtToken: storage.retrieveToken()
     };
-    console.log(obj)
+    console.log("Send", obj)
     var js = JSON.stringify(obj);
     try {
       const response = await fetch(bp.buildPath('api/ownedByUser'),

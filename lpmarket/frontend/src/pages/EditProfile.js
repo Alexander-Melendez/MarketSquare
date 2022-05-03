@@ -56,35 +56,35 @@ function EditProfile() {
         // console.log("Formdata:", data)
         // console.log("Stored", stored)
         console.log("Send: ", send)
-        // try {
-        //     const response = await fetch(bp.buildPath('api/editprofile'),
-        //         {
-        //             method: 'POST',
-        //             body: JSON.stringify(send),
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             }
-        //         });
-        //     var txt = await response.text();
-        //     var res = JSON.parse(txt);
-        //     console.log(res)
-        //     if (res.error === "") {
-        //         var tok = res.accessToken
-        //         storage.storeToken(tok)
-        //         var user = { firstName: res.fn, lastName: res.ln, id: res.id, email: res.email, phoneNumber: res.pn }
-        //         localStorage.setItem('user_data', JSON.stringify(user));
-        //         setSuccess(true)
-        //         setMsg("Changes successful!")
-        //         // window.location.href = '/Home/EditProfile';
-        //     }
-        //     else {
-        //         setSuccess(false)
-        //         setMsg("Changes unsuccessful, please try again.")
-        //     }
-        // }
-        // catch (e) {
-        //     console.log(e.toString());
-        // }
+        try {
+            const response = await fetch(bp.buildPath('api/editprofile'),
+                {
+                    method: 'POST',
+                    body: JSON.stringify(send),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            var txt = await response.text();
+            var res = JSON.parse(txt);
+            console.log(res)
+            if (!res.error) {
+                var tok = res.accessToken
+                storage.storeToken(tok)
+                var user = { firstName: res.fn, lastName: res.ln, id: res.id, email: res.email, phoneNumber: res.pn }
+                localStorage.setItem('user_data', JSON.stringify(user));
+                setSuccess(true)
+                setMsg("Changes successful!")
+                // window.location.href = '/Home/EditProfile';
+            }
+            else {
+                setSuccess(false)
+                setMsg("Changes unsuccessful, please try again.")
+            }
+        }
+        catch (e) {
+            console.log(e.toString());
+        }
     };
 
     return (
