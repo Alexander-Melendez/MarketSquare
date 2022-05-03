@@ -249,9 +249,10 @@ function App() {
       var resultCity = [];
       var resultCondition = [];
       var resultImage = [];
+      var resultEmail = [];
 
       var resultlength = _results.length;
-      for (var i = 0; i < resultlength; i = i + 9) {
+      for (var i = 0; i < resultlength; i = i + 10) {
         resultsName.push(_results[i]);
         resultsProductCategory.push(_results[i + 1]);
         resultsDesc.push(_results[i + 2]);
@@ -261,6 +262,7 @@ function App() {
         resultCity.push(_results[i + 6]);
         resultCondition.push(_results[i + 7]);
         resultImage.push(_results[i + 8]);
+        resultEmail.push(_results[i + 9])
       }
       setName(resultsName);
       setPrice(resultsPrice);
@@ -271,6 +273,7 @@ function App() {
       setCity(resultCity);
       setCondition(resultCondition);
       setImage(resultImage);
+      setEmail(resultEmail)
       setCounter(0);
     }
     catch (e) {
