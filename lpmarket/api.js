@@ -354,6 +354,24 @@ app.post('/api/resetPassword', async (req, res, next) =>
     res.status(200).json(ret);
   });
   
+  app.post('/api/searchById', async (req, res, next) => {
+      var error = '';
+    
+      const { _id } = req.body;
+    
+      var results;
+    
+      try{
+        results = await Product.find({ "_id": _id });
+        var ret = { results: results, error:error };
+      }
+      catch{
+        var ret = {error: "No product with that id"};
+      }
+   
+      res.status(200).json(ret);
+  });
+  
     app.post('/api/ownedByUser', async (req, res, next) => {
     // incoming: email
     // outgoing: results[], error
