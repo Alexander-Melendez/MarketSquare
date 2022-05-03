@@ -52,13 +52,13 @@ function ResetPassword() {
             var txt = await response.text();
             var res = JSON.parse(txt);
             console.log(res);
-            if (res.error) {
-                setSuccess(false)
+            if (res.error === "No Errors, Reset Successful!") {
+                setSuccess(true)
                 setMsg(res.error)
             }
             else {
-                setSuccess(true)
-                setMsg(res.message)
+                setSuccess(false)
+                setMsg(res.error)
             }
         }
         catch (e) {
