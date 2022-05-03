@@ -16,11 +16,11 @@ const editSchema = yup.object().shape({
         /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
         , "###-###-#### or ##########"
     ).required(req),
-    Password: yup.string().min(8, "Must Contain at least 8 characters")
-        .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/
-            , "Must contain, one uppercase letter, one lowercase letter, one number and one special character"
-        ).required(req),
+    // Password: yup.string().min(8, "Must Contain at least 8 characters")
+    //     .matches(
+    //         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/
+    //         , "Must contain, one uppercase letter, one lowercase letter, one number and one special character"
+    //     ).required(req),
     // passwordTwo: yup.string().oneOf([yup.ref("password"), null], "Passwords do not match").required(req),
 });
 
@@ -135,7 +135,7 @@ function EditProfile() {
                                         {errors.PhoneNumber?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
-                                <Form.Group className="mb-3">
+                                {/* <Form.Group className="mb-3">
                                     <Form.Label>Password</Form.Label>
                                     <InputGroup>
                                         <Form.Control
@@ -153,7 +153,7 @@ function EditProfile() {
                                             {errors.Password?.message}
                                         </Form.Control.Feedback>
                                     </InputGroup>
-                                </Form.Group>
+                                </Form.Group> */}
                                 {/* <Form.Group>
                                     <Form.Label>Confirm Password</Form.Label>
                                     <InputGroup>
