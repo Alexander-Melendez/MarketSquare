@@ -150,7 +150,7 @@ function LoginPage() {
                             <Button as={Link} variant='link' to="/Register">
                                 Register an Account
                             </Button>
-                            <Button as={Link} variant='link' to="/ResetPassword">
+                            <Button as={Link} variant='link' to="/ForgotPassword">
                                 Forgot Password
                             </Button>
                             {/* </Form.Group> */}
