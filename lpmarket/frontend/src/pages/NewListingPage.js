@@ -24,11 +24,11 @@ const productSchema = yup.object().shape({
     productPrice: yup.number().positive().integer().required(req),
     images: yup.mixed().nullable().test("type", ".jpeg, .jpg, or .png", (value) => checkIfFilesAreCorrectType(value))
         .required(req),
-    contactInfo: yup.string().matches(
-        /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-        , "e.g. 123-456-7890 or 1234567890"
-    ).required(req),
-    email: yup.string().email("example: user@site.com").required(req)
+    // contactInfo: yup.string().matches(
+    //     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+    //     , "e.g. 123-456-7890 or 1234567890"
+    // ).required(req),
+    // email: yup.string().email("example: user@site.com").required(req)
 });
 
 const formats = ['image/jpg', 'image/jpeg', 'image/png']
@@ -144,7 +144,8 @@ function NewListingPage() {
 
     const postNewListing = async (data) => {
         // console.log(data)
-
+        const stored = JSON.parse(localStorage.getItem("user_data"))
+        const oldData = { email: stored.email, contactInfo: stored.phoneNumber }
         const storeImage = async (image) => {//(image) => { 
             return new Promise((resolve, reject) => {
                 // const fbStorage = getStorage()
@@ -174,6 +175,7 @@ function NewListingPage() {
 
         var send = {
             ...data,
+            ...oldData,
             ProductImages: imgUrls,
             jwtToken: tokenStorage.retrieveToken()
         }
@@ -291,7 +293,7 @@ function NewListingPage() {
                                         {errors.productPrice?.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
-                                <Form.Group  >
+                                {/* <Form.Group  >
                                     <Form.Label>Email</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -314,7 +316,7 @@ function NewListingPage() {
                                     <Form.Control.Feedback type="invalid">
                                         {errors.contactInfo?.message}
                                     </Form.Control.Feedback>
-                                </Form.Group>
+                                </Form.Group> */}
                                 <Form.Group as={Col}>
                                     <Form.Label>City</Form.Label>
                                     <Form.Control
