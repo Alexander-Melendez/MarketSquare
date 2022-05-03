@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 // import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Switch, Link, /*Redirect*/ } from 'react-router-dom';
-import { Button, Navbar, Container, Form, Nav, Row, Col, InputGroup} from 'react-bootstrap';
+import { Button, Navbar, Container, Form, Nav, Row, Col, InputGroup, Alert } from 'react-bootstrap';
 // import storage from './firebase.js';
 
 import NewListingPage from './pages/NewListingPage';
@@ -40,7 +40,8 @@ function App() {
 
   const [counter, setCounter] = useState(0);
   let displaynumber = 8;
-
+  const [success, setSuccess] = useState(false)
+  const [msg, setMsg] = useState('')
 
   let bp = require('./Path.js');
 
@@ -66,7 +67,7 @@ function App() {
       var resultEmail = [];
 
       var resultlength = _results.length;
-      for (var i = 0; i < resultlength; i = i + 10){//9) {
+      for (var i = 0; i < resultlength; i = i + 10) {//9) {
         resultsName.push(_results[i]);
         resultsProductCategory.push(_results[i + 1]);
         resultsDesc.push(_results[i + 2]);
@@ -216,6 +217,9 @@ function App() {
       <Container className='mainOverlay'>
         <Container fluid>
           <Row className="justify-content-start mb-3">
+            <Alert className="text-center" variant={success ? "success" : "danger"} hidden={msg === ""}>
+              {msg}
+            </Alert>
             {rowone}
           </Row>
         </Container>
@@ -252,6 +256,15 @@ function App() {
       var resultEmail = [];
 
       var resultlength = _results.length;
+      if (resultlength < 1){
+        setSuccess(false)
+        setMsg("No results found")
+      } 
+      else {
+        setSuccess(true)
+        setMsg("")
+      }
+
       for (var i = 0; i < resultlength; i = i + 10) {
         resultsName.push(_results[i]);
         resultsProductCategory.push(_results[i + 1]);
@@ -290,7 +303,7 @@ function App() {
           <Nav >
             <Route path='/' exact>
               <InputGroup >
-                <Form.Control type="search" placeholder="Search.." ref={(c) => search = c} onChange={searchCard}/>
+                <Form.Control type="search" placeholder="Search.." ref={(c) => search = c} onChange={searchCard} />
                 <Button variant="secondary" onClick={searchCard}>Submit</Button>
               </InputGroup>
             </Route>
@@ -321,9 +334,9 @@ function App() {
         />
         <Route exact path='/login' component={LoginPage} />
         <Route exact path='/register' component={RegisterPage} />
-        <Route  path='/emailverification/:token' component={ActivateEmail}/>
-        <Route path="/resetpassword/:token" component={ResetPassword}/>
-        <Route path="/ForgotPassword" component={ForgotPassword}/>
+        <Route path='/emailverification/:token' component={ActivateEmail} />
+        <Route path="/resetpassword/:token" component={ResetPassword} />
+        <Route path="/ForgotPassword" component={ForgotPassword} />
       </Switch>
     </Router >
   );
