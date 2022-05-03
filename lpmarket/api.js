@@ -436,8 +436,8 @@ app.post('/api/resetPassword', async (req, res, next) =>
       ProductDescription: productDescription,
       ProductPrice: productPrice,
       ContactInfo: contactInfo,
-      City: city,
-      State: state,
+      ProductCity: city,
+      ProductState: state,
       ProductImages: ProductImages,
       Email: email,
       DateListed: new Date()
