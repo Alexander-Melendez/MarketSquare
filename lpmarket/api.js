@@ -436,8 +436,8 @@ app.post('/api/resetPassword', async (req, res, next) =>
       ProductDescription: productDescription,
       ProductPrice: productPrice,
       ContactInfo: contactInfo,
-      City: city,
-      State: state,
+      ProductCity: city,
+      ProductState: state,
       ProductImages: ProductImages,
       Email: email,
       DateListed: new Date()
@@ -520,7 +520,7 @@ app.post('/api/resetPassword', async (req, res, next) =>
     // outgoing: error
 
     let token = require('./createJWT.js');
-    const { productName, jwtToken } = req.body;
+    const { _id, jwtToken } = req.body;
 
     try {
       if (token.isExpired(jwtToken)) {
@@ -533,13 +533,13 @@ app.post('/api/resetPassword', async (req, res, next) =>
       console.log(e.message);
     }
 
-    const deleteProduct = { ProductName: productName };
+    const deleteProduct = { _id: _id };
     var error = '';
 
     try {
       // const db = client.db();
       // const result = db.collection('ProductInfo').deleteOne(deleteProduct);
-      const result = Product.findByIdAndDelete(deleteProduct);
+      const result = await Product.findOneAndDelete(deleteProduct);
     }
     catch (e) {
       error = e.toString();
