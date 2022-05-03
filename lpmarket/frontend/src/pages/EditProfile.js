@@ -24,14 +24,12 @@ const editSchema = yup.object().shape({
     // passwordTwo: yup.string().oneOf([yup.ref("password"), null], "Passwords do not match").required(req),
 });
 
-
-
 function EditProfile() {
     const stored = JSON.parse(localStorage.getItem("user_data"))
     const oldData = { LastName: stored.lastName, FirstName: stored.firstName, PhoneNumber: stored.phoneNumber }
     const bp = require('../Path.js');
     let storage = require('../tokenStorage.js');
-    
+
     const { register, handleSubmit, reset,
         formState: { errors, isDirty, isSubmitting, touchedFields, ...formState }
     } = useForm({
@@ -52,36 +50,41 @@ function EditProfile() {
     const onSubmit = async (data) => {
         let send = {
             ...data,
-            jwtToken: storage.retrieveToken(),
+            // jwtToken: storage.retrieveToken(),
             Email: stored.email
         }
         // console.log("Formdata:", data)
         // console.log("Stored", stored)
         console.log("Send: ", send)
-        try {
-            const response = await fetch(bp.buildPath('api/editprofile'),
-                {
-                    method: 'POST',
-                    body: JSON.stringify(send),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-            var txt = await response.text();
-            var res = JSON.parse(txt);
-            console.log(res)
-            if (res.error === "") {
-                setSuccess(true)
-                setMsg("Changes successful!")
-            }
-            else {
-                setSuccess(false)
-                setMsg("Changes unsuccessful, please try again.")
-            }
-        }
-        catch (e) {
-            console.log(e.toString());
-        }
+        // try {
+        //     const response = await fetch(bp.buildPath('api/editprofile'),
+        //         {
+        //             method: 'POST',
+        //             body: JSON.stringify(send),
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             }
+        //         });
+        //     var txt = await response.text();
+        //     var res = JSON.parse(txt);
+        //     console.log(res)
+        //     if (res.error === "") {
+        //         var tok = res.accessToken
+        //         storage.storeToken(tok)
+        //         var user = { firstName: res.fn, lastName: res.ln, id: res.id, email: res.email, phoneNumber: res.pn }
+        //         localStorage.setItem('user_data', JSON.stringify(user));
+        //         setSuccess(true)
+        //         setMsg("Changes successful!")
+        //         // window.location.href = '/Home/EditProfile';
+        //     }
+        //     else {
+        //         setSuccess(false)
+        //         setMsg("Changes unsuccessful, please try again.")
+        //     }
+        // }
+        // catch (e) {
+        //     console.log(e.toString());
+        // }
     };
 
     return (
