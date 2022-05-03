@@ -38,7 +38,7 @@ function ResetPassword() {
     });
 
     const onSubmit = async (data) => {
-        var send = {  token: token, newPassword: data.password};
+        var send = {  token: token, Password: data.password};
         console.log(send)
         try {
             const response = await fetch(bp.buildPath('api/resetPassword'),
