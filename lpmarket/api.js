@@ -582,7 +582,7 @@ app.post('/api/resetPassword', async (req, res, next) =>
       error = e.toString();
     }
 
-    var ret = { error: error };
+    var ret = { error: error, FirstName: FirstName, LastName: LastName, PhoneNumber: PhoneNumber };
     res.status(200).json(ret);
   });
 }
